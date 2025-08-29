@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    // --- FUNCTION 1: REFRESH THE SUMMARY CARDS ---
     function updateUserCounts() {
-        fetch('/RAIS-Global/admin/get_active_users.php')
+        fetch('../admin/get_active_users.php')
             .then(response => response.json())
             .then(data => {
                 const activeCountElement = document.getElementById('activeUserCount');
                 const inactiveCountElement = document.getElementById('inactiveUserCount');
-
                 if (activeCountElement) {
                     activeCountElement.textContent = data.active_users;
                 }
@@ -18,10 +15,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching user counts:', error));
     }
 
-    // --- FUNCTION 2: REFRESH THE USER TABLE ---
     function refreshUserTable() {
         const userTableBody = document.getElementById('userTableBody');
-        fetch('/RAIS-Global/admin/get_user_table.php')
+        fetch('../admin/get_user_table.php')
             .then(response => response.text())
             .then(html => {
                 if (userTableBody) {
@@ -31,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error refreshing user table:', error));
     }
 
-    // --- START THE AUTO-REFRESH INTERVALS ---
-    // Change the intervals at the bottom of the file
-    setInterval(updateUserCounts, 7000); // 7000 milliseconds = 7 seconds
-    setInterval(refreshUserTable, 7000); // Let's make this one fast too for consistency
+    setInterval(updateUserCounts, 7000); // Refresh cards every 7 seconds
+    setInterval(refreshUserTable, 7000); // Refresh table every 7 seconds
 });

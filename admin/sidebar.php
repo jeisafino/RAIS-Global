@@ -71,3 +71,5 @@
         &copy; 2025 RAIS
     </div>
 </aside>
+
+<script src="../js/heartbeat.js" defer></script>

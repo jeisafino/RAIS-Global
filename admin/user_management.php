@@ -7,7 +7,7 @@ $active_threshold = 30; // in minutes
 
 // Fetch all users from the database
 $users = [];
-$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users ORDER BY id ASC";
+$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users WHERE role = 'client' ORDER BY id ASC";
 if ($result = $conn->query($sql_users)) {
     while ($row = $result->fetch_assoc()) {
         $users[] = $row;
@@ -68,6 +68,6 @@ $conn->close();
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="togglemodeScript.js"></script>
-    <script src="/RAIS-Global/js/user_management.js" defer></script>
+    <script src="../js/heartbeat.js" defer></script>
 </body>
 </html>

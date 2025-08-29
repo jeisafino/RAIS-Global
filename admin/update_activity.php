@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Make sure this matches your session variable name (e.g., 'id', 'user_id')
+// IMPORTANT: Double-check that 'id' is your correct session variable for the user's ID.
 if (isset($_SESSION['id'])) {
     
     require_once '../config.php'; 

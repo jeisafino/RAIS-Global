@@ -1,8 +1,9 @@
 <?php
 require_once '../config.php';
-$active_threshold = 5;
+
+$active_threshold = 15; // in seconds
 $users = [];
-$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users ORDER BY id ASC";
+$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users WHERE role = 'client' ORDER BY id ASC";
 if ($result = $conn->query($sql_users)) {
     while ($row = $result->fetch_assoc()) {
         $users[] = $row;
@@ -16,6 +17,7 @@ foreach ($users as $user) {
     $statusBadgeClass = $is_online ? 'bg-success' : 'bg-secondary';
     $statusText = $is_online ? 'Online' : 'Offline';
     $lastActivityDisplay = !empty($user['last_activity']) ? date("M d, Y h:i A", strtotime($user['last_activity'])) : 'Never';
+    
     echo "<tr id='user-row-" . htmlspecialchars($user['id']) . "'>";
     echo "<td>" . htmlspecialchars($user['id']) . "</td>";
     echo "<td>" . htmlspecialchars($user['firstName']) . "</td>";

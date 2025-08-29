@@ -10,7 +10,7 @@ $active_threshold = 15; // in seconds
 // --- START: CONSOLIDATED REAL-TIME LOGIC ---
 
 // PART A: Calculate the counts for the TOP SUMMARY CARDS
-$sql_active = "SELECT COUNT(id) AS active_count FROM users WHERE last_activity >= NOW() - INTERVAL ? SECOND";
+$sql_active = "SELECT COUNT(id) AS active_count FROM users WHERE role = 'client' AND last_activity >= NOW() - INTERVAL ? SECOND";
 $stmt_active = $conn->prepare($sql_active);
 $stmt_active->bind_param("i", $active_threshold);
 $stmt_active->execute();
@@ -19,7 +19,7 @@ $active_row = $result_active->fetch_assoc();
 $active_users = $active_row['active_count'];
 $stmt_active->close();
 
-$sql_total = "SELECT COUNT(id) AS total_count FROM users";
+$sql_total = "SELECT COUNT(id) AS total_count FROM users WHERE role = 'client'";
 $result_total = $conn->query($sql_total);
 $total_row = $result_total->fetch_assoc();
 $total_users = $total_row['total_count'];
@@ -29,7 +29,7 @@ $inactive_users = $total_users - $active_users;
 
 // PART B: Fetch all user details for the USER MANAGEMENT TABLE
 $users = [];
-$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users ORDER BY id ASC";
+$sql_users = "SELECT id, firstName, lastName, email, status, last_login, role, last_activity FROM users WHERE role = 'client' ORDER BY id ASC";
 if ($result = $conn->query($sql_users)) {
     while ($row = $result->fetch_assoc()) {
         $users[] = $row;
@@ -104,9 +104,10 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="togglemodeScript.js"></script>
     
-    <script src="/RAIS-Global/js/user_management.js" defer></script>
-    
-    <script src="/RAIS-Global/js/admin_dashboard.js" defer></script>
+    <script src="../js/heartbeat.js"></script>
+    <script src="../js/user_management.js"></script>
+    <script src="../js/admin_dashboard.js"></script>
+
 
 </body>
 </html>
