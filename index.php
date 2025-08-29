@@ -667,7 +667,7 @@ $exams = [
                 </a>
                 <div class="nav-container-desktop">
                     <ul class="navbar-nav flex-row">
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="about.php">About</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#services">Services</a></li>
                         <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#blogs">Blogs</a></li>
                         <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#partners">Partner</a></li>
@@ -697,7 +697,7 @@ $exams = [
                         </div>
                         <div class="collapse navbar-collapse" id="navbarContent">
                             <ul class="navbar-nav mt-3">
-                                <li class="nav-item"><a class="nav-link fs-5" href="about.php">About</a></li>
+                                <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
                                 <li class="nav-item"><a class="nav-link fs-5" href="#services">Services</a></li>
                                 <li class="nav-item"><a class="nav-link fs-5" href="#blogs">Blogs</a></li>
                                 <li class="nav-item"><a class="nav-link fs-5" href="#partners">Partner</a></li>

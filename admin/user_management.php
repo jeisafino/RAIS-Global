@@ -46,9 +46,11 @@ $conn->close();
                         </div>
                     </div>
 
-                    <?php require_once '_user_table.php'; ?>
+                    <?php
+                      $page_context = 'user_management';
+                     require_once '_user_table.php'; 
+                     ?>
 
-                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addUserModal" style="background-color: var(--rais-button-maroon); border: none;">Add New User</button>
                 </div>
             </main>
         </div>
@@ -58,7 +60,7 @@ $conn->close();
         <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="addUserModalLabel">Add New User</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="addUserForm"><div class="mb-3"><label for="addFirstName" class="form-label">First Name</label><input type="text" class="form-control" id="addFirstName" required></div><div class="mb-3"><label for="addLastName" class="form-label">Last Name</label><input type="text" class="form-control" id="addLastName" required></div><div class="mb-3"><label for="addEmail" class="form-label">Email address</label><input type="email" class="form-control" id="addEmail" required></div><div class="mb-3"><label for="addStatus" class="form-label">Status</label><select class="form-select" id="addStatus"><option>Active</option><option>Inactive</option></select></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" form="addUserForm" class="btn btn-primary">Save User</button></div></div></div>
     </div>
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="editUserModalLabel">Edit User</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="editUserForm"><input type="hidden" id="editUserId"><div class="mb-3"><label for="editFirstName" class="form-label">First Name</label><input type="text" class="form-control" id="editFirstName" required></div><div class="mb-3"><label for="editLastName" class="form-label">Last Name</label><input type="text" class="form-control" id="editLastName" required></div><div class="mb-3"><label for="editEmail" class="form-label">Email address</label><input type="email" class="form-control" id="editEmail" required></div><div class="mb-3"><label for="editStatus" class="form-label">Status</label><select class="form-select" id="editStatus"><option>Active</option><option>Inactive</option></select></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" form="editUserForm" class="btn btn-primary">Save Changes</button></div></div></div>
+        <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="editUserModalLabel">Edit User</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="editUserForm"><input type="hidden" id="editUserId"><div class="mb-3"><label for="editFirstName" class="form-label">First Name</label><input type="text" class="form-control" id="editFirstName" required></div><div class="mb-3"><label for="editLastName" class="form-label">Last Name</label><input type="text" class="form-control" id="editLastName" required></div><div class="mb-3"><label for="editEmail" class="form-label">Email address</label><input type="email" class="form-control" id="editEmail" required></div><div class="mb-3"><p><span id="editUserStatusBadge" class="badge"></span></p></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" form="editUserForm" class="btn btn-primary">Save Changes</button></div></div></div>
     </div>
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body" id="deleteModalBody">Are you sure you want to delete this user?</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button></div></div></div>
@@ -69,5 +71,6 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="togglemodeScript.js"></script>
     <script src="../js/heartbeat.js" defer></script>
+    <script src="../js/user_management.js" defer></script>
 </body>
 </html>
