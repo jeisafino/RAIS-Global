@@ -33,15 +33,12 @@ $conn->close();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RAIS Settings</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="../img/logoulit.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom Styles -->
     <style>
         :root {
             --rais-primary-green: #004d40;
@@ -343,6 +340,10 @@ $conn->close();
         .chat-footer .form-control {
             border-radius: 20px 0 0 20px;
         }
+        
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
+            color: var(--rais-text-dark);
+        }
 
         .chat-toggle-btn {
             position: fixed;
@@ -487,11 +488,32 @@ $conn->close();
         .dark-mode .text-danger {
             color: #ff5252 !important;
         }
+        .dark-mode .chat-body {
+            background-color: #121212;
+        }
+        .dark-mode .chat-body .text-muted, .dark-mode .chat-body-fullscreen .text-muted {
+            color: #EAEAEA !important;
+        }
+        .dark-mode .form-control {
+            background-color: #2a2a2a;
+            color: #EAEAEA;
+            border-color: #3c3c3c;
+        }
+        .dark-mode .form-control::placeholder {
+            color: #888;
+        }
+        .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i {
+            color: #EAEAEA;
+        }
+        .dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             body {
-                padding-top: 50px;
+                padding-top: 60px;
                 padding-bottom: 50px;
                 overflow: auto;
             }
@@ -500,7 +522,7 @@ $conn->close();
                 flex-direction: column;
                 height: auto;
             }
-
+            
             .content-area {
                 height: auto;
                 overflow-y: visible;
@@ -513,7 +535,7 @@ $conn->close();
                 left: 0;
                 right: 0;
                 z-index: 1030;
-                height: 50px;
+                height: 60px;
             }
 
             .header-title {
@@ -534,10 +556,11 @@ $conn->close();
                 left: 0;
                 z-index: 1029;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
                 padding: 0;
                 transition: none;
+                overflow-x: auto;
+                overflow-y: hidden;
             }
 
             .sidebar:hover {
@@ -549,21 +572,20 @@ $conn->close();
                 display: none;
             }
 
-            .sidebar .nav {
+             .sidebar .nav {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
-                flex-grow: 1;
                 height: 100%;
+                width: 100%;
+                justify-content: space-around;
             }
 
             .sidebar .nav-link {
                 flex: 1;
-                flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                padding: 0 10px;
+                padding: 0 5px;
                 gap: 0;
                 height: 100%;
             }
@@ -601,12 +623,9 @@ $conn->close();
 
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
-        <!-- Sidebar -->
-                <?php require_once 'sidebar.php' ?>
+        <?php require_once 'sidebar.php'; ?>
 
-        <!-- Main Content Area -->
         <div class="content-area">
-            <!-- Header -->
             <div class="header">
                 <div class="header-brand d-flex align-items-center">
                     <img src="../img/logo.png" alt="RAIS Logo" class="header-logo-img light-mode-logo">
@@ -620,7 +639,6 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- Main Content -->
             <main class="main-content">
                 <h1>Settings</h1>
                 <div class="content-card">
@@ -657,12 +675,10 @@ $conn->close();
         </div>
     </div>
     
-    <!-- Floating Action Button -->
     <a href="book-flight.php" class="floating-btn text-decoration-none">
         <i class="bi bi-plus-lg"></i>
     </a>
 
-    <!-- Collapsible Chatbox -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header d-flex justify-content-between align-items-center" onclick="toggleChat()">
             <h5 class="chat-modal-title mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</h5>
@@ -676,13 +692,12 @@ $conn->close();
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
     </div>
     
-    <!-- Full Screen Chat for Mobile -->
     <div id="full-screen-chat">
         <div class="chat-header-fullscreen">
             <button class="back-btn" id="backToDashboardBtn"><i class="bi bi-arrow-left"></i></button>
@@ -696,18 +711,16 @@ $conn->close();
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Chat Toggle Button -->
     <button class="chat-toggle-btn" onclick="toggleChat()">
         <i class="bi bi-chat-dots"></i>
     </button>
 
-    <!-- Change Password Modal -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -736,7 +749,6 @@ $conn->close();
         </div>
     </div>
 
-    <!-- Delete Account Modal -->
     <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -758,7 +770,6 @@ $conn->close();
         </div>
     </div>
     
-    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -777,7 +788,6 @@ $conn->close();
       </div>
     </div>
 
-    <!-- Toast container -->
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
       <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
@@ -785,12 +795,10 @@ $conn->close();
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body" id="toastBody">
-          <!-- Message here -->
-        </div>
+          </div>
       </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -802,8 +810,8 @@ $conn->close();
                 const toastBody = document.getElementById('toastBody');
                 
                 const toastOptions = {
-                    autohide: type === 'success',
-                    delay: 2000
+                    autohide: true,
+                    delay: 3000
                 };
                 const toast = new bootstrap.Toast(toastEl, toastOptions);
 
@@ -892,7 +900,28 @@ $conn->close();
             // Delete Account Form Submission
             document.getElementById('deleteAccountForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                // ... (rest of the delete account logic remains the same)
+                const password = document.getElementById('deleteConfirmPassword').value;
+                const formData = new FormData();
+                formData.append('password', password);
+
+                fetch('delete-account.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Account deleted successfully. You will be logged out.');
+                        setTimeout(() => {
+                            window.location.href = '../login.php';
+                        }, 2000);
+                    } else {
+                        showAlert(data.error || 'Failed to delete account.', 'danger');
+                    }
+                })
+                .catch(() => {
+                    showAlert('An error occurred.', 'danger');
+                });
             });
 
             const mainWrapper = document.querySelector('.main-wrapper');
@@ -902,7 +931,7 @@ $conn->close();
             const fullScreenChat = document.getElementById('full-screen-chat');
 
             window.toggleChat = function() {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 992) {
                     const isChatVisible = fullScreenChat.style.display === 'flex';
                     if (isChatVisible) {
                         fullScreenChat.style.display = 'none';

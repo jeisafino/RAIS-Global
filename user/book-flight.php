@@ -40,13 +40,10 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
     <title>RAIS Book Flight</title>
     <link rel="icon" href="../img/logoulit.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom Styles -->
     <style>
         :root {
             --rais-primary-green: #004d40;
@@ -312,6 +309,10 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .chat-footer .form-control {
             border-radius: 20px 0 0 20px;
         }
+        
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
+            color: var(--rais-text-dark);
+        }
 
         .chat-toggle-btn {
             position: fixed;
@@ -403,7 +404,8 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .dark-mode .content-card,
         .dark-mode .chat-container,
         .dark-mode #full-screen-chat,
-        .dark-mode .chat-footer-fullscreen {
+        .dark-mode .chat-footer-fullscreen,
+        .dark-mode .modal-content {
             background-color: #1e1e1e;
             color: #EAEAEA;
             border-color: #2c2c2c;
@@ -431,10 +433,22 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .dark-mode .form-control::placeholder {
             color: #888;
         }
+        .dark-mode .chat-body {
+            background-color: #121212;
+        }
+        .dark-mode .chat-body .text-muted, .dark-mode .chat-body-fullscreen .text-muted {
+            color: #EAEAEA !important;
+        }
+        .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i {
+            color: #EAEAEA;
+        }
+        .dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             body {
                 padding-top: 60px;
                 padding-bottom: 50px;
@@ -483,10 +497,10 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 left: 0;
                 z-index: 1029;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
                 padding: 0;
                 transition: none;
+                overflow: hidden;
             }
 
             .sidebar:hover {
@@ -502,18 +516,17 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             .sidebar .nav {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
-                flex-grow: 1;
                 height: 100%;
+                width: 100%;
+                justify-content: space-around;
             }
 
             .sidebar .nav-link {
                 flex: 1;
-                flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                padding: 0 10px;
+                padding: 0 5px;
                 gap: 0;
                 height: 100%;
             }
@@ -546,12 +559,9 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
-        <!-- Sidebar -->
-                <?php require_once 'sidebar.php' ?>
+        <?php require_once 'sidebar.php' ?>
 
-        <!-- Main Content Area -->
         <div class="content-area">
-            <!-- Header -->
             <div class="header">
                 <div class="header-brand d-flex align-items-center">
                     <img src="../img/logo.png" alt="RAIS Logo" class="header-logo-img light-mode-logo">
@@ -565,7 +575,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 </div>
             </div>
 
-            <!-- Main Content -->
             <main class="main-content">
                 <h1>Book Flight</h1>
                 <div class="row g-4 justify-content-center">
@@ -610,14 +619,12 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
 
-    <!-- Collapsible Chatbox -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header d-flex justify-content-between align-items-center" onclick="toggleChat()">
             <h5 class="chat-modal-title mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</h5>
             <i class="bi bi-x-lg text-white"></i>
         </div>
         <div class="chat-body">
-            <!-- Chat messages will go here -->
             <div class="text-center text-muted">RAIS Support how may i assist you?</div>
         </div>
         <div class="chat-footer">
@@ -625,13 +632,12 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
     </div>
     
-    <!-- Full Screen Chat for Mobile -->
     <div id="full-screen-chat">
         <div class="chat-header-fullscreen">
             <button class="back-btn" id="backToDashboardBtn"><i class="bi bi-arrow-left"></i></button>
@@ -645,18 +651,16 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Chat Toggle Button -->
     <button class="chat-toggle-btn" onclick="toggleChat()">
         <i class="bi bi-chat-dots"></i>
     </button>
 
-    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -675,7 +679,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
       </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -694,7 +697,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             const fullScreenChat = document.getElementById('full-screen-chat');
 
             function toggleChat() {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 992) {
                     const isChatVisible = fullScreenChat.style.display === 'flex';
                     if (isChatVisible) {
                         fullScreenChat.style.display = 'none';

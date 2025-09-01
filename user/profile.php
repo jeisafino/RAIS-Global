@@ -1,4 +1,46 @@
 <?php
+// sidebar.php - The reusable sidebar component for the dashboard pages.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Get the current page filename to set the active link
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+<aside class="sidebar d-flex flex-column">
+    <div class="logo">RAIS</div>
+    <nav class="nav flex-column">
+        <a class="nav-link <?php if ($currentPage == 'dashboard.php') echo 'active'; ?>" href="dashboard.php">
+            <i class="bi bi-house-door-fill"></i><span>Dashboard</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'book-consultation.php' || $currentPage == 'book-flight.php') echo 'active'; ?>" href="book-consultation.php">
+            <i class="bi bi-calendar-check"></i><span>Book Appointment</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'statement-of-account.php') echo 'active'; ?>" href="statement-of-account.php">
+            <i class="bi bi-receipt"></i><span>Statement of Account</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'documents.php') echo 'active'; ?>" href="documents.php">
+            <i class="bi bi-file-earmark-text"></i><span>Documents</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'forms.php') echo 'active'; ?>" href="forms.php">
+            <i class="bi bi-journal-text"></i><span>Forms</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'notifications.php') echo 'active'; ?>" href="notifications.php">
+            <i class="bi bi-bell"></i><span>Notifications</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'settings.php') echo 'active'; ?>" href="settings.php">
+            <i class="bi bi-gear"></i><span>Settings</span>
+        </a>
+        <a class="nav-link <?php if ($currentPage == 'profile.php') echo 'active'; ?>" href="profile.php">
+            <i class="bi bi-person-circle"></i><span>Profile</span>
+        </a>
+    </nav>
+    <div class="mt-auto footer-text">
+        &copy; <?php echo date("Y"); ?> RAIS
+    </div>
+</aside>
+
+<?php
 // profile.php - User's profile page
 
 // Start the session to access logged-in user's data.
@@ -229,7 +271,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 </head>
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
-                <?php require_once 'sidebar.php' ?>
+        <?php require_once 'sidebar.php' ?>
 
         <div class="content-area">
             <header class="header">
@@ -248,7 +290,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             <main class="main-content">
                 <h1>Profile</h1>
                 <div class="content-card">
-                    <!-- Profile View Section -->
                     <div id="profile-view" class="profile-view text-center">
                         <div id="profileViewImageContainer">
                             <?php if (!empty($userProfile['profileImage'])): ?>
@@ -277,7 +318,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                         <button id="editProfileBtn" class="btn btn-primary mt-4" style="background-color: var(--rais-button-maroon); border: none;">Edit Profile</button>
                     </div>
 
-                    <!-- Profile Edit Form (Initially Hidden) -->
                     <form id="profile-edit-form" action="update-profile.php" method="POST" enctype="multipart/form-data">
                         <div class="mb-3 text-center">
                             <img id="profileImagePreview" src="<?php echo !empty($userProfile['profileImage']) ? '../' . htmlspecialchars($userProfile['profileImage']) . '?v=' . time() : 'https://placehold.co/100x100'; ?>" alt="Profile Preview" class="profile-image-preview mb-2">
@@ -327,7 +367,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
     
-    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -346,7 +385,6 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
       </div>
     </div>
 
-    <!-- Added Bootstrap JS Bundle for modal functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
