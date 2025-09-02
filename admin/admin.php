@@ -39,6 +39,29 @@ if ($result = $conn->query($sql_users)) {
     echo "ERROR: Could not execute user list query. " . $conn->error;
 }
 
+// --- FETCH LATEST CHAT MESSAGES FOR MONITORING ---
+$latest_chats = [];
+$sql_chats = "
+    SELECT u.firstName, u.lastName, m.message
+    FROM chat_messages m
+    INNER JOIN (
+        SELECT MAX(id) as max_id
+        FROM chat_messages
+        WHERE sender_id != 0 
+        GROUP BY sender_id
+        ORDER BY max_id DESC
+        LIMIT 3
+    ) latest_chat_messages ON m.id = latest_chat_messages.max_id
+    INNER JOIN users u ON m.sender_id = u.id
+    ORDER BY m.id DESC";
+
+if ($result_chats = $conn->query($sql_chats)) {
+    while ($row_chat = $result_chats->fetch_assoc()) {
+        $latest_chats[] = $row_chat;
+    }
+    $result_chats->free();
+}
+
 $conn->close();
 ?>
 <!doctype html>
@@ -49,9 +72,74 @@ $conn->close();
     <title><?php echo htmlspecialchars($page_title); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
+        rel="stylesheet">
     <link rel="icon" href="../img/logoulit.png" />
     <link rel="stylesheet" href="style.css">
-</head>
+
+    <style>
+        /* Light Mode Styles (Default) */
+        .live-chat-list .chat-preview-item {
+            background-color: #f8f9fa; /* Light gray background */
+            border: 1px solid #e9ecef;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .live-chat-list .user-identifier {
+            color: #198754; /* Darker green for better contrast on light background */
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        .live-chat-list .message-preview {
+            color: #495057; /* Standard text color */
+        }
+        
+        /* --- BUTTON STYLE TO MATCH 'MANAGE ALL USERS' --- */
+        .btn-view-chat-list {
+            background-color: #811F1D; /* Solid dark red */
+            color: #fff;
+            border: 1px solid #811F1D;
+            padding: 0.5rem 1.25rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            border-radius: 0.375rem; /* Standard bootstrap radius */
+        }
+        .btn-view-chat-list:hover {
+            background-color: #9a2430; /* Slightly darker red on hover */
+            border-color: #9a2430;
+            color: #fff;
+        }
+
+        /* Dark Mode Overrides */
+        body.dark-mode .live-chat-list .chat-preview-item {
+            background-color: #2b2f35;
+            border-color: #3e444a;
+        }
+        body.dark-mode .live-chat-list .user-identifier {
+            color: #28a745; /* Brighter green for dark background */
+        }
+        body.dark-mode .live-chat-list .message-preview {
+            color: #adb5bd;
+        }
+        
+        /* --- TABLE ROW HOVER STYLES --- */
+        /* Adds a smooth transition to the background color change */
+        .table-hover tbody tr {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+        /* Applies the green background on hover ONLY in dark mode */
+        body.dark-mode .table-hover tbody tr:hover {
+            background-color: #0b4038 !important; /* Added !important to override Bootstrap defaults */
+            color: #f8f9fa !important; /* This new line forces the text to be light */
+        }
+
+    </style>
+    </head>
 <body>
     <div class="main-wrapper">
         <?php require_once 'sidebar.php'; ?>
@@ -83,7 +171,30 @@ $conn->close();
                 require_once '_user_table.php';
                 ?>
 
-                </main>
+                <div class="content-card mt-4">
+                    <h2 class="mb-3">Live Chat Monitoring</h2>
+                    <div class="live-chat-list mb-3">
+                        <?php if (!empty($latest_chats)): ?>
+                            <?php $user_counter = 1; ?>
+                            <?php foreach ($latest_chats as $chat): ?>
+                                <div class="chat-preview-item">
+                                    <span class="user-identifier">User <?php echo $user_counter++; ?>:</span>
+                                    <span class="message-preview">
+                                        <?php 
+                                            // Truncate message to fit preview
+                                            echo htmlspecialchars(mb_strimwidth($chat['message'], 0, 45, "...")); 
+                                        ?>
+                                    </span>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-muted">No recent chats to display.</p>
+                        <?php endif; ?>
+                    </div>
+                    <a href="chat_management.php" class="btn-view-chat-list">View Chat List</a>
+                </div>
+
+            </main>
         </div>
     </div>
     
@@ -96,9 +207,10 @@ $conn->close();
     <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmationModalLabel">Success</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Action completed successfully.</div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button></div></div></div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="togglemodeScript.js"></script>
     <script src="../js/user_management.js" defer></script>
     <script src="../js/admin_dashboard.js" defer></script>
-    </body>
+</body>
 </html>

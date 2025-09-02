@@ -40,10 +40,13 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
     <title>RAIS Book Flight</title>
     <link rel="icon" href="../img/logoulit.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
     <style>
         :root {
             --rais-primary-green: #004d40;
@@ -559,9 +562,30 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
-        <?php require_once 'sidebar.php' ?>
+        <!-- Sidebar -->
+        <aside class="sidebar d-flex flex-column">
+            <div class="logo">RAIS</div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="dashboard.php"><i class="bi bi-house-door-fill"></i><span>Dashboard</span></a>
+                <a class="nav-link" href="book-consultation.php"><i class="bi bi-calendar-check"></i><span>Book
+                        Consultation</span></a>
+                <a class="nav-link" href="statement-of-account.php"><i class="bi bi-receipt"></i><span>Statement of
+                        Account</span></a>
+                <a class="nav-link" href="documents.php"><i class="bi bi-file-earmark-text"></i><span>Documents</span></a>
+                <a class="nav-link" href="forms.php"><i class="bi bi-journal-text"></i><span>Forms</span></a>
+                <a class="nav-link" href="notifications.php"><i class="bi bi-bell"></i><span>Notifications</span></a>
+                <a class="nav-link" href="settings.php"><i class="bi bi-gear"></i><span>Settings</span></a>
+                <a class="nav-link" href="profile.php"><i class="bi bi-person-circle"></i><span>Profile</span></a>
+            </nav>
 
+            <div class="mt-auto footer-text">
+                &copy; <?php echo date("Y"); ?> RAIS
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
         <div class="content-area">
+            <!-- Header -->
             <div class="header">
                 <div class="header-brand d-flex align-items-center">
                     <img src="../img/logo.png" alt="RAIS Logo" class="header-logo-img light-mode-logo">
@@ -575,12 +599,13 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 </div>
             </div>
 
+            <!-- Main Content -->
             <main class="main-content">
-                <h1>Book Flight</h1>
+                <h1>Let us help you plan your trip!</h1>
                 <div class="row g-4 justify-content-center">
                     <div class="col-12 col-lg-8">
                         <div class="content-card flight-form-card">
-                            <h5 class="mb-4">Fill out the form to book your flight to Canada.</h5>
+                            <h5 class="mb-4">Fill out the form to plan your flight.</h5>
                             <form>
                                 <div class="row g-3 mb-3">
                                     <div class="col-12 col-md-6">
@@ -601,12 +626,12 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                                     <input type="date" class="form-control" id="departureDate" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="departureCity" class="form-label">Departure City</label>
-                                    <input type="text" class="form-control" id="departureCity" required>
+                                    <label for="departureCity" class="form-label">Departure Location</label>
+                                    <input type="text" class="form-control" placeholder="Manila Airport" id="departureCity"  required >
                                 </div>
                                 <div class="mb-3">
-                                    <label for="destinationCity" class="form-label">Destination City in Canada</label>
-                                    <input type="text" class="form-control" id="destinationCity" value="Vancouver" required>
+                                    <label for="destinationCity" class="form-label">Destination</label>
+                                    <input type="text" class="form-control" placeholder="Vancouver, Canada" id="destinationCity" required>
                                 </div>
                                 <div class="d-grid mt-4">
                                     <button type="submit" class="btn btn-primary">Book Now</button>
@@ -619,12 +644,14 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
 
+    <!-- Collapsible Chatbox -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header d-flex justify-content-between align-items-center" onclick="toggleChat()">
             <h5 class="chat-modal-title mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</h5>
             <i class="bi bi-x-lg text-white"></i>
         </div>
         <div class="chat-body">
+            <!-- Chat messages will go here -->
             <div class="text-center text-muted">RAIS Support how may i assist you?</div>
         </div>
         <div class="chat-footer">
@@ -638,6 +665,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
     
+    <!-- Full Screen Chat for Mobile -->
     <div id="full-screen-chat">
         <div class="chat-header-fullscreen">
             <button class="back-btn" id="backToDashboardBtn"><i class="bi bi-arrow-left"></i></button>
@@ -657,10 +685,12 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
 
+    <!-- Floating Chat Toggle Button -->
     <button class="chat-toggle-btn" onclick="toggleChat()">
         <i class="bi bi-chat-dots"></i>
     </button>
 
+    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -679,6 +709,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
       </div>
     </div>
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
