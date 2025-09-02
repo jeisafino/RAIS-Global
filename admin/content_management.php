@@ -225,7 +225,7 @@ $footerData = [
     </div>
 
     <!-- ALL MODALS AND TEMPLATES -->
-    <div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" required></div><div class="mb-3"><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" required></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
+<div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" name="mediaName" required></div><div class="mb-3"><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" name="uploaderName" required></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" name="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
     <div class="modal fade" id="landscapeWarningModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Image Orientation Warning</h5> <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>The chosen photo is not a landscape photo. If you wish to continue, the photo may be stretched or cropped.</p></div><div class="modal-footer"> <button type="button" class="btn btn-secondary" id="repick-photo-btn">Repick Photo</button> <button type="button" class="btn btn-primary" id="continue-anyway-btn">Continue Anyway</button></div></div></div></div>
     <div class="modal fade" id="landing-confirmation-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-confirmation-title">Confirm Action</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-confirmation-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirm-landing-action-btn">Confirm</button></div></div></div></div>
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
@@ -271,94 +271,216 @@ $footerData = [
 
     const readFileAsDataURL = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
 
-    // --- START: SCRIPT FOR LANDING PAGE MANAGEMENT ---
-    (function() {
-        function loadLandingMediaData() { const savedData = localStorage.getItem('raisCmsLandingMedia'); if (savedData) { return JSON.parse(savedData); } return []; }
-        function saveLandingMediaData(data) { localStorage.setItem('raisCmsLandingMedia', JSON.stringify(data));}
-        let landingMediaData = loadLandingMediaData();
-        let selectedMediaId = null;
-        let nextMediaId = (landingMediaData.length > 0 ? Math.max(...landingMediaData.map(m => m.id)) : 0) + 1;
-        const mediaTableBody = document.getElementById('media-table-body');
-        const addLandingBtn = document.getElementById('add-landing-btn');
-        const editLandingBtn = document.getElementById('edit-landing-btn');
-        const deleteLandingBtn = document.getElementById('delete-landing-btn');
-        const previewLandingBtn = document.getElementById('preview-landing-btn');
-        const uploadModal = new bootstrap.Modal(document.getElementById('uploadMediaModal'));
-        const warningModal = new bootstrap.Modal(document.getElementById('landscapeWarningModal'));
-        const previewModal = new bootstrap.Modal(document.getElementById('landing-preview-modal'));
-        const uploadForm = document.getElementById('upload-form');
-        const mediaFileInput = document.getElementById('mediaFile');
-        const saveMediaBtn = document.getElementById('save-media-btn');
-        const repickPhotoBtn = document.getElementById('repick-photo-btn');
-        const continueAnywayBtn = document.getElementById('continue-anyway-btn');
-        let tempFile = null;
-        let isLandscape = true;
+    // --- START: SCRIPT FOR LANDING PAGE MANAGEMENT (DATABASE-DRIVEN) ---
+(function() {
+    let landingMediaData = [];
+    let selectedMediaId = null;
 
-        function renderTable() {
-            mediaTableBody.innerHTML = '';
-            landingMediaData.forEach(media => {
-                const row = mediaTableBody.insertRow();
-                row.dataset.id = media.id;
-                if (media.id === selectedMediaId) row.classList.add('selected');
-                row.innerHTML = `<td>${media.name}</td><td>${media.uploader}</td><td>${media.date}</td><td>${media.fileName}</td>`;
+    const mediaTableBody = document.getElementById('media-table-body');
+    const addLandingBtn = document.getElementById('add-landing-btn');
+    const editLandingBtn = document.getElementById('edit-landing-btn');
+    const deleteLandingBtn = document.getElementById('delete-landing-btn');
+    const previewLandingBtn = document.getElementById('preview-landing-btn');
+    const uploadModal = new bootstrap.Modal(document.getElementById('uploadMediaModal'));
+    const previewModal = new bootstrap.Modal(document.getElementById('landing-preview-modal'));
+    const uploadForm = document.getElementById('upload-form');
+    const saveMediaBtn = document.getElementById('save-media-btn');
+    
+    // Helper function to build the correct API URL
+    const getApiPath = (file) => `../api/${file}`;
+
+    // --- Data Fetching and Rendering ---
+    async function fetchAndRenderTable() {
+        try {
+            // CORRECTED FETCH PATH
+            const response = await fetch(getApiPath('hero_media_handler.php'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                landingMediaData = result.data;
+                renderTable();
+            } else {
+                console.error('Error fetching media:', result.message);
+            }
+        } catch (error) {
+            console.error('Error fetching media:', error);
+        }
+    }
+
+    function renderTable() {
+        mediaTableBody.innerHTML = '';
+        landingMediaData.forEach(media => {
+            const row = mediaTableBody.insertRow();
+            row.dataset.id = media.id;
+            row.className = media.is_active == 1 ? 'table-success' : ''; // Highlight active row
+            if (media.id === selectedMediaId) row.classList.add('selected');
+
+            const fileName = media.file_path.split('/').pop();
+
+            row.innerHTML = `
+                <td>${media.media_name} ${media.is_active == 1 ? '<span class="badge bg-success ms-2">Active</span>' : ''}</td>
+                <td>${media.uploader}</td>
+                <td>${media.date}</td>
+                <td>${fileName}</td>
+                <td>
+                    <button class="btn btn-sm ${media.is_active == 1 ? 'btn-secondary' : 'btn-outline-success'} activate-btn" data-id="${media.id}" ${media.is_active == 1 ? 'disabled' : ''}>
+                        <i class="bi bi-check-circle-fill"></i> Set Active
+                    </button>
+                </td>
+            `;
+        });
+    }
+
+    function updateFabState() {
+        const isSelected = selectedMediaId !== null;
+        editLandingBtn.disabled = !isSelected;
+        deleteLandingBtn.disabled = !isSelected;
+        previewLandingBtn.disabled = !isSelected;
+    }
+    
+    // --- Event Handlers ---
+    mediaTableBody.addEventListener('click', e => {
+        const row = e.target.closest('tr');
+        if (e.target.closest('.activate-btn')) {
+            const mediaId = e.target.closest('.activate-btn').dataset.id;
+            setActiveMedia(mediaId);
+        } else if (row) {
+            const mediaId = parseInt(row.dataset.id);
+            selectedMediaId = (selectedMediaId === mediaId) ? null : mediaId;
+            renderTable();
+            updateFabState();
+        }
+    });
+
+    addLandingBtn.addEventListener('click', () => {
+        resetAndPrepareModal('add');
+        uploadModal.show();
+    });
+
+    editLandingBtn.addEventListener('click', () => {
+        if (selectedMediaId === null) return;
+        const media = landingMediaData.find(m => m.id === selectedMediaId);
+        resetAndPrepareModal('edit', media);
+        uploadModal.show();
+    });
+
+    deleteLandingBtn.addEventListener('click', () => {
+        if (selectedMediaId === null) return;
+        const media = landingMediaData.find(m => m.id === selectedMediaId);
+        confirmationModalTitle.textContent = "Confirm Deletion";
+        confirmationModalBody.innerHTML = `Are you sure you want to delete the media: <strong>${media.media_name}</strong>? This will also remove the file from the server.`;
+        confirmActionBtn.className = 'btn btn-danger';
+        confirmActionBtn.onclick = () => deleteMedia(selectedMediaId);
+        confirmationModal.show();
+    });
+
+    previewLandingBtn.addEventListener('click', () => {
+        if (selectedMediaId === null) return;
+        const media = landingMediaData.find(m => m.id === selectedMediaId);
+        document.getElementById('landing-preview-title').textContent = `Preview: ${media.media_name}`;
+        const previewBody = document.getElementById('landing-preview-body');
+        
+        const previewPath = `../${media.file_path}`;
+
+        const isVideo = media.file_path.match(/\.(mp4|webm|ogg)$/i);
+        if (isVideo) {
+            previewBody.innerHTML = `<video src="${previewPath}" class="img-fluid rounded" controls autoplay muted loop></video>`;
+        } else {
+            previewBody.innerHTML = `<img src="${previewPath}" class="img-fluid rounded" alt="Preview">`;
+        }
+        previewModal.show();
+    });
+
+    saveMediaBtn.addEventListener('click', async () => {
+        if (!uploadForm.checkValidity()) {
+            uploadForm.reportValidity();
+            return;
+        }
+
+        const formData = new FormData(uploadForm);
+        const mode = saveMediaBtn.dataset.mode;
+        formData.append('action', mode);
+
+        if (mode === 'edit') {
+            formData.append('mediaId', selectedMediaId);
+        }
+
+        try {
+            // CORRECTED FETCH PATH
+            const response = await fetch(getApiPath('hero_media_handler.php'), {
+                method: 'POST',
+                body: formData
             });
+            const result = await response.json();
+            if (result.status === 'success') {
+                uploadModal.hide();
+                fetchAndRenderTable();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
         }
-        function updateFabState() { const isSelected = selectedMediaId !== null; editLandingBtn.disabled = !isSelected; deleteLandingBtn.disabled = !isSelected; previewLandingBtn.disabled = !isSelected; }
-        function selectRow(mediaId) { selectedMediaId = (selectedMediaId === mediaId) ? null : mediaId; renderTable(); updateFabState(); }
-        function resetAndPrepareModal(mode = 'add', media = null) {
-            uploadForm.reset(); uploadForm.classList.remove('was-validated'); tempFile = null; isLandscape = true;
-            const modalTitle = document.getElementById('uploadMediaModalLabel');
-            const fileHelpText = uploadForm.querySelector('.form-text');
-            if (mode === 'add') { modalTitle.textContent = 'Add New Hero Media'; saveMediaBtn.textContent = 'Add Media'; saveMediaBtn.dataset.mode = 'add'; mediaFileInput.required = true; if(fileHelpText) fileHelpText.textContent = 'Please select a photo or video to upload.';
-            } else if (mode === 'edit' && media) { modalTitle.textContent = `Edit Media: ${media.name}`; saveMediaBtn.textContent = 'Update Media'; saveMediaBtn.dataset.mode = 'edit'; document.getElementById('mediaName').value = media.name; document.getElementById('uploaderName').value = media.uploader; mediaFileInput.required = false; if(fileHelpText) fileHelpText.textContent = `Current file: ${media.fileName}. You can upload a new file to replace it.`; }
+    });
+
+    // --- Helper and Action Functions ---
+    async function deleteMedia(mediaId) {
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('id', mediaId);
+
+        // CORRECTED FETCH PATH
+        const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            selectedMediaId = null;
+            fetchAndRenderTable();
+            updateFabState();
+            confirmationModal.hide();
+        } else {
+            alert('Error deleting media: ' + result.message);
         }
-        mediaTableBody.addEventListener('click', e => { const row = e.target.closest('tr'); if (row) selectRow(parseInt(row.dataset.id)); });
-        addLandingBtn.addEventListener('click', () => { resetAndPrepareModal('add'); uploadModal.show(); });
-        editLandingBtn.addEventListener('click', () => { if (selectedMediaId === null) return; const media = landingMediaData.find(m => m.id === selectedMediaId); resetAndPrepareModal('edit', media); uploadModal.show(); });
-        deleteLandingBtn.addEventListener('click', () => {
-            if (selectedMediaId === null) return;
-            const media = landingMediaData.find(m => m.id === selectedMediaId);
-            confirmationModalTitle.textContent = "Confirm Deletion";
-            confirmationModalBody.innerHTML = `Are you sure you want to delete the media: <strong>${media.name}</strong>?`;
-            confirmActionBtn.onclick = () => { landingMediaData = landingMediaData.filter(m => m.id !== selectedMediaId); saveLandingMediaData(landingMediaData); selectedMediaId = null; renderTable(); updateFabState(); confirmationModal.hide(); };
-            confirmationModal.show();
-        });
-        previewLandingBtn.addEventListener('click', () => {
-            if (selectedMediaId === null) return;
-            const media = landingMediaData.find(m => m.id === selectedMediaId);
-            document.getElementById('landing-preview-title').textContent = `Preview: ${media.name}`;
-            const previewBody = document.getElementById('landing-preview-body'); const url = media.mediaDataUrl;
-            if (url) { const isImage = (media.fileName || '').match(/\.(jpeg|jpg|gif|png)$/i); const isVideo = (media.fileName || '').match(/\.(mp4|webm|ogg)$/i); if (isImage) { previewBody.innerHTML = `<img src="${url}" class="img-fluid rounded" alt="Preview">`; } else if (isVideo) { previewBody.innerHTML = `<video src="${url}" class="img-fluid rounded" controls autoplay muted loop></video>`; } else { previewBody.innerHTML = `<p class="text-muted">Preview not available for this file type.</p>`; }
-            } else { previewBody.innerHTML = `<p class="text-muted">No preview available.</p>`; }
-            previewModal.show();
-        });
-        mediaFileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0]; if (!file) return; tempFile = file;
-            if (file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = e => { const img = new Image(); img.onload = () => { isLandscape = (img.width > img.height); }; img.src = e.target.result; }; reader.readAsDataURL(file);
-            } else { isLandscape = true; }
-        });
-        function performSave() {
-            const name = document.getElementById('mediaName').value; const uploader = document.getElementById('uploaderName').value; const mode = saveMediaBtn.dataset.mode;
-            const processData = (mediaDataUrl) => {
-                if (mode === 'add') { landingMediaData.push({ id: nextMediaId++, name: name, uploader: uploader, date: new Date().toISOString().slice(0, 10), fileName: tempFile.name, mediaDataUrl: mediaDataUrl });
-                } else { const media = landingMediaData.find(m => m.id === selectedMediaId); media.name = name; media.uploader = uploader; if (tempFile && mediaDataUrl) { media.fileName = tempFile.name; media.mediaDataUrl = mediaDataUrl; } }
-                saveLandingMediaData(landingMediaData); renderTable(); uploadModal.hide(); confirmationModal.hide();
-            };
-            if (tempFile) { const reader = new FileReader(); reader.onload = e => processData(e.target.result); reader.readAsDataURL(tempFile); } else { processData(landingMediaData.find(m => m.id === selectedMediaId)?.mediaDataUrl || null); }
+    }
+
+    async function setActiveMedia(mediaId) {
+        const formData = new FormData();
+        formData.append('action', 'set_active');
+        formData.append('id', mediaId);
+
+        // CORRECTED FETCH PATH
+        const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.status === 'success') {
+            fetchAndRenderTable();
+        } else {
+             alert('Error setting active media: ' + result.message);
         }
-        saveMediaBtn.addEventListener('click', () => {
-            if (!uploadForm.checkValidity()) { uploadForm.reportValidity(); return; }
-            if (tempFile && !isLandscape) { warningModal.show(); return; }
-            const mode = saveMediaBtn.dataset.mode;
-            confirmationModalTitle.textContent = "Confirm Save";
-            confirmationModalBody.textContent = `Are you sure you want to ${mode === 'add' ? 'add this new' : 'update this'} media item?`;
-            confirmActionBtn.onclick = performSave;
-            confirmationModal.show();
-        });
-        repickPhotoBtn.addEventListener('click', () => { warningModal.hide(); mediaFileInput.value = ''; tempFile = null; });
-        continueAnywayBtn.addEventListener('click', () => { isLandscape = true; warningModal.hide(); saveMediaBtn.click(); });
-        renderTable(); updateFabState();
-    })();
+    }
+
+    function resetAndPrepareModal(mode = 'add', media = null) {
+        uploadForm.reset();
+        uploadForm.classList.remove('was-validated');
+        const modalTitle = document.getElementById('uploadMediaModalLabel');
+        const mediaFileInput = document.getElementById('mediaFile');
+
+        if (mode === 'add') {
+            modalTitle.textContent = 'Add New Hero Media';
+            saveMediaBtn.textContent = 'Add Media';
+            saveMediaBtn.dataset.mode = 'add';
+            mediaFileInput.required = true;
+        } else if (mode === 'edit' && media) {
+            modalTitle.textContent = `Edit Media: ${media.media_name}`;
+            saveMediaBtn.textContent = 'Update Media';
+            saveMediaBtn.dataset.mode = 'edit';
+            document.getElementById('mediaName').value = media.media_name;
+            document.getElementById('uploaderName').value = media.uploader;
+            mediaFileInput.required = false; // Not required to upload a new file on edit
+        }
+    }
+
+    // Initial Load
+    fetchAndRenderTable();
+})();
     
     // --- START: SCRIPT FOR ABOUT PAGE MANAGEMENT ---
     (function() {

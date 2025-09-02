@@ -21,12 +21,10 @@ $db_user = "root";
 $db_pass = "";
 $db_name = "raisdb";
 
-// --- Create Connection ---
-$mysqli = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
-// --- Check Connection ---
-if ($mysqli->connect_errno) {
-    // In a real application, you would log this error instead of displaying it.
-    die("Database connection failed: " . $mysqli->connect_error);
+if ($conn->connect_errno) {
+    die("Database connection failed: " . $conn->connect_error);
 }
+
 ?>

@@ -1,5 +1,26 @@
 <?php
-// Data for the page - this can be fetched from a database in a real application
+// Add this PHP block at the very top of your index.php file
+require_once 'db_connect.php'; // Adjust path to your db_connect.php
+
+// Default hero media
+$hero_media_path = "vids/niagarapoh.mp4"; // Your original fallback video
+$hero_media_type = 'video'; // Default type
+
+// Fetch the active hero media from the database
+$result = $conn->query("SELECT file_path FROM hero_media WHERE is_active = 1 LIMIT 1");
+if ($result && $result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $hero_media_path = $row['file_path'];
+
+    // Determine if it's a video or image based on file extension
+    $extension = strtolower(pathinfo($hero_media_path, PATHINFO_EXTENSION));
+    if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+        $hero_media_type = 'image';
+    }
+}
+$conn->close(); // Close the connection after fetching the hero media
+
+// Data for the page
 $page_title = "RAIS HOME";
 
 // Services Offered Data
@@ -54,7 +75,6 @@ $exams = [
         "url" => "oet.php"
     ]
 ];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -654,13 +674,22 @@ $exams = [
     <main>
         <!-- Main page content -->
         <section class="hero position-relative text-white" style="min-height: 100vh; overflow: hidden;">
-            <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
-                style="object-fit: cover; top: 0; left: 0; z-index: -1;">
-                <source src="vids/niagarapoh.mp4" type="video/mp4" />
-                Your browser does not support HTML5 video.
-            </video>
             
-            <!-- DESKTOP HEADER -->
+            <?php if ($hero_media_type === 'video'): ?>
+                <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
+                    style="object-fit: cover; top: 0; left: 0; z-index: -1;">
+                    <source src="<?php echo htmlspecialchars($hero_media_path); ?>" type="video/mp4" />
+                    Your browser does not support HTML5 video.
+                </video>
+            <?php else: // It's an image ?>
+                <div class="position-absolute w-100 h-100" 
+                     style="background-image: url('<?php echo htmlspecialchars($hero_media_path); ?>'); 
+                            background-size: cover; 
+                            background-position: center; 
+                            top: 0; left: 0; z-index: -1;">
+                </div>
+            <?php endif; ?>
+            
             <header class="d-none d-lg-flex justify-content-between align-items-center py-4 px-5 position-absolute header-desktop">
                 <a href="index.php">
                     <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
@@ -679,8 +708,7 @@ $exams = [
                     <i class="bi bi-person fs-3 text-success"></i>
                 </a>
             </header>
-
-            <!-- MOBILE HEADER -->
+            
             <header class="d-lg-none position-absolute header-mobile">
                 <nav class="navbar navbar-dark py-3 px-4">
                     <div class="container-fluid justify-content-between">
@@ -708,7 +736,7 @@ $exams = [
                     </div>
                 </nav>
             </header>
-
+            
             <div class="d-flex flex-column justify-content-center align-items-center text-center px-3"
                 style="min-height: 100vh;">
                 <h1 class="display-1 fw-bold" style="font-family:'Poppins', 'sans-serif';">TARA CANADA!</h1>
