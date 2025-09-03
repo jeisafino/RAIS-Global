@@ -67,6 +67,17 @@ $footerData = [
             background-color: #800000; /* Maroon color */
             color: #ffffff;
         }
+
+        /* Add this rule for the dark mode fix */
+        body.dark-mode #about-edit-nav .nav-link {
+            color: #f8f9fa; /* A light color for dark mode */
+        }
+
+        #about-edit-nav .nav-link.active {
+            background-color: #800000; /* Maroon color */
+            color: #ffffff;
+            border-color: #800000;
+        }
     </style>
 
 </head>
@@ -483,128 +494,308 @@ $footerData = [
 })();
     
     // --- START: SCRIPT FOR ABOUT PAGE MANAGEMENT ---
-    (function() {
-        const previewModal = new bootstrap.Modal(document.getElementById('about-page-preview-modal'));
-        const previewModalBody = document.getElementById('about-preview-body');
-        const previewBtn = document.getElementById('preview-about-page-btn');
-        const cancelBtn = document.getElementById('cancel-about-changes-btn');
+(function() {
+    const previewModal = new bootstrap.Modal(document.getElementById('about-page-preview-modal'));
+    const previewModalBody = document.getElementById('about-preview-body');
+    const previewBtn = document.getElementById('preview-about-page-btn');
+    const cancelBtn = document.getElementById('cancel-about-changes-btn');
+    const saveBtn = document.getElementById('save-all-about-changes-btn');
 
-        function loadAboutPageData() {
-            const savedData = localStorage.getItem('raisCmsAboutPageData');
-            if (savedData) return JSON.parse(savedData);
-            return {
-                hero: { mediaDataUrl: null, fileName: "", title: "About Roman & Associates Immigration Services LTD", description: "We are a licensed Canadian immigration firm based in Vancouver Island BC..." },
-                contentBlocks: [{ id: `cb_${Date.now()}`, type: 'text', content: "Canadian Immigration Consultants are able to help and support with the processing and documentation needed to work, study or immigrate to Canada. This process may seem overwhelming and confusing. We at Roman & Associates Immigration Services Ltd are here to provide support and services for your immigration needs and make it simple." }],
-                cards: [{ id: `card_${Date.now()}`, tabTitle: "Mission", cardTitle: "Mission Statement", content: "To provide honest, transparent, and expert Canadian immigration consulting services, empowering individuals and families worldwide to achieve better opportunities and a brighter future in Canada." }]
-            };
-        }
-        function saveAboutPageData(data) {
-            localStorage.setItem('raisCmsAboutPageData', JSON.stringify(data));
-            const saveBtn = document.getElementById('save-all-about-changes-btn');
-            saveBtn.textContent = 'Saved!'; saveBtn.classList.remove('btn-success'); saveBtn.classList.add('btn-secondary');
-            setTimeout(() => {
-                saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Save All Changes'; saveBtn.classList.remove('btn-secondary'); saveBtn.classList.add('btn-success');
-            }, 2000);
-        }
-        let aboutPageData = loadAboutPageData();
+const getApiPath = (file) => `../api/${file}`;
+    let aboutPageData = {}; // This will hold the data from the database
 
-        function renderAll() { renderMainSection(); renderContentBlocks(); renderCards(); }
-        function renderMainSection() {
-            const { hero } = aboutPageData;
-            document.getElementById('about-hero-title').value = hero.title;
-            document.getElementById('about-hero-description').value = hero.description;
-            document.getElementById('about-hero-file').value = '';
-            const previewContainer = document.getElementById('about-hero-preview');
-            if (hero.mediaDataUrl) { previewContainer.innerHTML = hero.fileName.match(/\.(mp4|webm)$/i) ? `<video src="${hero.mediaDataUrl}" class="img-fluid" controls autoplay muted loop></video>` : `<img src="${hero.mediaDataUrl}" class="img-fluid" alt="Hero Preview">`;
-            } else { previewContainer.innerHTML = `<p class="text-muted m-0">No media uploaded.</p>`; }
-        }
-        function renderContentBlocks() {
-            const container = document.getElementById('about-content-blocks-container'); container.innerHTML = '';
-            aboutPageData.contentBlocks.forEach(block => {
-                const templateId = block.type === 'text' ? 'about-text-block-template' : 'about-media-block-template';
-                const clone = document.getElementById(templateId).content.cloneNode(true);
-                const blockEl = clone.firstElementChild; blockEl.dataset.id = block.id;
-                if (block.type === 'text') { blockEl.querySelector('.block-content').value = block.content; } 
-                else {
-                    blockEl.querySelector('.block-media-file').value = '';
-                    const preview = blockEl.querySelector('.block-media-preview');
-                    if (block.mediaDataUrl) { preview.innerHTML = block.fileName.match(/\.(mp4|webm)$/i) ? `<video src="${block.mediaDataUrl}" class="img-fluid" controls autoplay muted loop></video>` : `<img src="${block.mediaDataUrl}" class="img-fluid" alt="Media Preview">`; } 
-                    else { preview.innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; }
-                }
-                container.appendChild(clone);
-            });
-        }
-        function renderCards() {
-            const container = document.getElementById('about-cards-container'); container.innerHTML = '';
-            aboutPageData.cards.forEach(card => {
-                const clone = document.getElementById('about-card-template').content.cloneNode(true);
-                const cardEl = clone.firstElementChild; cardEl.dataset.id = card.id;
-                cardEl.querySelector('.card-tab-title').value = card.tabTitle;
-                cardEl.querySelector('.card-title').value = card.cardTitle;
-                cardEl.querySelector('.card-content').value = card.content;
-                container.appendChild(clone);
-            });
-        }
-        
-        document.getElementById('about-edit-nav').addEventListener('click', e => { if (e.target.tagName === 'A') { e.preventDefault(); document.querySelectorAll('#about-edit-nav .nav-link').forEach(link => link.classList.remove('active')); e.target.classList.add('active'); document.querySelectorAll('.about-edit-pane').forEach(pane => pane.style.display = 'none'); document.getElementById(e.target.dataset.target).style.display = 'block'; } });
-        document.getElementById('add-text-block-btn').addEventListener('click', () => { aboutPageData.contentBlocks.push({ id: `cb_${Date.now()}`, type: 'text', content: "" }); renderContentBlocks(); });
-        document.getElementById('add-media-block-btn').addEventListener('click', () => { aboutPageData.contentBlocks.push({ id: `cb_${Date.now()}`, type: 'media', mediaDataUrl: null, fileName: "" }); renderContentBlocks(); });
-        document.getElementById('add-about-card-btn').addEventListener('click', () => { aboutPageData.cards.push({ id: `card_${Date.now()}`, tabTitle: "", cardTitle: "", content: "" }); renderCards(); });
-        document.getElementById('about').addEventListener('click', e => {
-            if (e.target.closest('.remove-about-block-btn')) { const blockEl = e.target.closest('.dynamic-about-block'), blockId = blockEl.dataset.id; confirmationModalTitle.textContent = "Confirm Deletion"; confirmationModalBody.textContent = 'Are you sure you want to remove this content block?'; confirmActionBtn.onclick = () => { aboutPageData.contentBlocks = aboutPageData.contentBlocks.filter(b => b.id !== blockId); renderContentBlocks(); confirmationModal.hide(); }; confirmationModal.show(); }
-            if (e.target.closest('.remove-about-card-btn')) { const cardEl = e.target.closest('.dynamic-about-card'), cardId = cardEl.dataset.id; confirmationModalTitle.textContent = "Confirm Deletion"; confirmationModalBody.textContent = 'Are you sure you want to remove this card?'; confirmActionBtn.onclick = () => { aboutPageData.cards = aboutPageData.cards.filter(c => c.id !== cardId); renderCards(); confirmationModal.hide(); }; confirmationModal.show(); }
-            if (e.target.closest('#clear-hero-media-btn')) { aboutPageData.hero.mediaDataUrl = null; aboutPageData.hero.fileName = ""; renderMainSection(); }
-            if (e.target.closest('.clear-block-media-btn')) { const blockEl = e.target.closest('.dynamic-about-block'); const blockData = aboutPageData.contentBlocks.find(b => b.id === blockEl.dataset.id); if (blockData) { blockData.mediaDataUrl = null; blockData.fileName = ""; renderContentBlocks(); } }
-        });
-        document.getElementById('about').addEventListener('change', async e => {
-            if (e.target.id === 'about-hero-file') { const file = e.target.files[0]; if (!file) return; aboutPageData.hero.mediaDataUrl = await readFileAsDataURL(file); aboutPageData.hero.fileName = file.name; renderMainSection(); }
-            if (e.target.classList.contains('block-media-file')) { const file = e.target.files[0]; if (!file) return; const blockEl = e.target.closest('.dynamic-about-block'); const blockData = aboutPageData.contentBlocks.find(b => b.id === blockEl.dataset.id); blockData.mediaDataUrl = await readFileAsDataURL(file); blockData.fileName = file.name; renderContentBlocks(); }
-        });
-        function gatherCurrentData() {
-            const currentData = { hero: {}, contentBlocks: [], cards: [] };
-            currentData.hero.title = document.getElementById('about-hero-title').value;
-            currentData.hero.description = document.getElementById('about-hero-description').value;
-            currentData.hero.mediaHTML = document.getElementById('about-hero-preview').innerHTML;
-            document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => { if (el.dataset.type === 'text') { currentData.contentBlocks.push({ type: 'text', content: el.querySelector('.block-content').value }); } else { currentData.contentBlocks.push({ type: 'media', mediaHTML: el.querySelector('.block-media-preview').innerHTML }); } });
-            document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => { currentData.cards.push({ id: el.dataset.id, tabTitle: el.querySelector('.card-tab-title').value, cardTitle: el.querySelector('.card-title').value, content: el.querySelector('.card-content').value }); });
-            return currentData;
-        }
-        previewBtn.addEventListener('click', () => {
-            const data = gatherCurrentData(); let previewHTML = '<div class="container py-3">'; 
-            let buttonHTML = `<button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#aboutPreviewCollapsibleContent">Learn More</button>`;
-            if (data.contentBlocks.length === 0 && data.cards.length === 0) { buttonHTML = ''; }
-            previewHTML += `<div class="text-center mb-5">${data.hero.mediaHTML}<h2>${data.hero.title}</h2><p class="lead">${data.hero.description.replace(/\n/g, '<br>')}</p>${buttonHTML}</div><hr>`;
-            previewHTML += '<div class="collapse" id="aboutPreviewCollapsibleContent">';
-            data.contentBlocks.forEach(block => { if (block.type === 'text') { previewHTML += `<p>${block.content.replace(/\n/g, '<br>')}</p>`; } else { previewHTML += `<div class="my-4">${block.mediaHTML}</div>`; } });
-            if (data.cards.length > 0) {
-                previewHTML += '<hr class="my-5"><div class="p-4 rounded" style="background-color: #f0f0f0;">';
-                previewHTML += '<ul class="nav nav-tabs" role="tablist">';
-                data.cards.forEach((card, index) => { previewHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${index === 0 ? 'active' : ''}" id="preview-tab-${card.id}" data-bs-toggle="tab" data-bs-target="#preview-pane-${card.id}" type="button">${card.tabTitle}</button></li>`; });
-                previewHTML += '</ul>';
-                previewHTML += '<div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">';
-                data.cards.forEach((card, index) => { previewHTML += `<div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="preview-pane-${card.id}"><h5>${card.cardTitle}</h5><p>${card.content.replace(/\n/g, '<br>')}</p></div>`; });
-                previewHTML += '</div></div>';
+    async function loadAboutPageData() {
+        try {
+            const response = await fetch(getApiPath('about_handler.php'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                aboutPageData = result.data;
+                renderAll();
+            } else {
+                console.error('Failed to load about page data:', result.message);
+                alert('Failed to load About Page data. Check console for details.');
             }
-            previewHTML += '</div></div>';
-            previewModalBody.innerHTML = previewHTML;
-            previewModal.show();
-        });
-        function gatherAndSaveChanges() {
-            aboutPageData.hero.title = document.getElementById('about-hero-title').value;
-            aboutPageData.hero.description = document.getElementById('about-hero-description').value;
-            const newContentBlocks = [];
-            document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => { const originalBlock = aboutPageData.contentBlocks.find(b => b.id === el.dataset.id); if (el.dataset.type === 'text') { newContentBlocks.push({ id: el.dataset.id, type: 'text', content: el.querySelector('.block-content').value }); } else { newContentBlocks.push({ ...originalBlock }); } });
-            aboutPageData.contentBlocks = newContentBlocks;
-            const newCards = [];
-            document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => { newCards.push({ id: el.dataset.id, tabTitle: el.querySelector('.card-tab-title').value, cardTitle: el.querySelector('.card-title').value, content: el.querySelector('.card-content').value }); });
-            aboutPageData.cards = newCards;
-            saveAboutPageData(aboutPageData);
-            confirmationModal.hide();
+        } catch (error) {
+            console.error('Error fetching about page data:', error);
+            alert('An error occurred while fetching About Page data.');
         }
-        document.getElementById('save-all-about-changes-btn').addEventListener('click', () => { confirmationModalTitle.textContent = "Confirm Save"; confirmationModalBody.textContent = 'Are you sure you want to save all changes to the About page? This will overwrite the current saved version.'; confirmActionBtn.onclick = gatherAndSaveChanges; confirmationModal.show(); });
-        cancelBtn.addEventListener('click', () => { confirmationModalTitle.textContent = "Confirm Cancel"; confirmationModalBody.textContent = 'Are you sure you want to discard all unsaved changes? The editor will be reset to the last saved state.'; confirmActionBtn.onclick = () => { aboutPageData = loadAboutPageData(); renderAll(); confirmationModal.hide(); }; confirmationModal.show(); });
-        renderAll();
-    })();
+    }
+
+    async function saveAboutPageData() {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+    const formData = new FormData();
+    
+    // --- Data Gathering Logic (Corrected) ---
+    const dataToSave = {
+        hero: {
+            title: document.getElementById('about-hero-title').value,
+            description: document.getElementById('about-hero-description').value,
+            clear_media: !document.getElementById('about-hero-preview').querySelector('img, video'),
+            // **THE FIX**: Carry over the existing media_path if it hasn't been changed.
+            media_path: aboutPageData.hero.media_path || null
+        },
+        contentBlocks: [],
+        cards: []
+    };
+    
+    const heroFileInput = document.getElementById('about-hero-file');
+    if (heroFileInput.files[0]) {
+        formData.append('hero_media_file', heroFileInput.files[0]);
+    }
+    
+    document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => {
+        const blockId = el.dataset.id;
+        const originalBlock = aboutPageData.contentBlocks.find(b => b.id == blockId) || {};
+        const blockData = { id: blockId, type: el.dataset.type, media_path: originalBlock.media_path || null, content: '' };
+        if (blockData.type === 'text') {
+            blockData.content = el.querySelector('.block-content').value;
+        } else {
+            const fileInput = el.querySelector('.block-media-file');
+            if (fileInput.files[0]) {
+                formData.append(`block_media_file_${blockId}`, fileInput.files[0]);
+            } else if (!el.querySelector('.block-media-preview').querySelector('img, video')) {
+                blockData.media_path = null;
+            }
+        }
+        dataToSave.contentBlocks.push(blockData);
+    });
+    
+    document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => {
+        dataToSave.cards.push({
+            id: el.dataset.id, tabTitle: el.querySelector('.card-tab-title').value,
+            cardTitle: el.querySelector('.card-title').value, content: el.querySelector('.card-content').value
+        });
+    });
+    formData.append('data', JSON.stringify(dataToSave));
+    // --- End of Data Gathering Logic ---
+    
+    try {
+        const response = await fetch(getApiPath('about_handler.php'), {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i> Saved!';
+            await loadAboutPageData();
+        } else {
+             alert('Save failed: ' + result.message);
+             saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Failed';
+        }
+    } catch (error) {
+        alert('An error occurred: ' + error.message);
+        saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Error';
+    } finally {
+        setTimeout(() => {
+            saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Save All Changes';
+            saveBtn.disabled = false;
+        }, 2000);
+        confirmationModal.hide();
+    }
+}
+
+    function renderAll() { renderMainSection(); renderContentBlocks(); renderCards(); }
+    
+    function renderMainSection() {
+        const { hero } = aboutPageData;
+        document.getElementById('about-hero-title').value = hero.title || '';
+        document.getElementById('about-hero-description').value = hero.description || '';
+        document.getElementById('about-hero-file').value = '';
+        const previewContainer = document.getElementById('about-hero-preview');
+        if (hero.media_path) {
+            // FIX: Use the correct relative path from the project root.
+            const mediaUrl = `../${hero.media_path}?t=${new Date().getTime()}`; 
+            previewContainer.innerHTML = hero.media_type === 'video' 
+                ? `<video src="${mediaUrl}" class="img-fluid" controls autoplay muted loop></video>` 
+                : `<img src="${mediaUrl}" class="img-fluid" alt="Hero Preview">`;
+        } else { previewContainer.innerHTML = `<p class="text-muted m-0">No media uploaded.</p>`; }
+    }
+
+    function renderContentBlocks() {
+        const container = document.getElementById('about-content-blocks-container'); container.innerHTML = '';
+        (aboutPageData.contentBlocks || []).forEach(block => {
+            const templateId = block.type === 'text' ? 'about-text-block-template' : 'about-media-block-template';
+            const clone = document.getElementById(templateId).content.cloneNode(true);
+            const blockEl = clone.firstElementChild; blockEl.dataset.id = block.id;
+            if (block.type === 'text') {
+                blockEl.querySelector('.block-content').value = block.content;
+            } else {
+                blockEl.querySelector('.block-media-file').value = '';
+                const preview = blockEl.querySelector('.block-media-preview');
+                if (block.media_path) {
+                    // FIX: Use the correct relative path from the project root.
+                    const mediaUrl = `../${block.media_path}?t=${new Date().getTime()}`;
+                    preview.innerHTML = block.media_type === 'video' 
+                        ? `<video src="${mediaUrl}" class="img-fluid" controls autoplay muted loop></video>` 
+                        : `<img src="${mediaUrl}" class="img-fluid" alt="Media Preview">`;
+                } else { preview.innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; }
+            }
+            container.appendChild(clone);
+        });
+    }
+
+    function renderCards() {
+        const container = document.getElementById('about-cards-container'); container.innerHTML = '';
+        (aboutPageData.cards || []).forEach(card => {
+            const clone = document.getElementById('about-card-template').content.cloneNode(true);
+            const cardEl = clone.firstElementChild; cardEl.dataset.id = card.id;
+            cardEl.querySelector('.card-tab-title').value = card.tab_title;
+            cardEl.querySelector('.card-title').value = card.card_title;
+            cardEl.querySelector('.card-content').value = card.content;
+            container.appendChild(clone);
+        });
+    }
+    
+    // --- Re-implementing Preview Functionality ---
+    function gatherCurrentDataForPreview() {
+        const data = { hero: {}, contentBlocks: [], cards: [] };
+        
+        // Hero section
+        data.hero.title = document.getElementById('about-hero-title').value;
+        data.hero.description = document.getElementById('about-hero-description').value;
+        const heroPreviewEl = document.getElementById('about-hero-preview').querySelector('img, video');
+        data.hero.mediaHTML = heroPreviewEl ? heroPreviewEl.outerHTML : '';
+
+        // Content blocks
+        document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => {
+            if (el.dataset.type === 'text') {
+                data.contentBlocks.push({ type: 'text', content: el.querySelector('.block-content').value });
+            } else {
+                const mediaPreviewEl = el.querySelector('.block-media-preview').querySelector('img, video');
+                data.contentBlocks.push({ type: 'media', mediaHTML: mediaPreviewEl ? mediaPreviewEl.outerHTML : '' });
+            }
+        });
+
+        // Cards
+        document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => {
+            data.cards.push({
+                id: el.dataset.id,
+                tabTitle: el.querySelector('.card-tab-title').value,
+                cardTitle: el.querySelector('.card-title').value,
+                content: el.querySelector('.card-content').value
+            });
+        });
+
+        return data;
+    }
+    
+    previewBtn.addEventListener('click', () => {
+    const data = gatherCurrentDataForPreview();
+    
+    // --- DEBUGGING STEP ---
+    // Press F12 in your browser to open developer tools and click the "Console" tab.
+    // This will show you exactly what data the preview function is working with.
+    // Check if the `content` fields in the `cards` array have the text you entered.
+    console.log("Data for Preview:", data); 
+    
+    let previewHTML = '<div class="container py-3">';
+
+    // Main Section Preview
+    previewHTML += `
+        <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    ${data.hero.mediaHTML}
+                </div>
+                <div class="col-lg-6">
+                    <h2 style="color: #023621; font-weight: 700;">${data.hero.title}</h2>
+                    <p class="fs-5 my-4" style="line-height: 1.7;">${data.hero.description.replace(/\n/g, '<br>')}</p>
+                    ${(data.contentBlocks.length > 0 || data.cards.length > 0) ? '<button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#aboutPreviewCollapsibleContent">Learn More</button>' : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Content Blocks & Cards Preview
+    previewHTML += '<div class="collapse show" id="aboutPreviewCollapsibleContent">';
+    data.contentBlocks.forEach(block => {
+        if (block.type === 'text') {
+            previewHTML += `<p class="p-4">${block.content.replace(/\n/g, '<br>')}</p>`;
+        } else if (block.mediaHTML) {
+            previewHTML += `<div class="my-4">${block.mediaHTML}</div>`;
+        }
+    });
+
+    if (data.cards.length > 0) {
+        previewHTML += '<hr class="my-5"><div class="p-4 rounded" style="background-color: #f0f0f0;">';
+        previewHTML += '<ul class="nav nav-tabs" role="tablist">';
+        data.cards.forEach((card, index) => {
+            const cardPreviewId = `preview-card-${index}`;
+            previewHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#pane-${cardPreviewId}" type="button">${card.tabTitle}</button></li>`;
+        });
+        previewHTML += '</ul>';
+        previewHTML += '<div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">';
+        data.cards.forEach((card, index) => {
+            const cardPreviewId = `preview-card-${index}`;
+            previewHTML += `<div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="pane-${cardPreviewId}"><h5>${card.cardTitle}</h5><p>${card.content.replace(/\n/g, '<br>')}</p></div>`;
+        });
+        previewHTML += '</div></div>';
+    }
+
+    previewHTML += '</div></div>';
+    previewModalBody.innerHTML = previewHTML;
+    previewModal.show();
+});
+    
+    document.getElementById('about-edit-nav').addEventListener('click', e => { if (e.target.tagName === 'A') { e.preventDefault(); document.querySelectorAll('#about-edit-nav .nav-link').forEach(link => link.classList.remove('active')); e.target.classList.add('active'); document.querySelectorAll('.about-edit-pane').forEach(pane => pane.style.display = 'none'); document.getElementById(e.target.dataset.target).style.display = 'block'; } });
+    
+    document.getElementById('add-text-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-text-block-template').content.cloneNode(true); clone.firstElementChild.dataset.id = newId; document.getElementById('about-content-blocks-container').appendChild(clone); });
+    document.getElementById('add-media-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-media-block-template').content.cloneNode(true); const blockEl = clone.firstElementChild; blockEl.dataset.id = newId; blockEl.querySelector('.block-media-preview').innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; document.getElementById('about-content-blocks-container').appendChild(clone); });
+    document.getElementById('add-about-card-btn').addEventListener('click', () => { const clone = document.getElementById('about-card-template').content.cloneNode(true); clone.firstElementChild.dataset.id = `new_${Date.now()}`; document.getElementById('about-cards-container').appendChild(clone); });
+
+    document.getElementById('about').addEventListener('click', e => {
+        const removeBtn = e.target.closest('.remove-about-block-btn, .remove-about-card-btn');
+        if (removeBtn) { removeBtn.closest('.dynamic-about-block, .dynamic-about-card').remove(); }
+        
+        if(e.target.closest('#clear-hero-media-btn')) { document.getElementById('about-hero-preview').innerHTML = `<p class="text-muted m-0">Media cleared. Save to confirm.</p>`; document.getElementById('about-hero-file').value = ''; }
+        
+        const clearBlockBtn = e.target.closest('.clear-block-media-btn');
+        if (clearBlockBtn) {
+            const blockEl = clearBlockBtn.closest('.dynamic-about-block');
+            blockEl.querySelector('.block-media-preview').innerHTML = `<p class="text-muted m-0">Media cleared. Save to confirm.</p>`;
+            blockEl.querySelector('.block-media-file').value = '';
+        }
+    });
+
+    document.getElementById('about').addEventListener('change', async e => {
+        const fileInput = e.target.closest('#about-hero-file, .block-media-file');
+        if(fileInput && fileInput.files[0]){
+             const file = fileInput.files[0];
+             const reader = new FileReader();
+             reader.onload = (event) => {
+                const previewContainer = fileInput.id === 'about-hero-file' ? document.getElementById('about-hero-preview') : fileInput.closest('.dynamic-about-block').querySelector('.block-media-preview');
+                previewContainer.innerHTML = file.type.startsWith('video/')
+                    ? `<video src="${event.target.result}" class="img-fluid" controls autoplay muted loop></video>`
+                    : `<img src="${event.target.result}" class="img-fluid" alt="Preview">`;
+             }
+             reader.readAsDataURL(file);
+        }
+    });
+    
+    saveBtn.addEventListener('click', () => {
+         confirmationModalTitle.textContent = "Confirm Save";
+         confirmationModalBody.textContent = 'Are you sure you want to save all changes to the About page? This will overwrite the current live version.';
+         confirmActionBtn.className = 'btn btn-success';
+         confirmActionBtn.onclick = saveAboutPageData;
+         confirmationModal.show();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        confirmationModalTitle.textContent = "Confirm Cancel";
+        confirmationModalBody.textContent = 'Are you sure you want to discard all unsaved changes? The editor will be reset to the last saved state.';
+        confirmActionBtn.className = 'btn btn-secondary';
+        confirmActionBtn.onclick = () => {
+            loadAboutPageData();
+            confirmationModal.hide();
+        };
+        confirmationModal.show();
+    });
+
+    loadAboutPageData();
+})();
 
     // --- START: SCRIPT FOR SERVICES PAGE MANAGEMENT ---
     (function() {

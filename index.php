@@ -18,10 +18,27 @@ if ($result && $result->num_rows > 0) {
         $hero_media_type = 'image';
     }
 }
-$conn->close(); // Close the connection after fetching the hero media
 
 // Data for the page
 $page_title = "RAIS HOME";
+
+//About Section
+// Fetch About Section Data
+$about_main_result = $conn->query("SELECT * FROM about_main WHERE id = 1");
+$about_main = $about_main_result->fetch_assoc();
+
+$about_blocks_result = $conn->query("SELECT * FROM about_content_blocks ORDER BY sort_order ASC");
+$about_blocks = [];
+while ($row = $about_blocks_result->fetch_assoc()) {
+    $about_blocks[] = $row;
+}
+
+$about_cards_result = $conn->query("SELECT * FROM about_cards ORDER BY sort_order ASC");
+$about_cards = [];
+while ($row = $about_cards_result->fetch_assoc()) {
+    $about_cards[] = $row;
+}
+$conn->close();
 
 // Services Offered Data
 $services = [
@@ -746,112 +763,75 @@ $exams = [
         </section>
 
         <!-- Other sections of your main page -->
-        <section id="about" class="pt-5 position-relative"
-            style="padding-bottom: 11rem; background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
-            <div
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
-            </div>
-            <div class="container position-relative">
-                <div class="card overflow-hidden"
-                    style="border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 42, 67, 0.1); border-left: 6px solid #0C470C;">
-                    <div class="card-body p-4 p-lg-5">
-                        <div class="row align-items-center g-4">
-                            <div class="col-lg-6 video-container">
-                                <video src="vids/about_vid.mov" loop autoplay controls muted
-                                    poster="https://placehold.co/600x400/e2e8f0/e2e8f0?text=Video"></video>
+        <section id="about" class="pt-5 position-relative" style="padding-bottom: 11rem; background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);"></div>
+    <div class="container position-relative">
+        <div class="card overflow-hidden" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 42, 67, 0.1); border-left: 6px solid #0C470C;">
+            <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-6 video-container">
+                        <?php if (!empty($about_main['media_path'])): ?>
+                            <?php if ($about_main['media_type'] === 'video'): ?>
+                                <video src="<?php echo htmlspecialchars($about_main['media_path']); ?>" loop autoplay controls muted class="w-100 rounded"></video>
+                            <?php else: ?>
+                                <img src="<?php echo htmlspecialchars($about_main['media_path']); ?>" alt="About Us Media" class="w-100 rounded">
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 300px;">
+                                <p class="text-muted">Media not available</p>
                             </div>
-                            <div class="col-lg-6">
-                                <h2 style="color: #023621; font-weight: 700;">About Roman & Associates Immigration Services LTD</h2>
-                                <p class="fs-5 my-4" style="line-height: 1.7;">We are a licensed Canadian immigration firm based in
-                                    Vancouver Island BC, providing expert advice on visas, permits, and sponsorships to help people
-                                    achieve a brighter future in Canada.</p>
-                                <button id="learnMoreBtn" class="btn btn-lg text-white fw-bold btn-green">Learn More</button>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
-                    <div class="expanded-about-wrapper" id="expandedAboutWrapper">
-                        <div class="card-body p-4 p-lg-5">
-                            <p>Canadian Immigration Consultants are able to help and support with the processing and documentation
-                                needed to work, study or immigrate to Canada. This process may seem overwhelming and confusing. We at
-                                Roman & Associates Immigration Services Ltd are here to provide support and services for your
-                                immigration needs and make it simple.</p>
-                            <p>We are registered Canadian Immigration consultants with active good standing with ICCRC. Book an
-                                appointment now to see how your life can change.</p>
-                            <p>We offer Immigration Services to clients across British Columbia including cities: Nanaimo, Ladysmith,
-                                Duncan, Parksville, Vancouver, Victoria, Richmond, Surrey, and the rest of Canada except Quebec.</p>
-                            <p>We also serve across China, Japan, Philippines, Korea, Hong Kong, Saudi Arabia, UAE, Singapore, and the
-                                rest of the world.</p>
-                        </div>
-                        <nav class="expanded-nav">
-                            <a href="#" data-target="mission" class="active">Mission</a>
-                            <a href="#" data-target="vision">Vision</a>
-                            <a href="#" data-target="objectives">Objectives</a>
-                            <a href="#" data-target="background">Background</a>
-                        </nav>
-                        <div class="card-body p-4 p-lg-5 expanded-content">
-                            <div class="content-box">
-                                <section id="mission" class="content-section active">
-                                    <h3>Mission Statement</h3>
-                                    <p>To provide honest, transparent, and expert Canadian immigration consulting services, empowering
-                                        individuals and families worldwide to achieve better opportunities and a brighter future in Canada.
-                                    </p>
-                                </section>
-                                <section id="vision" class="content-section">
-                                    <h3>Vision Statement</h3>
-                                    <p>To be a trusted global leader in Canadian immigration consultancy—known for our integrity,
-                                        personalized service, and commitment to helping clients successfully build a new life in Canada.</p>
-                                </section>
-                                <section id="objectives" class="content-section">
-                                    <h3>Company Objectives</h3>
-                                    <ul class="objectives-list">
-                                        <li><strong>Deliver Expert Guidance:</strong> Continuously provide up-to-date, professional
-                                            immigration advice on Canadian visas including study permits, work permits, visit visas, and
-                                            family sponsorships.</li>
-                                        <li><strong>Uphold Integrity and Transparency:</strong> Maintain 100% honesty in all client
-                                            interactions, fostering long-term trust and confidence in our services.</li>
-                                        <li><strong>Stay Informed and Compliant:</strong> Attend regular industry seminars, training, and
-                                            regulatory updates to ensure compliance with the latest Canadian immigration laws and policies.
-                                        </li>
-                                        <li><strong>Expand Global Reach:</strong> Serve clients not only across Canada (except Quebec) but
-                                            also in Asia, the Middle East, and beyond, helping more individuals access life-changing
-                                            opportunities.</li>
-                                        <li><strong>Enhance Client Support:</strong> Offer personalized, compassionate support that
-                                            motivates and encourages clients throughout their immigration journey.</li>
-                                        <li><strong>Ensure Affordable Excellence:</strong> Provide high-quality services at reasonable fees,
-                                            reflecting the care, diligence, and dedication poured into every application.</li>
-                                        <li><strong>Promote Responsible Immigration:</strong> Actively contribute to Canada’s values by
-                                            supporting qualified, deserving applicants and helping them integrate successfully into Canadian
-                                            society.</li>
-                                    </ul>
-                                </section>
-                                <section id="background" class="content-section">
-                                    <h3>Company Background</h3>
-                                    <p>Roman Canadian Immigration Services is a licensed Canadian immigration consultancy firm founded on
-                                        December 1, 2016, and proudly based on Vancouver Island, British Columbia, Canada. We specialize in
-                                        providing professional, transparent, and client-focused immigration services for individuals and
-                                        families aiming to visit, study, work, or settle in Canada.</p>
-                                    <p>Our firm is led by a Regulated Canadian Immigration Consultant (RCIC) and operates in full
-                                        compliance with the Immigration Consultants of Canada Regulatory Council (ICCRC)—ensuring that all
-                                        our services meet the highest standards of ethical and legal practice.</p>
-                                    <p> With nearly a decade of experience in the immigration industry, we have successfully guided
-                                        clients from various parts of the world—including the Philippines, Japan, China, Korea, Saudi
-                                        Arabia, UAE, Singapore, and Hong Kong—through the complex immigration process. We also serve clients
-                                        across British Columbia and other Canadian provinces, excluding Quebec.</p>
-                                    <p>At Roman Canadian Immigration Services, we pride ourselves on our integrity, transparency, and
-                                        dedication. We believe that each client deserves personalized attention, honest advice, and
-                                        unwavering support throughout their immigration journey. Our commitment to lifelong learning and
-                                        adaptation allows us to stay updated with the latest policies and pathways introduced by the
-                                        Canadian government.</p>
-                                    <p>Over the years, we have helped hundreds of clients realize their dream of starting a new life in
-                                        Canada. Whether it's pursuing higher education, reuniting with loved ones, or securing a better job
-                                        opportunity, we’re here to support our clients every step of the way.</p>
-                                </section>
-                            </div>
-                        </div>
+                    <div class="col-lg-6">
+                        <h2 style="color: #023621; font-weight: 700;"><?php echo htmlspecialchars($about_main['title']); ?></h2>
+                        <p class="fs-5 my-4" style="line-height: 1.7;"><?php echo nl2br(htmlspecialchars($about_main['description'])); ?></p>
+                        <?php if (!empty($about_blocks) || !empty($about_cards)): ?>
+                            <button id="learnMoreBtn" class="btn btn-lg text-white fw-bold btn-green">Learn More</button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <?php if (!empty($about_blocks) || !empty($about_cards)): ?>
+            <div class="expanded-about-wrapper" id="expandedAboutWrapper">
+                <div class="card-body p-4 p-lg-5">
+                    <?php foreach ($about_blocks as $block): ?>
+                        <?php if ($block['type'] === 'text'): ?>
+                            <p><?php echo nl2br(htmlspecialchars($block['content'])); ?></p>
+                        <?php elseif ($block['type'] === 'media' && !empty($block['media_path'])): ?>
+                            <div class="my-4 text-center">
+                                <?php if ($block['media_type'] === 'video'): ?>
+                                    <video src="<?php echo htmlspecialchars($block['media_path']); ?>" controls loop muted class="w-100 rounded"></video>
+                                <?php else: ?>
+                                    <img src="<?php echo htmlspecialchars($block['media_path']); ?>" alt="Content Media" class="w-100 rounded">
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php if (!empty($about_cards)): ?>
+                <nav class="expanded-nav">
+                    <?php foreach ($about_cards as $index => $card): ?>
+                        <a href="#" data-target="content-<?php echo $index; ?>" class="<?php echo $index === 0 ? 'active' : ''; ?>"><?php echo htmlspecialchars($card['tab_title']); ?></a>
+                    <?php endforeach; ?>
+                </nav>
+                <div class="card-body p-4 p-lg-5 expanded-content">
+                    <div class="content-box">
+                        <?php foreach ($about_cards as $index => $card): ?>
+                            <section id="content-<?php echo $index; ?>" class="content-section <?php echo $index === 0 ? 'active' : ''; ?>">
+                                <h3><?php echo htmlspecialchars($card['card_title']); ?></h3>
+                                <p><?php echo nl2br(htmlspecialchars($card['content'])); ?></p>
+                            </section>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
 
         <section id="services" class="service-section">
             <div class="container full-height-center">
@@ -1128,5 +1108,23 @@ $exams = [
             }
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+            const expandedAboutWrapper = document.getElementById('expandedAboutWrapper');
+
+            if (learnMoreBtn && expandedAboutWrapper) {
+                expandedAboutWrapper.addEventListener('show.bs.collapse', function () {
+                    learnMoreBtn.textContent = 'See Less';
+                });
+
+                expandedAboutWrapper.addEventListener('hide.bs.collapse', function () {
+                    learnMoreBtn.textContent = 'Learn More';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
 </body>
 </html>
