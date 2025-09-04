@@ -241,8 +241,7 @@ $footerData = [
     <div class="modal fade" id="landing-confirmation-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-confirmation-title">Confirm Action</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-confirmation-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirm-landing-action-btn">Confirm</button></div></div></div></div>
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
-    <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div>    <template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" accept="image/*,video/*"></div></div></template>
-    <div class="modal fade" id="service-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-preview-title">Service Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="service-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
+    <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div> <template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" accept="image/*,video/*"></div></div></template>    <div class="modal fade" id="service-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-preview-title">Service Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="service-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog Post</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row"><div class="col-md-8"><div class="mb-3"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" required></div></div><div class="col-md-4"><div class="mb-3"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" required></div></div></div><div class="mb-3"><label for="blog-author" class="form-label">Author Name</label><input type="text" class="form-control" id="blog-author" required></div><div class="mb-3"><label for="blog-summary" class="form-label">Summary / Subtitle (for blog list page)</label><textarea class="form-control" id="blog-summary" rows="2" required></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" accept="image/*,video/*"><div class="form-text">This image will appear below the title.</div></div><hr class="my-4"><h6>Blog Content</h6><p class="text-muted small">The first section will be the full-width introductory paragraph. Subsequent sections will alternate layout.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-blog-btn">Add Blog Post</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title"></div><div class="mb-2"><label class="form-label">Section Content / Paragraph</label><textarea class="form-control section-description" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" accept="image/*,video/*"></div></div></template>
     <div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
@@ -790,256 +789,238 @@ $footerData = [
 })();
 
     // --- START: SCRIPT FOR SERVICES PAGE MANAGEMENT ---
-    (function() {
-        // Data Persistence
-        function loadServicesData() {
-            const savedData = localStorage.getItem('raisCmsServicesData');
-            if (savedData) {
-                return JSON.parse(savedData);
-            }
-            return [];
-        }
+(function() {
+    let servicesData = [];
+    let selectedServiceId = null;
 
-        function saveServicesData(data) {
-            localStorage.setItem('raisCmsServicesData', JSON.stringify(data));
-        }
+    // UI Elements
+    const serviceCardsContainer = document.getElementById('service-cards-container');
+    const addServiceBtn = document.getElementById('add-service-btn');
+    const editServiceBtn = document.getElementById('edit-service-btn');
+    const deleteServiceBtn = document.getElementById('delete-service-btn');
+    const previewServiceBtn = document.getElementById('preview-service-btn');
+    const serviceModal = new bootstrap.Modal(document.getElementById('service-modal'));
+    const serviceModalTitle = document.getElementById('service-modal-title');
+    const serviceForm = document.getElementById('service-form');
+    const saveServiceBtn = document.getElementById('save-service-btn');
+    const addSectionBtn = document.getElementById('add-section-btn');
+    const dynamicSectionsContainer = document.getElementById('dynamic-sections-container');
+    const sectionTemplate = document.getElementById('service-section-template');
+    
+    // API Path Helper
+    const getApiPath = (file) => `../api/${file}`;
 
-        let servicesData = loadServicesData();
-        let selectedServiceId = null;
-        let nextServiceId = (servicesData.length > 0 ? Math.max(...servicesData.map(s => s.id)) : 0) + 1;
-
-        // UI Elements
-        const serviceCardsContainer = document.getElementById('service-cards-container');
-        const addServiceBtn = document.getElementById('add-service-btn');
-        const editServiceBtn = document.getElementById('edit-service-btn');
-        const deleteServiceBtn = document.getElementById('delete-service-btn');
-        const previewServiceBtn = document.getElementById('preview-service-btn');
-        const serviceModal = new bootstrap.Modal(document.getElementById('service-modal'));
-        const previewModal = new bootstrap.Modal(document.getElementById('service-preview-modal'));
-        const serviceModalTitle = document.getElementById('service-modal-title');
-        const serviceForm = document.getElementById('service-form');
-        const saveServiceBtn = document.getElementById('save-service-btn');
-        const addSectionBtn = document.getElementById('add-section-btn');
-        const dynamicSectionsContainer = document.getElementById('dynamic-sections-container');
-        const sectionTemplate = document.getElementById('service-section-template');
-
-        function renderServiceCards() {
-            serviceCardsContainer.innerHTML = '';
-            servicesData.forEach(service => {
-                const cardCol = document.createElement('div');
-                cardCol.className = 'col-md-6 col-lg-4';
-                const card = document.createElement('div');
-                card.className = 'card service-card';
-                card.dataset.id = service.id;
-                if (service.id === selectedServiceId) card.classList.add('selected');
-                const mediaUrl = service.heroMediaDataUrl || 'https://via.placeholder.com/800x600.png?text=Service+Media';
-                card.innerHTML = `<img src="${mediaUrl}" class="card-img-top service-card-img" alt="${service.name}"><div class="card-body"><h5 class="card-title">${service.name}</h5><p class="card-text text-muted">${service.description}</p></div>`;
-                cardCol.appendChild(card);
-                serviceCardsContainer.appendChild(cardCol);
-            });
-        }
-
-        function updateFabState() {
-            const isSelected = selectedServiceId !== null;
-            editServiceBtn.disabled = !isSelected;
-            deleteServiceBtn.disabled = !isSelected;
-            previewServiceBtn.disabled = !isSelected;
-        }
-
-        function selectCard(serviceId) {
-            selectedServiceId = (selectedServiceId === serviceId) ? null : serviceId;
-            renderServiceCards();
-            updateFabState();
-        }
-
-        function createSectionElement(data = {}) {
-            const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
-            newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
-                newSection.remove();
-                updateSectionNumbers();
-            });
-            if (data.title) newSection.querySelector('.section-title').value = data.title;
-            if (data.description) newSection.querySelector('.section-description').value = data.description;
-            return newSection;
-        }
-
-        function updateSectionNumbers() {
-            dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((section, index) => {
-                section.querySelector('.section-number').textContent = `Section ${index + 1}`;
-            });
-        }
-
-        function resetAndPrepareModal(mode = 'add', service = null) {
-            serviceForm.reset();
-            dynamicSectionsContainer.innerHTML = '';
-            serviceForm.classList.remove('was-validated');
-            if (mode === 'add') {
-                serviceModalTitle.textContent = 'Add New Service';
-                saveServiceBtn.textContent = 'Add Service';
-                saveServiceBtn.dataset.mode = 'add';
-            } else if (mode === 'edit' && service) {
-                serviceModalTitle.textContent = `Edit Service: ${service.name}`;
-                saveServiceBtn.textContent = 'Update Service';
-                saveServiceBtn.dataset.mode = 'edit';
-                document.getElementById('service-name').value = service.name;
-                document.getElementById('service-description').value = service.description;
-                (service.sections || []).forEach(sectionData => {
-                    dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
-                });
-                updateSectionNumbers();
-            }
-        }
-
-        serviceCardsContainer.addEventListener('click', (e) => {
-            const card = e.target.closest('.service-card');
-            if (card) selectCard(parseInt(card.dataset.id));
-        });
-        addServiceBtn.addEventListener('click', () => {
-            resetAndPrepareModal('add');
-            serviceModal.show();
-        });
-        editServiceBtn.addEventListener('click', () => {
-            if (selectedServiceId === null) return;
-            const service = servicesData.find(s => s.id === selectedServiceId);
-            resetAndPrepareModal('edit', service);
-            serviceModal.show();
-        });
-        addSectionBtn.addEventListener('click', () => {
-            dynamicSectionsContainer.appendChild(createSectionElement());
-            updateSectionNumbers();
-        });
-
-        deleteServiceBtn.addEventListener('click', () => {
-            if (selectedServiceId === null) return;
-            const service = servicesData.find(s => s.id === selectedServiceId);
-            confirmationModalTitle.textContent = "Confirm Deletion";
-            confirmationModalBody.innerHTML = `Are you sure you want to delete the service: <strong>${service.name}</strong>?`;
-            confirmActionBtn.onclick = () => {
-                servicesData = servicesData.filter(s => s.id !== selectedServiceId);
-                saveServicesData(servicesData);
-                selectedServiceId = null;
+    // --- Data Fetching and Rendering ---
+    async function fetchAndRenderServices() {
+        try {
+            const response = await fetch(getApiPath('services_handler.php?action=get'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                servicesData = result.data;
                 renderServiceCards();
-                updateFabState();
-                confirmationModal.hide();
-            };
-            confirmationModal.show();
-        });
-
-        previewServiceBtn.addEventListener('click', () => {
-            if (selectedServiceId === null) return;
-            const service = servicesData.find(s => s.id === selectedServiceId);
-            const previewTitle = document.getElementById('service-preview-title');
-            const previewBody = document.getElementById('service-preview-body');
-            previewTitle.textContent = `Preview: ${service.name}`;
-
-            let heroHTML = `<div class="text-center mb-5" style="padding: 6rem 1rem; background-image: url('${service.heroMediaDataUrl || ''}'); background-size: cover; background-position: center; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">
-                                <h1>${service.name}</h1>
-                                <p class="lead">${service.description}</p>
-                                <a href="${service.applyNowLink}" class="btn btn-success btn-lg">Apply Now</a>
-                            </div>`;
-
-            let tabsHTML = '';
-            if (service.sections && service.sections.length > 0) {
-                tabsHTML += '<div class="container"><ul class="nav nav-tabs" role="tablist">';
-                service.sections.forEach((section, index) => {
-                    tabsHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${index === 0 ? 'active' : ''}" id="preview-service-tab-${index}" data-bs-toggle="tab" data-bs-target="#preview-service-pane-${index}" type="button">${section.title}</button></li>`;
-                });
-                tabsHTML += '</ul>';
-                tabsHTML += '<div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">';
-                service.sections.forEach((section, index) => {
-                    let mediaHTML = section.mediaDataUrl ? `<div class="col-md-5"><img src="${section.mediaDataUrl}" class="img-fluid rounded"></div>` : '';
-                    let textColClass = section.mediaDataUrl ? 'col-md-7' : 'col-12';
-                    tabsHTML += `<div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="preview-service-pane-${index}"><div class="row align-items-center"><div class="${textColClass}"><p>${section.description.replace(/\n/g, '<br>')}</p></div>${mediaHTML}</div></div>`;
-                });
-                tabsHTML += '</div></div>';
+            } else {
+                console.error("Failed to fetch services:", result.message);
             }
+        } catch (error) {
+            console.error("Error fetching services:", error);
+        }
+    }
 
-            previewBody.innerHTML = heroHTML + tabsHTML;
-            previewModal.show();
+    function renderServiceCards() {
+        serviceCardsContainer.innerHTML = '';
+        servicesData.forEach(service => {
+            const cardCol = document.createElement('div');
+            cardCol.className = 'col-md-6 col-lg-4';
+            const card = document.createElement('div');
+            card.className = 'card service-card';
+            card.dataset.id = service.id;
+            if (service.id == selectedServiceId) card.classList.add('selected');
+            const mediaUrl = service.hero_media_path ? `../${service.hero_media_path}` : 'https://via.placeholder.com/800x600.png?text=Service+Media';
+            card.innerHTML = `<img src="${mediaUrl}" class="card-img-top service-card-img" alt="${service.name}"><div class="card-body"><h5 class="card-title">${service.name}</h5><p class="card-text text-muted">${service.description}</p></div>`;
+            cardCol.appendChild(card);
+            serviceCardsContainer.appendChild(cardCol);
         });
+    }
 
-        // Add event listener to reset z-index when confirmation modal is hidden
-        confirmationModalEl.addEventListener('hidden.bs.modal', () => {
-            confirmationModalEl.style.zIndex = '';
-        });
+    function updateFabState() {
+        const isSelected = selectedServiceId !== null;
+        editServiceBtn.disabled = !isSelected;
+        deleteServiceBtn.disabled = !isSelected;
+        previewServiceBtn.disabled = !isSelected;
+    }
 
-        saveServiceBtn.addEventListener('click', async () => {
-            if (!serviceForm.checkValidity()) {
-                serviceForm.classList.add('was-validated');
-                serviceForm.reportValidity();
-                return;
-            }
-            const mode = saveServiceBtn.dataset.mode;
-
-            confirmationModalTitle.textContent = "Confirm Save";
-            confirmationModalBody.textContent = `Are you sure you want to ${mode === 'add' ? 'add this new' : 'update this'} service?`;
-
-            confirmActionBtn.onclick = async () => {
-                serviceModal.hide(); 
-
-                const heroFile = document.getElementById('service-hero-media').files[0];
-                const sectionPromises = Array.from(dynamicSectionsContainer.querySelectorAll('.dynamic-section')).map(async (el) => {
-                    const sectionFile = el.querySelector('.section-media').files[0];
-                    return {
-                        title: el.querySelector('.section-title').value,
-                        description: el.querySelector('.section-description').value,
-                        file: sectionFile,
-                        fileName: sectionFile ? sectionFile.name : null
-                    };
-                });
-                const sectionsWithFiles = await Promise.all(sectionPromises);
-
-                let heroMediaDataUrl = null;
-                if (heroFile) heroMediaDataUrl = await readFileAsDataURL(heroFile);
-
-                const sectionsWithDataUrls = await Promise.all(sectionsWithFiles.map(async sec => {
-                    let mediaDataUrl = null;
-                    if (sec.file) mediaDataUrl = await readFileAsDataURL(sec.file);
-                    return { ...sec,
-                        mediaDataUrl: mediaDataUrl,
-                        file: null
-                    };
-                }));
-
-                if (mode === 'add') {
-                    servicesData.push({
-                        id: nextServiceId++,
-                        name: document.getElementById('service-name').value,
-                        description: document.getElementById('service-description').value,
-                        applyNowLink: '#', // The button is now static
-                        heroMediaDataUrl: heroMediaDataUrl,
-                        sections: sectionsWithDataUrls
-                    });
-                } else {
-                    const service = servicesData.find(s => s.id === selectedServiceId);
-                    service.name = document.getElementById('service-name').value;
-                    service.description = document.getElementById('service-description').value;
-                    service.applyNowLink = '#'; // The button is now static
-                    if (heroMediaDataUrl) service.heroMediaDataUrl = heroMediaDataUrl;
-
-                    const originalSections = service.sections || [];
-                    const updatedSections = sectionsWithDataUrls.map((sec, index) => {
-                        if (!sec.mediaDataUrl) {
-                            sec.mediaDataUrl = originalSections[index]?.mediaDataUrl || null;
-                        }
-                        return sec;
-                    });
-                    service.sections = updatedSections;
-                }
-
-                saveServicesData(servicesData);
-                renderServiceCards();
-                updateFabState();
-                confirmationModal.hide();
-            };
-            
-            // 📌 FIX: Manually set the z-index to ensure it appears on top
-            confirmationModalEl.style.zIndex = "1060";
-            confirmationModal.show();
-        });
+    function selectCard(serviceId) {
+        selectedServiceId = (selectedServiceId == serviceId) ? null : serviceId;
         renderServiceCards();
         updateFabState();
-    })();
+    }
+
+    function createSectionElement(data = {}) {
+        const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
+        newSection.dataset.existingMediaPath = data.media_path || '';
+        newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
+            newSection.remove();
+            updateSectionNumbers();
+        });
+        if (data.title) newSection.querySelector('.section-title').value = data.title;
+        if (data.content) newSection.querySelector('.section-description').value = data.content;
+        return newSection;
+    }
+
+    function updateSectionNumbers() {
+        dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((section, index) => {
+            section.querySelector('.section-number').textContent = `Section ${index + 1}`;
+            // Important for file uploads
+            section.querySelector('.section-media').name = `section_media_${index}`;
+        });
+    }
+
+    function resetAndPrepareModal(mode = 'add', service = null) {
+        serviceForm.reset();
+        dynamicSectionsContainer.innerHTML = '';
+        serviceForm.classList.remove('was-validated');
+        
+        // Make sure hero media input has the correct name attribute
+        document.getElementById('service-hero-media').name = 'hero_media';
+
+        if (mode === 'add') {
+            serviceModalTitle.textContent = 'Add New Service';
+            saveServiceBtn.textContent = 'Add Service';
+            saveServiceBtn.dataset.mode = 'add';
+            saveServiceBtn.dataset.id = '';
+        } else if (mode === 'edit' && service) {
+            serviceModalTitle.textContent = `Edit Service: ${service.name}`;
+            saveServiceBtn.textContent = 'Update Service';
+            saveServiceBtn.dataset.mode = 'edit';
+            saveServiceBtn.dataset.id = service.id;
+            document.getElementById('service-name').value = service.name;
+            document.getElementById('service-description').value = service.description;
+            // Hidden input to track existing hero path
+            const existingHeroInput = document.createElement('input');
+            existingHeroInput.type = 'hidden';
+            existingHeroInput.name = 'existing_hero_path';
+            existingHeroInput.value = service.hero_media_path || '';
+            serviceForm.appendChild(existingHeroInput);
+
+            (service.sections || []).forEach(sectionData => {
+                dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
+            });
+            updateSectionNumbers();
+        }
+    }
+    
+    // --- Event Listeners ---
+    serviceCardsContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.service-card');
+        if (card) selectCard(card.dataset.id);
+    });
+    addServiceBtn.addEventListener('click', () => {
+        resetAndPrepareModal('add');
+        serviceModal.show();
+    });
+    editServiceBtn.addEventListener('click', () => {
+        if (selectedServiceId === null) return;
+        const service = servicesData.find(s => s.id == selectedServiceId);
+        resetAndPrepareModal('edit', service);
+        serviceModal.show();
+    });
+    addSectionBtn.addEventListener('click', () => {
+        dynamicSectionsContainer.appendChild(createSectionElement());
+        updateSectionNumbers();
+    });
+
+    deleteServiceBtn.addEventListener('click', () => {
+        if (selectedServiceId === null) return;
+        const service = servicesData.find(s => s.id == selectedServiceId);
+        confirmationModalTitle.textContent = "Confirm Deletion";
+        confirmationModalBody.innerHTML = `Are you sure you want to delete the service: <strong>${service.name}</strong>? This cannot be undone.`;
+        confirmActionBtn.className = 'btn btn-danger';
+        confirmActionBtn.onclick = async () => {
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', selectedServiceId);
+            // Pass slug for file deletion
+            const slug = service.name.toLowerCase().trim().replace(/[^a-z0-9-]+/g, '-');
+            formData.append('file_slug', slug);
+
+
+            const response = await fetch(getApiPath('services_handler.php'), { method: 'POST', body: formData });
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                selectedServiceId = null;
+                fetchAndRenderServices();
+                updateFabState();
+            } else {
+                alert('Error deleting service: ' + result.message);
+            }
+            confirmationModal.hide();
+        };
+        confirmationModal.show();
+    });
+
+    previewServiceBtn.addEventListener('click', () => {
+        if (selectedServiceId === null) return;
+        const service = servicesData.find(s => s.id == selectedServiceId);
+        if (service && service.file_path) {
+            window.open(`../${service.file_path}`, '_blank');
+        } else {
+            alert('This service does not have a page generated yet. Please save it first.');
+        }
+    });
+
+    saveServiceBtn.addEventListener('click', async () => {
+        if (!serviceForm.checkValidity()) {
+            serviceForm.classList.add('was-validated');
+            serviceForm.reportValidity();
+            return;
+        }
+
+        const formData = new FormData(serviceForm);
+        const mode = saveServiceBtn.dataset.mode;
+        formData.append('action', mode);
+
+        if (mode === 'edit') {
+            formData.append('id', saveServiceBtn.dataset.id);
+        }
+
+        // Gather sections data as JSON
+        const sectionsArray = [];
+        dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((el, index) => {
+            sectionsArray.push({
+                title: el.querySelector('.section-title').value,
+                description: el.querySelector('.section-description').value,
+                existing_media_path: el.dataset.existingMediaPath // Pass existing path for updates
+            });
+            // Append file if it exists, matching the name set in updateSectionNumbers
+            const fileInput = el.querySelector('.section-media');
+            if(fileInput.files[0]) {
+                formData.append(`section_media_${index}`, fileInput.files[0]);
+            }
+        });
+        formData.append('sections', JSON.stringify(sectionsArray));
+
+        try {
+            const response = await fetch(getApiPath('services_handler.php'), {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                serviceModal.hide();
+                fetchAndRenderServices();
+            } else {
+                alert('Error saving service: ' + result.message);
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    });
+    
+    // Initial Load
+    fetchAndRenderServices();
+    updateFabState();
+})();
     
     // --- START: SCRIPT FOR BLOGS PAGE MANAGEMENT ---
 (function() {

@@ -38,18 +38,23 @@ $about_cards = [];
 while ($row = $about_cards_result->fetch_assoc()) {
     $about_cards[] = $row;
 }
-$conn->close();
 
 // Services Offered Data
-$services = [
-    ["title" => "Caregiver Permit", "url" => "Service Offered/caregiver.php", "img" => "img/Fcaregiver.jpg"],
-    ["title" => "Work Permit", "url" => "Service Offered/work.php", "img" => "img/Fwork.jpg"],
-    ["title" => "Visit (Tourist Visa) Permit", "url" => "Service Offered/visitpermit.php", "img" => "img/Fvisit.jpg"],
-    ["title" => "Permanent Residency (PR)", "url" => "Service Offered/PR.php", "img" => "img/Fpr.jpg"],
-    ["title" => "Family Sponsorship", "url" => "Service Offered/fam.php", "img" => "img/Ffam.jpg"],
-    ["title" => "Labour Market Impact Assessment (LMIA)", "url" => "Service Offered/lmia.php", "img" => "img/Flmia.jpg"],
-    ["title" => "Study Permit", "url" => "Service Offered/study.php", "img" => "img/Fstudy.jpg"]
-];
+// Services Offered Data
+$services = []; // Start with an empty array for our services
+$services_result = $conn->query("SELECT name, file_path, hero_media_path FROM services ORDER BY name ASC");
+
+// Check if the query was successful and returned results
+if ($services_result && $services_result->num_rows > 0) {
+    // Loop through the results (the correct MySQLi way) and build the array
+    while ($service_row = $services_result->fetch_assoc()) {
+        $services[] = [
+            'title' => $service_row['name'],
+            'url'   => $service_row['file_path'],
+            'img'   => $service_row['hero_media_path']
+        ];
+    }
+}
 
 // Blogs/Map Data
 $locations = [
