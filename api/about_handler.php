@@ -1,16 +1,11 @@
 <?php
 header('Content-Type: application/json');
-require_once '../db_connect.php'; // Adjust path if needed
-
-// --- More Robust Path Definition ---
-// This defines the absolute path to your project's root folder (e.g., C:/xampp/htdocs/RAIS-Global)
-define('PROJECT_ROOT_PATH', dirname(__DIR__));
-$upload_dir_absolute = PROJECT_ROOT_PATH . '/uploads/about/'; // Absolute path for moving files
-$upload_path_relative = 'uploads/about/'; // Relative path to store in DB
+require_once '../db_connect.php'; 
 
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
+$upload_path_relative = 'uploads/about/';
+define('PROJECT_ROOT_PATH', dirname(__DIR__));
 
-// Function to safely delete a file using an absolute path
 function delete_file($absolute_filepath) {
     if ($absolute_filepath && file_exists($absolute_filepath) && is_writable($absolute_filepath)) {
         unlink($absolute_filepath);
@@ -18,7 +13,6 @@ function delete_file($absolute_filepath) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // GET logic remains the same...
     try {
         $data = [];
         $result_main = $conn->query("SELECT * FROM about_main WHERE id = 1");
@@ -35,62 +29,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data'])) {
-    // Check if the upload directory is writable
-    if (!is_dir($upload_dir_absolute) || !is_writable($upload_dir_absolute)) {
-        $response['message'] = 'Upload directory does not exist or is not writable. Please check server permissions for uploads/about/.';
-        echo json_encode($response);
-        exit();
-    }
-    
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->begin_transaction();
     try {
         $data = json_decode($_POST['data'], true);
-        $hero_data = $data['hero'];
-        
-        // --- Process Hero Section ---
-        $current_hero = $conn->query("SELECT media_path FROM about_main WHERE id = 1")->fetch_assoc();
-        $hero_media_path_db = $current_hero['media_path'] ?? null;
-        $hero_media_type = 'image';
 
-        if (isset($_FILES['hero_media_file'])) {
-            if ($hero_media_path_db) delete_file(PROJECT_ROOT_PATH . '/' . $hero_media_path_db);
-            
+        // --- THE DEFINITIVE FIX ---
+        // 1. Read the CURRENT media path directly from the database.
+        $current_media_result = $conn->query("SELECT media_path, media_type FROM about_main WHERE id = 1");
+        $current_media_row = $current_media_result->fetch_assoc();
+        $final_media_path = $current_media_row['media_path'] ?? null;
+        $hero_media_type = $current_media_row['media_type'] ?? 'image';
+
+        // 2. Now, process changes based on this reliable data.
+        if (isset($_FILES['hero_media_file']) && $_FILES['hero_media_file']['error'] == 0) {
+            // CASE 1: A new file is being uploaded.
+            if ($final_media_path) { // Use the path we just read from the DB.
+                delete_file(PROJECT_ROOT_PATH . '/' . $final_media_path);
+            }
             $file = $_FILES['hero_media_file'];
             $filename = time() . '_' . basename($file['name']);
-            // ADDED: Check if move_uploaded_file succeeds
-            if (!move_uploaded_file($file['tmp_name'], $upload_dir_absolute . $filename)) {
-                throw new Exception('Failed to move uploaded hero file. Check directory permissions.');
+            if (move_uploaded_file($file['tmp_name'], PROJECT_ROOT_PATH . '/' . $upload_path_relative . $filename)) {
+                $final_media_path = $upload_path_relative . $filename;
+                $hero_media_type = strpos($file['type'], 'video') === 0 ? 'video' : 'image';
+            } else {
+                throw new Exception('Failed to move new hero file.');
             }
-            $hero_media_path_db = $upload_path_relative . $filename;
-            $hero_media_type = strpos($file['type'], 'video') === 0 ? 'video' : 'image';
-        } elseif (isset($hero_data['clear_media']) && $hero_data['clear_media'] && $hero_media_path_db) {
-            delete_file(PROJECT_ROOT_PATH . '/' . $hero_media_path_db);
-            $hero_media_path_db = null;
+        } 
+        elseif (isset($data['hero']['clear_media']) && $data['hero']['clear_media']) {
+            // CASE 2: The media was explicitly cleared.
+            if ($final_media_path) { // Use the path we just read from the DB.
+                delete_file(PROJECT_ROOT_PATH . '/' . $final_media_path);
+            }
+            $final_media_path = null;
         }
+        // CASE 3: No new file and not clearing. The $final_media_path variable already holds the correct value from our database query.
 
-        $stmt = $conn->prepare("UPDATE about_main SET title = ?, description = ?, media_path = ?, media_type = ? WHERE id = 1");
-        $stmt->bind_param("ssss", $hero_data['title'], $hero_data['description'], $hero_media_path_db, $hero_media_type);
-        $stmt->execute();
+        // 3. Update the database with the final, correct path.
+        $stmt_hero = $conn->prepare("UPDATE about_main SET title = ?, description = ?, media_path = ?, media_type = ? WHERE id = 1");
+        $stmt_hero->bind_param("ssss", $data['hero']['title'], $data['hero']['description'], $final_media_path, $hero_media_type);
+        if (!$stmt_hero->execute()) { throw new Exception("Hero update failed: " . $stmt_hero->error); }
 
-        // (The rest of the logic for blocks and cards is similar and will benefit from the robust pathing)
-        // For brevity, the full logic for blocks and cards is omitted here, but the principle is the same.
-        // The previously provided full script already contains the correct logic flow.
-        // This example focuses on demonstrating the added error checking.
-        
-        // --- Process Content Blocks (truncated for clarity, use your existing full logic) ---
+        // --- Process Content Blocks and Cards as before ---
         $conn->query("TRUNCATE TABLE about_content_blocks");
+        // ... (rest of the script for blocks and cards is unchanged) ...
         $stmt_block = $conn->prepare("INSERT INTO about_content_blocks (type, content, media_path, media_type, sort_order) VALUES (?, ?, ?, ?, ?)");
         foreach ($data['contentBlocks'] as $i => $block) {
-            $block_media_path = !empty($block['media_path']) ? $block['media_path'] : null;
+            $block_media_path = $block['media_path'] ?? null;
             $block_media_type = 'image';
             $file_key = 'block_media_file_' . $block['id'];
-
             if (isset($_FILES[$file_key])) {
+                if ($block_media_path) delete_file(PROJECT_ROOT_PATH . '/' . $block_media_path);
                 $file = $_FILES[$file_key];
-                $filename = time() . '_' . $i . '_' . basename($file['name']);
-                if (!move_uploaded_file($file['tmp_name'], $upload_dir_absolute . $filename)) {
-                    throw new Exception('Failed to move uploaded block file. Check permissions.');
+                $filename = time() . '_block_' . $i . '_' . basename($file['name']);
+                if (!move_uploaded_file($file['tmp_name'], PROJECT_ROOT_PATH . '/' . $upload_path_relative . $filename)) {
+                    throw new Exception('Failed to move block file.');
                 }
                 $block_media_path = $upload_path_relative . $filename;
                 $block_media_type = strpos($file['type'], 'video') === 0 ? 'video' : 'image';
@@ -99,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data'])) {
             $stmt_block->execute();
         }
 
-        // --- Process Cards ---
         $conn->query("TRUNCATE TABLE about_cards");
         $stmt_card = $conn->prepare("INSERT INTO about_cards (tab_title, card_title, content, sort_order) VALUES (?, ?, ?, ?)");
         foreach ($data['cards'] as $i => $card) {

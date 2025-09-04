@@ -495,14 +495,17 @@ $footerData = [
     
     // --- START: SCRIPT FOR ABOUT PAGE MANAGEMENT ---
 (function() {
+    // State variables to track user actions reliably
+    let heroMediaWasCleared = false;
+    let blockMediaState = {}; 
+
     const previewModal = new bootstrap.Modal(document.getElementById('about-page-preview-modal'));
     const previewModalBody = document.getElementById('about-preview-body');
     const previewBtn = document.getElementById('preview-about-page-btn');
     const cancelBtn = document.getElementById('cancel-about-changes-btn');
     const saveBtn = document.getElementById('save-all-about-changes-btn');
-
-const getApiPath = (file) => `../api/${file}`;
-    let aboutPageData = {}; // This will hold the data from the database
+    const getApiPath = (file) => `../api/${file}`;
+    let aboutPageData = {};
 
     async function loadAboutPageData() {
         try {
@@ -510,94 +513,100 @@ const getApiPath = (file) => `../api/${file}`;
             const result = await response.json();
             if (result.status === 'success') {
                 aboutPageData = result.data;
+                // Reset flags every time data is loaded from the server
+                heroMediaWasCleared = false;
+                blockMediaState = {};
                 renderAll();
             } else {
                 console.error('Failed to load about page data:', result.message);
-                alert('Failed to load About Page data. Check console for details.');
             }
         } catch (error) {
             console.error('Error fetching about page data:', error);
-            alert('An error occurred while fetching About Page data.');
         }
     }
 
     async function saveAboutPageData() {
-    saveBtn.disabled = true;
-    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        const formData = new FormData();
 
-    const formData = new FormData();
-    
-    // --- Data Gathering Logic (Corrected) ---
-    const dataToSave = {
-        hero: {
-            title: document.getElementById('about-hero-title').value,
-            description: document.getElementById('about-hero-description').value,
-            clear_media: !document.getElementById('about-hero-preview').querySelector('img, video'),
-            // **THE FIX**: Carry over the existing media_path if it hasn't been changed.
-            media_path: aboutPageData.hero.media_path || null
-        },
-        contentBlocks: [],
-        cards: []
-    };
-    
-    const heroFileInput = document.getElementById('about-hero-file');
-    if (heroFileInput.files[0]) {
-        formData.append('hero_media_file', heroFileInput.files[0]);
-    }
-    
-    document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => {
-        const blockId = el.dataset.id;
-        const originalBlock = aboutPageData.contentBlocks.find(b => b.id == blockId) || {};
-        const blockData = { id: blockId, type: el.dataset.type, media_path: originalBlock.media_path || null, content: '' };
-        if (blockData.type === 'text') {
-            blockData.content = el.querySelector('.block-content').value;
-        } else {
-            const fileInput = el.querySelector('.block-media-file');
-            if (fileInput.files[0]) {
-                formData.append(`block_media_file_${blockId}`, fileInput.files[0]);
-            } else if (!el.querySelector('.block-media-preview').querySelector('img, video')) {
-                blockData.media_path = null;
+        // **THE FIX**: The logic now ONLY uses the heroMediaWasCleared flag.
+        // It no longer tries to guess based on the hidden DOM element.
+        const dataToSave = {
+            hero: {
+                title: document.getElementById('about-hero-title').value,
+                description: document.getElementById('about-hero-description').value,
+                clear_media: heroMediaWasCleared, // Use the reliable flag directly
+                media_path: aboutPageData.hero.media_path || null
+            },
+            contentBlocks: [],
+            cards: []
+        };
+
+        const heroFileInput = document.getElementById('about-hero-file');
+        if (heroFileInput.files[0]) {
+            formData.append('hero_media_file', heroFileInput.files[0]);
+        }
+
+        document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => {
+            const blockId = el.dataset.id;
+            const originalBlock = aboutPageData.contentBlocks.find(b => b.id == blockId) || {};
+            let media_path = originalBlock.media_path || null;
+            if (blockMediaState[blockId] === 'cleared') {
+                media_path = null;
             }
-        }
-        dataToSave.contentBlocks.push(blockData);
-    });
-    
-    document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => {
-        dataToSave.cards.push({
-            id: el.dataset.id, tabTitle: el.querySelector('.card-tab-title').value,
-            cardTitle: el.querySelector('.card-title').value, content: el.querySelector('.card-content').value
+            const blockData = { id: blockId, type: el.dataset.type, media_path: media_path, content: '' };
+            if (blockData.type === 'text') {
+                blockData.content = el.querySelector('.block-content').value;
+            } else {
+                const fileInput = el.querySelector('.block-media-file');
+                if (fileInput.files[0]) {
+                    formData.append(`block_media_file_${blockId}`, fileInput.files[0]);
+                }
+            }
+            dataToSave.contentBlocks.push(blockData);
         });
-    });
-    formData.append('data', JSON.stringify(dataToSave));
-    // --- End of Data Gathering Logic ---
-    
-    try {
-        const response = await fetch(getApiPath('about_handler.php'), {
-            method: 'POST',
-            body: formData
-        });
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i> Saved!';
-            await loadAboutPageData();
-        } else {
-             alert('Save failed: ' + result.message);
-             saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Failed';
-        }
-    } catch (error) {
-        alert('An error occurred: ' + error.message);
-        saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Error';
-    } finally {
-        setTimeout(() => {
-            saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Save All Changes';
-            saveBtn.disabled = false;
-        }, 2000);
-        confirmationModal.hide();
-    }
-}
 
-    function renderAll() { renderMainSection(); renderContentBlocks(); renderCards(); }
+        document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => {
+            dataToSave.cards.push({
+                id: el.dataset.id,
+                tabTitle: el.querySelector('.card-tab-title').value,
+                cardTitle: el.querySelector('.card-title').value,
+                content: el.querySelector('.card-content').value
+            });
+        });
+        formData.append('data', JSON.stringify(dataToSave));
+
+        try {
+            const response = await fetch(getApiPath('about_handler.php'), {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i> Saved!';
+                await loadAboutPageData();
+            } else {
+                alert('Save failed: ' + result.message);
+                saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Failed';
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+            saveBtn.innerHTML = '<i class="bi bi-x-lg me-2"></i> Error';
+        } finally {
+            setTimeout(() => {
+                saveBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Save All Changes';
+                saveBtn.disabled = false;
+            }, 2000);
+            confirmationModal.hide();
+        }
+    }
+
+    function renderAll() {
+        renderMainSection();
+        renderContentBlocks();
+        renderCards();
+    }
     
     function renderMainSection() {
         const { hero } = aboutPageData;
@@ -606,14 +615,15 @@ const getApiPath = (file) => `../api/${file}`;
         document.getElementById('about-hero-file').value = '';
         const previewContainer = document.getElementById('about-hero-preview');
         if (hero.media_path) {
-            // FIX: Use the correct relative path from the project root.
             const mediaUrl = `../${hero.media_path}?t=${new Date().getTime()}`; 
             previewContainer.innerHTML = hero.media_type === 'video' 
                 ? `<video src="${mediaUrl}" class="img-fluid" controls autoplay muted loop></video>` 
                 : `<img src="${mediaUrl}" class="img-fluid" alt="Hero Preview">`;
-        } else { previewContainer.innerHTML = `<p class="text-muted m-0">No media uploaded.</p>`; }
+        } else {
+            previewContainer.innerHTML = `<p class="text-muted m-0">No media uploaded.</p>`;
+        }
     }
-
+    
     function renderContentBlocks() {
         const container = document.getElementById('about-content-blocks-container'); container.innerHTML = '';
         (aboutPageData.contentBlocks || []).forEach(block => {
@@ -626,12 +636,13 @@ const getApiPath = (file) => `../api/${file}`;
                 blockEl.querySelector('.block-media-file').value = '';
                 const preview = blockEl.querySelector('.block-media-preview');
                 if (block.media_path) {
-                    // FIX: Use the correct relative path from the project root.
                     const mediaUrl = `../${block.media_path}?t=${new Date().getTime()}`;
                     preview.innerHTML = block.media_type === 'video' 
                         ? `<video src="${mediaUrl}" class="img-fluid" controls autoplay muted loop></video>` 
                         : `<img src="${mediaUrl}" class="img-fluid" alt="Media Preview">`;
-                } else { preview.innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; }
+                } else {
+                    preview.innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`;
+                }
             }
             container.appendChild(clone);
         });
@@ -648,18 +659,13 @@ const getApiPath = (file) => `../api/${file}`;
             container.appendChild(clone);
         });
     }
-    
-    // --- Re-implementing Preview Functionality ---
+
     function gatherCurrentDataForPreview() {
         const data = { hero: {}, contentBlocks: [], cards: [] };
-        
-        // Hero section
         data.hero.title = document.getElementById('about-hero-title').value;
         data.hero.description = document.getElementById('about-hero-description').value;
         const heroPreviewEl = document.getElementById('about-hero-preview').querySelector('img, video');
         data.hero.mediaHTML = heroPreviewEl ? heroPreviewEl.outerHTML : '';
-
-        // Content blocks
         document.querySelectorAll('#about-content-blocks-container .dynamic-about-block').forEach(el => {
             if (el.dataset.type === 'text') {
                 data.contentBlocks.push({ type: 'text', content: el.querySelector('.block-content').value });
@@ -668,8 +674,6 @@ const getApiPath = (file) => `../api/${file}`;
                 data.contentBlocks.push({ type: 'media', mediaHTML: mediaPreviewEl ? mediaPreviewEl.outerHTML : '' });
             }
         });
-
-        // Cards
         document.querySelectorAll('#about-cards-container .dynamic-about-card').forEach(el => {
             data.cards.push({
                 id: el.dataset.id,
@@ -678,89 +682,44 @@ const getApiPath = (file) => `../api/${file}`;
                 content: el.querySelector('.card-content').value
             });
         });
-
         return data;
     }
-    
-    previewBtn.addEventListener('click', () => {
-    const data = gatherCurrentDataForPreview();
-    
-    // --- DEBUGGING STEP ---
-    // Press F12 in your browser to open developer tools and click the "Console" tab.
-    // This will show you exactly what data the preview function is working with.
-    // Check if the `content` fields in the `cards` array have the text you entered.
-    console.log("Data for Preview:", data); 
-    
-    let previewHTML = '<div class="container py-3">';
 
-    // Main Section Preview
-    previewHTML += `
-        <div class="card-body p-4 p-lg-5">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-6">
-                    ${data.hero.mediaHTML}
-                </div>
-                <div class="col-lg-6">
-                    <h2 style="color: #023621; font-weight: 700;">${data.hero.title}</h2>
-                    <p class="fs-5 my-4" style="line-height: 1.7;">${data.hero.description.replace(/\n/g, '<br>')}</p>
-                    ${(data.contentBlocks.length > 0 || data.cards.length > 0) ? '<button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#aboutPreviewCollapsibleContent">Learn More</button>' : ''}
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Content Blocks & Cards Preview
-    previewHTML += '<div class="collapse show" id="aboutPreviewCollapsibleContent">';
-    data.contentBlocks.forEach(block => {
-        if (block.type === 'text') {
-            previewHTML += `<p class="p-4">${block.content.replace(/\n/g, '<br>')}</p>`;
-        } else if (block.mediaHTML) {
-            previewHTML += `<div class="my-4">${block.mediaHTML}</div>`;
-        }
-    });
-
-    if (data.cards.length > 0) {
-        previewHTML += '<hr class="my-5"><div class="p-4 rounded" style="background-color: #f0f0f0;">';
-        previewHTML += '<ul class="nav nav-tabs" role="tablist">';
-        data.cards.forEach((card, index) => {
-            const cardPreviewId = `preview-card-${index}`;
-            previewHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#pane-${cardPreviewId}" type="button">${card.tabTitle}</button></li>`;
-        });
-        previewHTML += '</ul>';
-        previewHTML += '<div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">';
-        data.cards.forEach((card, index) => {
-            const cardPreviewId = `preview-card-${index}`;
-            previewHTML += `<div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="pane-${cardPreviewId}"><h5>${card.cardTitle}</h5><p>${card.content.replace(/\n/g, '<br>')}</p></div>`;
-        });
-        previewHTML += '</div></div>';
-    }
-
-    previewHTML += '</div></div>';
-    previewModalBody.innerHTML = previewHTML;
-    previewModal.show();
-});
-    
-    document.getElementById('about-edit-nav').addEventListener('click', e => { if (e.target.tagName === 'A') { e.preventDefault(); document.querySelectorAll('#about-edit-nav .nav-link').forEach(link => link.classList.remove('active')); e.target.classList.add('active'); document.querySelectorAll('.about-edit-pane').forEach(pane => pane.style.display = 'none'); document.getElementById(e.target.dataset.target).style.display = 'block'; } });
-    
-    document.getElementById('add-text-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-text-block-template').content.cloneNode(true); clone.firstElementChild.dataset.id = newId; document.getElementById('about-content-blocks-container').appendChild(clone); });
-    document.getElementById('add-media-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-media-block-template').content.cloneNode(true); const blockEl = clone.firstElementChild; blockEl.dataset.id = newId; blockEl.querySelector('.block-media-preview').innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; document.getElementById('about-content-blocks-container').appendChild(clone); });
-    document.getElementById('add-about-card-btn').addEventListener('click', () => { const clone = document.getElementById('about-card-template').content.cloneNode(true); clone.firstElementChild.dataset.id = `new_${Date.now()}`; document.getElementById('about-cards-container').appendChild(clone); });
-
+    // --- Event Listeners ---
     document.getElementById('about').addEventListener('click', e => {
         const removeBtn = e.target.closest('.remove-about-block-btn, .remove-about-card-btn');
         if (removeBtn) { removeBtn.closest('.dynamic-about-block, .dynamic-about-card').remove(); }
-        
-        if(e.target.closest('#clear-hero-media-btn')) { document.getElementById('about-hero-preview').innerHTML = `<p class="text-muted m-0">Media cleared. Save to confirm.</p>`; document.getElementById('about-hero-file').value = ''; }
-        
+
+        // Set the flag to true ONLY when the user clicks 'Clear'
+        if (e.target.closest('#clear-hero-media-btn')) {
+            document.getElementById('about-hero-preview').innerHTML = `<p class="text-muted m-0">Media cleared. Save to confirm.</p>`;
+            document.getElementById('about-hero-file').value = '';
+            heroMediaWasCleared = true;
+        }
+
         const clearBlockBtn = e.target.closest('.clear-block-media-btn');
         if (clearBlockBtn) {
             const blockEl = clearBlockBtn.closest('.dynamic-about-block');
             blockEl.querySelector('.block-media-preview').innerHTML = `<p class="text-muted m-0">Media cleared. Save to confirm.</p>`;
             blockEl.querySelector('.block-media-file').value = '';
+            blockMediaState[blockEl.dataset.id] = 'cleared';
         }
     });
 
     document.getElementById('about').addEventListener('change', async e => {
+        const heroFileInput = e.target.closest('#about-hero-file');
+        const blockFileInput = e.target.closest('.block-media-file');
+        
+        // Reset the flag if the user uploads a new file, as they are replacing, not clearing.
+        if (heroFileInput && heroFileInput.files[0]) {
+            heroMediaWasCleared = false;
+        }
+        if (blockFileInput && blockFileInput.files[0]) {
+             const blockEl = blockFileInput.closest('.dynamic-about-block');
+             blockMediaState[blockEl.dataset.id] = 'new_file';
+        }
+        
+        // This logic just shows a temporary preview of the new file
         const fileInput = e.target.closest('#about-hero-file, .block-media-file');
         if(fileInput && fileInput.files[0]){
              const file = fileInput.files[0];
@@ -774,26 +733,59 @@ const getApiPath = (file) => `../api/${file}`;
              reader.readAsDataURL(file);
         }
     });
-    
-    saveBtn.addEventListener('click', () => {
-         confirmationModalTitle.textContent = "Confirm Save";
-         confirmationModalBody.textContent = 'Are you sure you want to save all changes to the About page? This will overwrite the current live version.';
-         confirmActionBtn.className = 'btn btn-success';
-         confirmActionBtn.onclick = saveAboutPageData;
-         confirmationModal.show();
+
+    previewBtn.addEventListener('click', () => {
+        const data = gatherCurrentDataForPreview();
+        let previewHTML = '<div class="container py-3">';
+        previewHTML += `
+            <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-6">
+                        ${data.hero.mediaHTML}
+                    </div>
+                    <div class="col-lg-6">
+                        <h2 style="color: #023621; font-weight: 700;">${data.hero.title}</h2>
+                        <p class="fs-5 my-4" style="line-height: 1.7;">${data.hero.description.replace(/\n/g, '<br>')}</p>
+                        ${(data.contentBlocks.length > 0 || data.cards.length > 0) ? '<button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#aboutPreviewCollapsibleContent">Learn More</button>' : ''}
+                    </div>
+                </div>
+            </div>`;
+        previewHTML += '<div class="collapse show" id="aboutPreviewCollapsibleContent">';
+        data.contentBlocks.forEach(block => {
+            if (block.type === 'text') {
+                previewHTML += `<p class="p-4">${block.content.replace(/\n/g, '<br>')}</p>`;
+            } else if (block.mediaHTML) {
+                previewHTML += `<div class="my-4">${block.mediaHTML}</div>`;
+            }
+        });
+        if (data.cards.length > 0) {
+            previewHTML += '<hr class="my-5"><div class="p-4 rounded" style="background-color: #f0f0f0;">';
+            previewHTML += '<ul class="nav nav-tabs" role="tablist">';
+            data.cards.forEach((card, index) => {
+                const cardPreviewId = `preview-card-${index}`;
+                previewHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#pane-${cardPreviewId}" type="button">${card.tabTitle}</button></li>`;
+            });
+            previewHTML += '</ul>';
+            previewHTML += '<div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">';
+            data.cards.forEach((card, index) => {
+                const cardPreviewId = `preview-card-${index}`;
+                previewHTML += `<div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="pane-${cardPreviewId}"><h5>${card.cardTitle}</h5><p>${card.content.replace(/\n/g, '<br>')}</p></div>`;
+            });
+            previewHTML += '</div></div>';
+        }
+        previewHTML += '</div></div>';
+        previewModalBody.innerHTML = previewHTML;
+        previewModal.show();
     });
 
-    cancelBtn.addEventListener('click', () => {
-        confirmationModalTitle.textContent = "Confirm Cancel";
-        confirmationModalBody.textContent = 'Are you sure you want to discard all unsaved changes? The editor will be reset to the last saved state.';
-        confirmActionBtn.className = 'btn btn-secondary';
-        confirmActionBtn.onclick = () => {
-            loadAboutPageData();
-            confirmationModal.hide();
-        };
-        confirmationModal.show();
-    });
+    document.getElementById('about-edit-nav').addEventListener('click', e => { if (e.target.tagName === 'A') { e.preventDefault(); document.querySelectorAll('#about-edit-nav .nav-link').forEach(link => link.classList.remove('active')); e.target.classList.add('active'); document.querySelectorAll('.about-edit-pane').forEach(pane => pane.style.display = 'none'); document.getElementById(e.target.dataset.target).style.display = 'block'; } });
+    document.getElementById('add-text-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-text-block-template').content.cloneNode(true); clone.firstElementChild.dataset.id = newId; document.getElementById('about-content-blocks-container').appendChild(clone); });
+    document.getElementById('add-media-block-btn').addEventListener('click', () => { const newId = `new_${Date.now()}`; const clone = document.getElementById('about-media-block-template').content.cloneNode(true); const blockEl = clone.firstElementChild; blockEl.dataset.id = newId; blockEl.querySelector('.block-media-preview').innerHTML = `<p class="text-muted m-0">Choose a file to preview.</p>`; document.getElementById('about-content-blocks-container').appendChild(clone); });
+    document.getElementById('add-about-card-btn').addEventListener('click', () => { const clone = document.getElementById('about-card-template').content.cloneNode(true); clone.firstElementChild.dataset.id = `new_${Date.now()}`; document.getElementById('about-cards-container').appendChild(clone); });
+    saveBtn.addEventListener('click', () => { confirmationModalTitle.textContent = "Confirm Save"; confirmationModalBody.textContent = 'Are you sure you want to save all changes to the About page? This will overwrite the current live version.'; confirmActionBtn.className = 'btn btn-success'; confirmActionBtn.onclick = saveAboutPageData; confirmationModal.show(); });
+    cancelBtn.addEventListener('click', () => { confirmationModalTitle.textContent = "Confirm Cancel"; confirmationModalBody.textContent = 'Are you sure you want to discard all unsaved changes? The editor will be reset to the last saved state.'; confirmActionBtn.className = 'btn btn-secondary'; confirmActionBtn.onclick = () => { loadAboutPageData(); confirmationModal.hide(); }; confirmationModal.show(); });
 
+    // Initial Load
     loadAboutPageData();
 })();
 

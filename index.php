@@ -1113,18 +1113,19 @@ $exams = [
             const learnMoreBtn = document.getElementById('learnMoreBtn');
             const expandedAboutWrapper = document.getElementById('expandedAboutWrapper');
 
+            // The button only exists if there is expandable content
             if (learnMoreBtn && expandedAboutWrapper) {
+                // Fired when the section starts to open
                 expandedAboutWrapper.addEventListener('show.bs.collapse', function () {
                     learnMoreBtn.textContent = 'See Less';
                 });
 
+                // Fired when the section starts to close
                 expandedAboutWrapper.addEventListener('hide.bs.collapse', function () {
                     learnMoreBtn.textContent = 'Learn More';
                 });
             }
         });
     </script>
-</body>
-</html>
 </body>
 </html>
