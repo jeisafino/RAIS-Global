@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 29, 2025 at 11:53 AM
+-- Generation Time: Sep 05, 2025 at 09:16 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,71 @@ SET time_zone = "+00:00";
 --
 -- Database: `raisdb`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `about_cards`
+--
+
+CREATE TABLE `about_cards` (
+  `id` int(11) NOT NULL,
+  `tab_title` varchar(255) NOT NULL,
+  `card_title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `sort_order` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `about_cards`
+--
+
+INSERT INTO `about_cards` (`id`, `tab_title`, `card_title`, `content`, `sort_order`) VALUES
+(1, 'one', 'mission', 'this is mission', 0),
+(2, 'two', 'vision', 'this is vision ', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `about_content_blocks`
+--
+
+CREATE TABLE `about_content_blocks` (
+  `id` int(11) NOT NULL,
+  `type` varchar(10) NOT NULL,
+  `content` text DEFAULT NULL,
+  `media_path` varchar(255) DEFAULT NULL,
+  `media_type` varchar(10) DEFAULT 'image',
+  `sort_order` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `about_content_blocks`
+--
+
+INSERT INTO `about_content_blocks` (`id`, `type`, `content`, `media_path`, `media_type`, `sort_order`) VALUES
+(1, 'text', 'to learn more about usafad;lj', NULL, 'image', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `about_main`
+--
+
+CREATE TABLE `about_main` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `media_path` varchar(255) DEFAULT NULL,
+  `media_type` varchar(10) DEFAULT 'image'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `about_main`
+--
+
+INSERT INTO `about_main` (`id`, `title`, `description`, `media_path`, `media_type`) VALUES
+(1, 'About Roman & Associates Immigration Services ', 'We are a licensed Canadian immigration firm based in Vancouver Island BC, providing expert advice on visas, permits, and sponsorships to help people achieve a brighter future in Canada.', 'uploads/about/1756978673_niagara22.mp4', 'video');
 
 -- --------------------------------------------------------
 
@@ -42,11 +107,12 @@ CREATE TABLE `chat_messages` (
 --
 
 INSERT INTO `chat_messages` (`id`, `sender_id`, `receiver_id`, `message`, `timestamp`, `is_read`, `is_archived_by_admin`) VALUES
-(2, 0, 4, 'hello', '2025-08-29 08:27:04', 0, 0),
-(3, 4, 0, 'how are you', '2025-08-29 08:27:15', 0, 0),
-(4, 2, 0, 'Hellow madlang people mabuhaay', '2025-08-29 08:28:11', 0, 0),
-(5, 2, 0, 'Hello po ate', '2025-08-29 09:38:28', 0, 0),
-(6, 0, 2, 'Hi po', '2025-08-29 09:38:37', 0, 0);
+(2, 0, 4, 'hello', '2025-08-29 00:27:04', 0, 0),
+(3, 4, 0, 'how are you', '2025-08-29 00:27:15', 0, 0),
+(4, 2, 0, 'Hellow madlang people mabuhaay', '2025-08-29 00:28:11', 0, 0),
+(5, 2, 0, 'Hello po ate', '2025-08-29 01:38:28', 0, 0),
+(6, 0, 2, 'Hi po', '2025-08-29 01:38:37', 0, 0),
+(0, 0, 4, 'fine', '2025-09-04 04:17:46', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -92,6 +158,72 @@ CREATE TABLE `flights` (
   `destination_city` varchar(255) NOT NULL,
   `booking_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hero_media`
+--
+
+CREATE TABLE `hero_media` (
+  `id` int(11) NOT NULL,
+  `media_name` varchar(255) NOT NULL,
+  `uploader` varchar(255) NOT NULL,
+  `upload_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `file_path` varchar(255) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hero_media`
+--
+
+INSERT INTO `hero_media` (`id`, `media_name`, `uploader`, `upload_date`, `file_path`, `is_active`) VALUES
+(1, 'Trial', 'me', '2025-09-04 12:30:50', 'uploads/hero/hero_68b915fa451cf3.70130649.mp4', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `hero_media_path` varchar(255) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`id`, `name`, `description`, `hero_media_path`, `file_path`, `created_at`) VALUES
+(7, 'Visa Permit', '', 'uploads/service/68b980189ef9d-Fvisit.jpg', 'services/visa-permit.php', '2025-09-04 12:03:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `service_sections`
+--
+
+CREATE TABLE `service_sections` (
+  `id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text DEFAULT NULL,
+  `media_path` varchar(255) DEFAULT NULL,
+  `display_order` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `service_sections`
+--
+
+INSERT INTO `service_sections` (`id`, `service_id`, `title`, `content`, `media_path`, `display_order`) VALUES
+(10, 7, 'About', 'asdfhvkclxcx', 'uploads/service/68b980189f98e-visa1.png', 0);
 
 -- --------------------------------------------------------
 
@@ -150,8 +282,8 @@ INSERT INTO `users` (`id`, `firstName`, `lastName`, `address`, `phone`, `email`,
 (1, 'John Paul', 'Godoy', 'Darasa, Tanauan City Batangas', '09359306521', 'godoyjp443@gmail.com', '$2y$10$LxDGp8XROe201KZCttcLSOUlAqajOp5/TqhlZk89ReZwLbMjpzFf.', 'uploads/chae1.jpg', NULL, '2005-02-04', 'https://www.facebook.com/chaepi04', '', '', 1, 1, 0, 0, 0, 0, 1, 'client', 'Inactive', NULL, NULL),
 (2, 'Kim', 'Chaewon', 'Darasa, Tanauan City Batangas', '09359306521', 'kimchae1chi@gmail.com', '$2y$10$YzarQtmz8o0nxRxl5vASierqYIj5.pGSSZ1yNhkgHQ/2gnW4N9vqC', 'uploads/68aea7cdd0f67-cha.jpg', NULL, '2005-08-18', 'https://www.facebook.com/chaepi04', '', 'godoyjp443@gmail.com', 1, 0, 0, 1, 1, 1, 1, 'client', 'Inactive', NULL, '2025-08-29 17:52:53'),
 (3, 'Kim', 'Yooyeon', 'Darasa', '09359306521', 'jp04@gmail.com', '$2y$10$hCC3xNl8HBw99lN/6gi5Z.etwr0OC79hXywGdIC5nrq2BfR6m3NQm', 'uploads/68ae93c2840bb-chaewon.jpg', NULL, '2005-02-04', 'https://www.facebook.com/chaepi04', '', '', 1, 1, 0, 1, 1, 1, 1, 'client', 'Inactive', NULL, NULL),
-(4, 'Jisoo', 'Hong', 'San Pedro, Santo Tomas, Batangas', '09618225084', 'hongjisoo@gmail.com', '$2y$10$JdXfhvws62So9kLTaB5Q7uyznoRFIbsVKdawmKKGea44eZZlTMUGu', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 1, 'client', 'Inactive', NULL, '2025-08-29 16:27:43'),
-(5, 'Matthew', 'Hernandez', 'San Pedro, Santo Tomas, Batangas', '09067664653', 'matthewehernandez0712@gmail.com', '$2y$10$nhydeg12pimZzlCLtyeOkeV.fUTJc2DjYZE4DOQ6PAIccodCxmDnq', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 1, 'Super Admin', 'Inactive', NULL, '2025-08-29 14:17:45');
+(4, 'Jisoo', 'Hong', 'San Pedro, Santo Tomas, Batangas', '09618225084', 'hongjisoo@gmail.com', '$2y$10$JdXfhvws62So9kLTaB5Q7uyznoRFIbsVKdawmKKGea44eZZlTMUGu', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 1, 'client', 'Inactive', NULL, '2025-09-04 12:30:59'),
+(5, 'Matthew', 'Hernandez', 'San Pedro, Santo Tomas, Batangas', '09067664653', 'matthewehernandez0712@gmail.com', '$2y$10$nhydeg12pimZzlCLtyeOkeV.fUTJc2DjYZE4DOQ6PAIccodCxmDnq', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 1, 'Super Admin', 'Inactive', NULL, '2025-09-04 17:03:35');
 
 -- --------------------------------------------------------
 
@@ -173,166 +305,116 @@ CREATE TABLE `user_documents` (
 --
 
 INSERT INTO `user_documents` (`id`, `user_id`, `file_name`, `file_path`, `upload_date`, `status`) VALUES
-(1, 2, 'cha.jpg', '../uploads/68ae9150f3ca9-cha.jpg', '2025-08-27 05:02:09', 'pending'),
-(2, 3, 'afs.webp', '../uploads/68ae96a5e3c80-afs.webp', '2025-08-27 05:24:53', 'pending'),
-(3, 3, 'chae.webp', '../uploads/68ae96a5e57d6-chae.webp', '2025-08-27 05:24:53', 'pending');
+(1, 2, 'cha.jpg', '../uploads/68ae9150f3ca9-cha.jpg', '2025-08-26 21:02:09', 'pending'),
+(2, 3, 'afs.webp', '../uploads/68ae96a5e3c80-afs.webp', '2025-08-26 21:24:53', 'pending'),
+(3, 3, 'chae.webp', '../uploads/68ae96a5e57d6-chae.webp', '2025-08-26 21:24:53', 'pending');
 
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `v_chat_with_names`
--- (See below for the actual view)
+-- Table structure for table `v_chat_with_names`
 --
+
 CREATE TABLE `v_chat_with_names` (
-`message_id` int(11)
-,`message` text
-,`timestamp` timestamp
-,`sender_id` int(11)
-,`sender_firstName` varchar(50)
-,`sender_lastName` varchar(50)
-,`receiver_id` int(11)
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `v_chat_with_names`
---
-DROP TABLE IF EXISTS `v_chat_with_names`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_chat_with_names`  AS SELECT `cm`.`id` AS `message_id`, `cm`.`message` AS `message`, `cm`.`timestamp` AS `timestamp`, `cm`.`sender_id` AS `sender_id`, `u`.`firstName` AS `sender_firstName`, `u`.`lastName` AS `sender_lastName`, `cm`.`receiver_id` AS `receiver_id` FROM (`chat_messages` `cm` left join `users` `u` on(`cm`.`sender_id` = `u`.`id`)) ;
+  `message_id` int(11) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `sender_id` int(11) DEFAULT NULL,
+  `sender_firstName` varchar(50) DEFAULT NULL,
+  `sender_lastName` varchar(50) DEFAULT NULL,
+  `receiver_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `chat_messages`
+-- Indexes for table `about_cards`
 --
-ALTER TABLE `chat_messages`
+ALTER TABLE `about_cards`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `consultations`
+-- Indexes for table `about_content_blocks`
 --
-ALTER TABLE `consultations`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+ALTER TABLE `about_content_blocks`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `documents`
+-- Indexes for table `about_main`
 --
-ALTER TABLE `documents`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+ALTER TABLE `about_main`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `flights`
+-- Indexes for table `hero_media`
 --
-ALTER TABLE `flights`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+ALTER TABLE `hero_media`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `statement_of_account`
+-- Indexes for table `services`
 --
-ALTER TABLE `statement_of_account`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `users`
+-- Indexes for table `service_sections`
 --
-ALTER TABLE `users`
+ALTER TABLE `service_sections`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- Indexes for table `user_documents`
---
-ALTER TABLE `user_documents`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `service_id` (`service_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `chat_messages`
+-- AUTO_INCREMENT for table `about_cards`
 --
-ALTER TABLE `chat_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `about_cards`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `consultations`
+-- AUTO_INCREMENT for table `about_content_blocks`
 --
-ALTER TABLE `consultations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `about_content_blocks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `documents`
+-- AUTO_INCREMENT for table `about_main`
 --
-ALTER TABLE `documents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `about_main`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `flights`
+-- AUTO_INCREMENT for table `hero_media`
 --
-ALTER TABLE `flights`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `hero_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `statement_of_account`
+-- AUTO_INCREMENT for table `services`
 --
-ALTER TABLE `statement_of_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `services`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT for table `service_sections`
 --
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `user_documents`
---
-ALTER TABLE `user_documents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `service_sections`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `consultations`
+-- Constraints for table `service_sections`
 --
-ALTER TABLE `consultations`
-  ADD CONSTRAINT `consultations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `documents`
---
-ALTER TABLE `documents`
-  ADD CONSTRAINT `documents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `flights`
---
-ALTER TABLE `flights`
-  ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `statement_of_account`
---
-ALTER TABLE `statement_of_account`
-  ADD CONSTRAINT `statement_of_account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `user_documents`
---
-ALTER TABLE `user_documents`
-  ADD CONSTRAINT `user_documents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `service_sections`
+  ADD CONSTRAINT `service_sections_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -2,23 +2,20 @@
 // api/services_handler.php
 
 header('Content-Type: application/json');
-require_once '../db_connect.php';
+require_once '../db_connect.php'; // This file should create the $conn variable
 
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // --- Helper Functions ---
-// In /api/services_handler.php
-
-function handleFileUpload($file, $uploadDir = '../uploads/service/') { // THIS PATH IS UPDATED
+function handleFileUpload($file, $uploadDir = '../uploads/service/') {
     if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
         return null;
     }
     $fileName = uniqid() . '-' . basename($file['name']);
     $targetPath = $uploadDir . $fileName;
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-        // This path is also updated to match
-        return 'uploads/service/' . $fileName; 
+        return 'uploads/service/' . $fileName;
     }
     return null;
 }
@@ -28,15 +25,12 @@ function generateServiceFile($serviceId, $serviceName, $conn) {
     if (!file_exists($templatePath)) {
         return [false, 'Service template file not found.'];
     }
-
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $serviceName)));
     $newFileName = $slug . '.php';
     $newFilePath = '../services/' . $newFileName;
     $publicPath = 'services/' . $newFileName;
-
     $templateContent = file_get_contents($templatePath);
     $newContent = str_replace('SERVICE_ID_PLACEHOLDER', $serviceId, $templateContent);
-
     if (file_put_contents($newFilePath, $newContent)) {
         $stmt = $conn->prepare("UPDATE services SET file_path = ? WHERE id = ?");
         $stmt->bind_param("si", $publicPath, $serviceId);
@@ -65,73 +59,108 @@ switch ($action) {
         break;
 
     case 'add':
-    case 'edit':
-        $serviceName = $_POST['name'] ?? '';
-        $serviceDesc = $_POST['description'] ?? '';
-         if (empty($serviceName)) {
-        // If the service name is empty, stop and send an error.
+case 'edit':
+    $serviceName = trim($_POST['name'] ?? '');
+    $serviceDesc = $_POST['description'] ?? '';
+    $serviceId = ($action === 'edit') ? ($_POST['id'] ?? 0) : 0;
+
+    $sectionTitles = $_POST['section_title'] ?? [];
+    $sectionDescriptions = $_POST['section_description'] ?? [];
+    $existingMediaPaths = $_POST['existing_media_path'] ?? [];
+    
+    if (empty($serviceName)) {
         $response['message'] = 'Service Name cannot be empty.';
-        break; 
+        break;
     }
-        $sectionsData = json_decode($_POST['sections'] ?? '[]', true);
-        $serviceId = ($action === 'edit') ? ($_POST['id'] ?? 0) : 0;
 
-        $conn->begin_transaction();
+    $conn->begin_transaction();
 
-        try {
-            // Handle Hero Media
-            $heroPath = $_POST['existing_hero_path'] ?? null;
-            if (isset($_FILES['hero_media'])) {
+    try {
+        $heroPath = null;
+        if ($action === 'edit') {
+            $stmt = $conn->prepare("SELECT description, hero_media_path FROM services WHERE id = ?");
+            $stmt->bind_param("i", $serviceId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $currentService = $result->fetch_assoc();
+
+            if (empty($serviceDesc) && isset($currentService['description'])) {
+                $serviceDesc = $currentService['description'];
+            }
+
+            if (isset($_FILES['hero_media']) && $_FILES['hero_media']['error'] == UPLOAD_ERR_OK) {
+                $heroPath = handleFileUpload($_FILES['hero_media']);
+            } else {
+                $heroPath = $currentService['hero_media_path'] ?? null;
+            }
+        } else { // 'add' action
+            if (isset($_FILES['hero_media']) && $_FILES['hero_media']['error'] == UPLOAD_ERR_OK) {
                 $heroPath = handleFileUpload($_FILES['hero_media']);
             }
-
-            // Insert or Update Service
-            if ($action === 'add') {
-                $stmt = $conn->prepare("INSERT INTO services (name, description, hero_media_path) VALUES (?, ?, ?)");
-                $stmt->bind_param("sss", $serviceName, $serviceDesc, $heroPath);
-                $stmt->execute();
-                $serviceId = $conn->insert_id;
-            } else {
-                $stmt = $conn->prepare("UPDATE services SET name = ?, description = ?, hero_media_path = ? WHERE id = ?");
-                $stmt->bind_param("sssi", $serviceName, $serviceDesc, $heroPath, $serviceId);
-                $stmt->execute();
-                // Clear old sections
-                $conn->query("DELETE FROM service_sections WHERE service_id = $serviceId");
-            }
-
-            // Insert Sections
-            $stmt = $conn->prepare("INSERT INTO service_sections (service_id, title, content, media_path, display_order) VALUES (?, ?, ?, ?, ?)");
-            foreach ($sectionsData as $index => $section) {
-                $sectionPath = $section['existing_media_path'] ?? null;
-                if (isset($_FILES["section_media_$index"])) {
-                    $sectionPath = handleFileUpload($_FILES["section_media_$index"]);
-                }
-                $stmt->bind_param("isssi", $serviceId, $section['title'], $section['description'], $sectionPath, $index);
-                $stmt->execute();
-            }
-
-            // Generate the .php file
-            list($fileGenerated, $message) = generateServiceFile($serviceId, $serviceName, $conn);
-            if (!$fileGenerated) throw new Exception($message);
-            
-            $conn->commit();
-            $response = ['status' => 'success', 'message' => "Service " . ($action === 'add' ? "added" : "updated") . " successfully."];
-        } catch (Exception $e) {
-            $conn->rollback();
-            $response['message'] = 'Database transaction failed: ' . $e->getMessage();
         }
-        break;
+
+        if ($action === 'add') {
+            $stmt = $conn->prepare("INSERT INTO services (name, description, hero_media_path) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $serviceName, $serviceDesc, $heroPath);
+            $stmt->execute();
+            $serviceId = $conn->insert_id;
+        } else { // 'edit' action
+            $stmt = $conn->prepare("UPDATE services SET name = ?, description = ?, hero_media_path = ? WHERE id = ?");
+            $stmt->bind_param("sssi", $serviceName, $serviceDesc, $heroPath, $serviceId);
+            $stmt->execute();
+            
+            $stmt = $conn->prepare("DELETE FROM service_sections WHERE service_id = ?");
+            $stmt->bind_param("i", $serviceId);
+            $stmt->execute();
+        }
+
+        $stmt = $conn->prepare("INSERT INTO service_sections (service_id, title, content, media_path, display_order) VALUES (?, ?, ?, ?, ?)");
+        foreach ($sectionTitles as $index => $title) {
+            $content = $sectionDescriptions[$index] ?? '';
+            $sectionPath = null;
+            
+            // Handle array of uploaded section files
+            if (isset($_FILES['section_media']) && $_FILES['section_media']['error'][$index] == UPLOAD_ERR_OK) {
+                $file = [
+                    'name' => $_FILES['section_media']['name'][$index],
+                    'type' => $_FILES['section_media']['type'][$index],
+                    'tmp_name' => $_FILES['section_media']['tmp_name'][$index],
+                    'error' => $_FILES['section_media']['error'][$index],
+                    'size' => $_FILES['section_media']['size'][$index]
+                ];
+                $sectionPath = handleFileUpload($file);
+            } else if ($action === 'edit') {
+                 // If no new file, keep the old one
+                $sectionPath = $existingMediaPaths[$index] ?? null;
+            }
+
+            $stmt->bind_param("isssi", $serviceId, $title, $content, $sectionPath, $index);
+            $stmt->execute();
+        }
+        
+        list($fileGenerated, $message) = generateServiceFile($serviceId, $serviceName, $conn);
+        if (!$fileGenerated) throw new Exception($message);
+        
+        $conn->commit();
+        $response = ['status' => 'success', 'message' => "Service " . ($action === 'add' ? "added" : "updated") . " successfully."];
+    } catch (Exception $e) {
+        $conn->rollback();
+        $response['message'] = 'Transaction failed: ' . $e->getMessage();
+    }
+    break;
 
     case 'delete':
         $serviceId = $_POST['id'] ?? 0;
-        // You might want to also delete files from the server here
+        $fileSlug = $_POST['file_slug'] ?? '';
+
         $stmt = $conn->prepare("DELETE FROM services WHERE id = ?");
         $stmt->bind_param("i", $serviceId);
         if ($stmt->execute()) {
-            // Also delete the generated file
-            $filePath = '../services/' . $_POST['file_slug'] . '.php';
-            if (file_exists($filePath)) {
-                unlink($filePath);
+            if (!empty($fileSlug)) {
+                $filePath = '../services/' . $fileSlug . '.php';
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
             }
             $response = ['status' => 'success', 'message' => 'Service deleted.'];
         } else {
@@ -145,5 +174,4 @@ switch ($action) {
 }
 
 echo json_encode($response);
-$conn->close();
 ?>
