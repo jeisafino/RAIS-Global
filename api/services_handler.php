@@ -113,6 +113,16 @@ switch ($action) {
             $stmt->bind_param("i", $serviceId);
             $stmt->execute();
 
+            // *** START: NEW CODE TO HANDLE DELETION ***
+            // Delete files for any media that was explicitly cleared on the frontend
+            $clearedSectionPaths = $_POST['cleared_section_paths'] ?? [];
+            foreach ($clearedSectionPaths as $pathToDelete) {
+                if (!empty($pathToDelete) && file_exists('../' . $pathToDelete)) {
+                    unlink('../' . $pathToDelete);
+                }
+            }
+            // *** END: NEW CODE TO HANDLE DELETION ***
+
             $sectionTitles = $_POST['section_title'] ?? [];
             $sectionDescriptions = $_POST['section_description'] ?? [];
             $existingSectionPaths = $_POST['existing_section_paths'] ?? [];
@@ -139,7 +149,7 @@ switch ($action) {
             $response['message'] = 'Edit transaction failed: ' . $e->getMessage();
         }
         break;
-
+        
     case 'delete':
         $serviceId = $_POST['id'] ?? 0;
         $fileSlug = $_POST['file_slug'] ?? '';

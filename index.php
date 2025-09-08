@@ -57,12 +57,19 @@ if ($services_result && $services_result->num_rows > 0) {
 }
 
 // Blogs/Map Data
-$locations = [
-    ["title" => "Student Life at La Salle Lipa", "summary" => "Experience education and values at La Salle.", "coordinates" => [13.9412, 121.1621], "url" => "blog/la-salle.php"],
-    ["title" => "Tech & Training at STI Lipa", "summary" => "A look into STI Lipa’s modern curriculum.", "coordinates" => [13.9416, 121.1628], "url" => "blog/sti-lipa.php"],
-    ["title" => "IELTS Prep at 9.0 Niner Calamba", "summary" => "Reviewing English with proven techniques.", "coordinates" => [14.2133, 121.1658], "url" => "blog/calamba.php"],
-    ["title" => "Learning English in Tacloban", "summary" => "ELA helps students master the language.", "coordinates" => [11.2410, 125.0016], "url" => "blog/tacloban.php"]
-];
+$locations = [];
+$map_query = "SELECT map_title, map_summary, map_latitude, map_longitude, file_path FROM blogs WHERE map_latitude IS NOT NULL AND map_longitude IS NOT NULL";
+$map_result = $conn->query($map_query);
+if ($map_result && $map_result->num_rows > 0) {
+    while ($row = $map_result->fetch_assoc()) {
+        $locations[] = [
+            "title" => $row['map_title'],
+            "summary" => $row['map_summary'],
+            "coordinates" => [(float)$row['map_latitude'], (float)$row['map_longitude']],
+            "url" => $row['file_path']
+        ];
+    }
+}
 
 // Partners Data
 $partners = [

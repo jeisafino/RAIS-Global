@@ -1,89 +1,34 @@
 <?php
 // Page title
 $page_title = "RAIS Blogs & Events";
+require_once 'db_connect.php';
 
 // Centralized data for blogs and map events
-$events = [
-    [
-        "id" => "event1",
-        "title" => "RCIS AT THE IELTS MINI FAIR",
-        "author" => "Imnil Benmarc A. Jolo",
-        "image" => "blog/img/minifair2.png",
-        "alt" => "IELTS Mini Fair",
-        "url" => "blog/mini-fair.php",
-        "mapInfo" => [
-            "title" => "IELTS Prep at 9.0 Niner Calamba",
-            "summary" => "Reviewing English with proven techniques.",
-            "coordinates" => [14.2133, 121.1658]
-        ]
-    ],
-    [
-        "id" => "event2",
-        "title" => "THE VISITATION: BRIDGING ACADEMIA AND INDUSTRY",
-        "author" => "Imnil Benmarc A. Jolo",
-        "image" => "blog/img/lasalle.png",
-        "alt" => "Visitation from academic partners",
-        "url" => "blog/visitation.php",
-        "mapInfo" => [
-            "title" => "Student Life at La Salle Lipa",
-            "summary" => "Experience education and values at La Salle.",
-            "coordinates" => [13.9412, 121.1621]
-        ]
-    ],
-    [
-        "id" => "event3",
-        "title" => "A LONG ROAD FOR “A CALLING TO CANADA”",
-        "author" => "Imnil Benmarc A. Jolo",
-        "image" => "blog/img/canada.png",
-        "alt" => "A Calling to Canada event",
-        "url" => "blog/canada.php",
-        "mapInfo" => null // No specific map point for this one
-    ],
-    [
-        "id" => "event4",
-        "title" => "CONNECTING WITH STUDENTS: LAGUNA ALL THE WAY",
-        "author" => "Imnil Benmarc A. Jolo",
-        "image" => "blog/img/calamba.png",
-        "alt" => "Laguna event",
-        "url" => "blog/calamba.php",
-        "mapInfo" => null // You can add map info if needed
-    ],
-    [
-        "id" => "event5",
-        "title" => "STI LIPA & RAIS: BRIDGING EDUCATION AND INDUSTRY",
-        "author" => "Published on: February 28, 2025",
-        "image" => "blog/img/Sti.png",
-        "alt" => "STI Lipa event",
-        "url" => "blog/sti-lipa.php",
-        "mapInfo" => [
-            "title" => "Tech & Training at STI Lipa",
-            "summary" => "A look into STI Lipa’s modern curriculum.",
-            "coordinates" => [13.9416, 121.1628]
-        ]
-    ],
-    [
-        "id" => "event6",
-        "title" => "MAUPAY NGA ADLAW LEYTE",
-        "author" => "Imnil Benmarc A. Jolo",
-        "image" => "blog/img/tacloban.png",
-        "alt" => "Leyte event",
-        "url" => "blog/tacloban.php",
-        "mapInfo" => [
-            "title" => "Learning English in Tacloban",
-            "summary" => "ELA helps students master the language.",
-            "coordinates" => [11.2410, 125.0016]
-        ]
-    ],
-    [
-        "id" => "event7",
-        "title" => "DLSL LIPA & RAIS: FOSTERING FUTURE LEADERS",
-        "author" => "Published on: March 27, 2025",
-        "image" => "blog/img/dlsl.jpg",
-        "alt" => "DLSL Lipa event",
-        "url" => "blog/la-salle.php",
-        "mapInfo" => null // Already covered by event2's map point
-    ]
-];
+$events = [];
+$blogs_result = $conn->query("SELECT id, title, author, hero_media_path, file_path, map_title, map_summary, map_latitude, map_longitude FROM blogs ORDER BY publish_date DESC");
+
+if ($blogs_result && $blogs_result->num_rows > 0) {
+    while($row = $blogs_result->fetch_assoc()) {
+        $event_item = [
+            "id" => "event" . $row['id'], // Create a dynamic ID
+            "title" => $row['title'],
+            "author" => $row['author'],
+            "image" => $row['hero_media_path'],
+            "alt" => $row['title'],
+            "url" => $row['file_path'],
+            "mapInfo" => null
+        ];
+        // Add map info if it exists
+        if (!empty($row['map_latitude']) && !empty($row['map_longitude'])) {
+            $event_item['mapInfo'] = [
+                "title" => $row['map_title'],
+                "summary" => $row['map_summary'],
+                "coordinates" => [(float)$row['map_latitude'], (float)$row['map_longitude']]
+            ];
+        }
+        $events[] = $event_item;
+    }
+}
 
 $map_locations = [];
 foreach ($events as $event) {

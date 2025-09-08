@@ -242,6 +242,7 @@ $footerData = [
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
     <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
+    <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>
     <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><nav class="nav nav-tabs mb-3"><a class="nav-link active" href="#" data-pane="exam-pane-info">Exam Info</a><a class="nav-link" href="#" data-pane="exam-pane-about">About</a><a class="nav-link" href="#" data-pane="exam-pane-format">Test Format</a><a class="nav-link" href="#" data-pane="exam-pane-cards">Info Cards</a><a class="nav-link" href="#" data-pane="exam-pane-faqs">FAQs</a></nav><div id="exam-pane-info" class="exam-pane active"><div class="p-3 border rounded"><h6><i class="bi bi-card-heading me-2"></i>Exam Info & Hero Section</h6><div class="mb-3"><label for="exam-name" class="form-label">Exam Name (e.g., IELTS)</label><input type="text" class="form-control" id="exam-name" required></div><div class="mb-3"><label for="exam-hero-media" class="form-label">Hero Section Media (Image or Video)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*,video/*"></div></div></div><div id="exam-pane-about" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-info-circle me-2"></i>About Section</h6><div class="mb-3"><label for="exam-about-content" class="form-label">About Content</label><textarea class="form-control" id="exam-about-content" rows="4"></textarea></div><div class="mb-3"><label for="exam-about-media" class="form-label">Optional Media for About Section</label><input type="file" class="form-control" id="exam-about-media" accept="image/*,video/*"></div></div></div><div id="exam-pane-format" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-card-checklist me-2"></i>Test Format</h6><p class="text-muted small">Add items that appear in the test format section.</p><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div></div><div id="exam-pane-cards" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-grid-1x2 me-2"></i>Informational Cards</h6><p class="text-muted small">Add cards for sections like "How does it work?" or "Why choose us?".</p><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add Card</button></div></div><div id="exam-pane-faqs" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-patch-question me-2"></i>Frequently Asked Questions</h6><p class="text-muted small">Add question and answer pairs.</p><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div><div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body" style="background-color: #f8f9fa;"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div><template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon Class (e.g., 'bi bi-headphones')</label><input type="text" class="form-control form-control-sm format-icon"></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template><template id="exam-infocard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Info Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm infocard-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm infocard-description" rows="3" required></textarea></div></div></template><template id="exam-faq-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">FAQ Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Question</label><input type="text" class="form-control form-control-sm faq-question" required></div><div><label class="form-label small">Answer</label><textarea class="form-control form-control-sm faq-answer" rows="3" required></textarea></div></div></template>    <div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body" style="background-color: #f8f9fa;"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="footer-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="footer-modal-title">Add Social Media Link</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="footer-form" novalidate><div class="mb-3"><label for="footer-label" class="form-label">Label</label><input type="text" class="form-control" id="footer-label" placeholder="e.g., Facebook" required></div><div class="mb-3"><label for="footer-description" class="form-label">Description / Link</label><input type="text" class="form-control" id="footer-description" placeholder="e.g., https://facebook.com/your-page" required></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-footer-item-btn">Save Item</button></div></div></div></div>
     
@@ -879,32 +880,57 @@ $footerData = [
     }
 
     function createSectionElement(data = {}) {
-        const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
-        newSection.dataset.existingMediaPath = data.media_path || '';
+    const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
+    newSection.dataset.existingMediaPath = data.media_path || '';
 
-        newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
-            newSection.remove();
-            updateSectionNumbers();
-        });
+    newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
+        newSection.remove();
+        updateSectionNumbers();
+    });
 
-        if (data.title) newSection.querySelector('.section-title').value = data.title;
-        if (data.content) newSection.querySelector('.section-description').value = data.content;
+    if (data.title) newSection.querySelector('.section-title').value = data.title;
+    if (data.content) newSection.querySelector('.section-description').value = data.content;
 
-        // **THE FIX FOR SECTION MEDIA DISPLAY**: Create a preview if media exists.
-        if (data.media_path) {
-            const mediaPreviewContainer = document.createElement('div');
-            mediaPreviewContainer.className = 'mt-2 border rounded p-2';
-            const mediaUrl = `../${data.media_path}`;
-            const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
-            mediaPreviewContainer.innerHTML = `
-                <p class="small text-muted mb-1">Current Section Media:</p>
-                ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
-            `;
-            // Insert the preview after the file input
-            newSection.querySelector('.section-media').after(mediaPreviewContainer);
-        }
-        return newSection;
+    // *** START: MODIFIED SECTION ***
+    if (data.media_path) {
+        const mediaPreviewContainer = document.createElement('div');
+        mediaPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container';
+        const mediaUrl = `../${data.media_path}`;
+
+        // Add the "Clear Media" button
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'btn btn-sm btn-outline-danger float-end';
+        clearBtn.innerHTML = '<i class="bi bi-trash"></i> Clear';
+        clearBtn.onclick = () => {
+            // Create a hidden input to tell the backend which file to delete
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'cleared_section_paths[]';
+            hiddenInput.value = data.media_path;
+            serviceForm.appendChild(hiddenInput);
+
+            // Clear the existing path data and remove the preview
+            newSection.dataset.existingMediaPath = '';
+            mediaPreviewContainer.remove();
+        };
+
+        mediaPreviewContainer.innerHTML = `<p class="small text-muted mb-1 d-flex justify-content-between align-items-center">Current Media:</p>`;
+        mediaPreviewContainer.querySelector('p').appendChild(clearBtn); // Append button to the paragraph
+
+        // Add the image/video preview
+        const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+        const mediaElement = document.createElement(isVideo ? 'video' : 'img');
+        mediaElement.src = mediaUrl;
+        mediaElement.className = 'img-fluid rounded mt-2';
+        if(isVideo) mediaElement.controls = true;
+        mediaPreviewContainer.appendChild(mediaElement);
+
+        newSection.querySelector('.section-media').after(mediaPreviewContainer);
     }
+    // *** END: MODIFIED SECTION ***
+    return newSection;
+}
 
     function updateSectionNumbers() {
         dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((section, index) => {
@@ -915,51 +941,50 @@ $footerData = [
     }
 
     function resetAndPrepareModal(mode = 'add', service = null) {
-        serviceForm.reset();
-        dynamicSectionsContainer.innerHTML = '';
-        serviceForm.classList.remove('was-validated');
-        
-        // **THE FIX**: Clear any old, dynamically added preview containers
-        const existingPreviews = serviceForm.querySelectorAll('.media-preview-container');
-        existingPreviews.forEach(preview => preview.remove());
-        
-        const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
-        existingHiddenInputs.forEach(input => input.remove());
-        
-        document.getElementById('service-hero-media').name = 'hero_media';
+    serviceForm.reset();
+    dynamicSectionsContainer.innerHTML = '';
+    serviceForm.classList.remove('was-validated');
 
-        if (mode === 'add') {
-            serviceModalTitle.textContent = 'Add New Service';
-            saveServiceBtn.textContent = 'Add Service';
-            saveServiceBtn.dataset.mode = 'add';
-            saveServiceBtn.dataset.id = '';
-        } else if (mode === 'edit' && service) {
-            serviceModalTitle.textContent = `Edit Service: ${service.name}`;
-            saveServiceBtn.textContent = 'Update Service';
-            saveServiceBtn.dataset.mode = 'edit';
-            saveServiceBtn.dataset.id = service.id;
-            document.getElementById('service-name').value = service.name;
-            document.getElementById('service-description').value = service.description;
+    const existingPreviews = serviceForm.querySelectorAll('.media-preview-container');
+    existingPreviews.forEach(preview => preview.remove());
 
-            // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
-            if (service.hero_media_path) {
-                const heroPreviewContainer = document.createElement('div');
-                heroPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container'; // Added class for easy removal
-                const mediaUrl = `../${service.hero_media_path}`;
-                const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
-                heroPreviewContainer.innerHTML = `
-                    <p class="small text-muted mb-1">Current Hero Media:</p>
-                    ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
-                `;
-                document.getElementById('service-hero-media').after(heroPreviewContainer);
-            }
+    // *** MODIFIED LINE: Also remove the hidden inputs for cleared paths ***
+    const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"], input[name^="cleared_section_paths"]');
+    existingHiddenInputs.forEach(input => input.remove());
 
-            (service.sections || []).forEach(sectionData => {
-                dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
-            });
-            updateSectionNumbers();
+    document.getElementById('service-hero-media').name = 'hero_media';
+
+    if (mode === 'add') {
+        serviceModalTitle.textContent = 'Add New Service';
+        saveServiceBtn.textContent = 'Add Service';
+        saveServiceBtn.dataset.mode = 'add';
+        saveServiceBtn.dataset.id = '';
+    } else if (mode === 'edit' && service) {
+        serviceModalTitle.textContent = `Edit Service: ${service.name}`;
+        saveServiceBtn.textContent = 'Update Service';
+        saveServiceBtn.dataset.mode = 'edit';
+        saveServiceBtn.dataset.id = service.id;
+        document.getElementById('service-name').value = service.name;
+        document.getElementById('service-description').value = service.description;
+
+        if (service.hero_media_path) {
+            const heroPreviewContainer = document.createElement('div');
+            heroPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container';
+            const mediaUrl = `../${service.hero_media_path}`;
+            const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+            heroPreviewContainer.innerHTML = `
+                <p class="small text-muted mb-1">Current Hero Media:</p>
+                ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
+            `;
+            document.getElementById('service-hero-media').after(heroPreviewContainer);
         }
+
+        (service.sections || []).forEach(sectionData => {
+            dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
+        });
+        updateSectionNumbers();
     }
+}
     
     // --- Event Listeners ---
     serviceCardsContainer.addEventListener('click', (e) => {
@@ -1080,9 +1105,8 @@ saveServiceBtn.addEventListener('click', async () => {
     
     // --- START: SCRIPT FOR BLOGS PAGE MANAGEMENT ---
 (function() {
+    let blogsData = [];
     let selectedBlogId = null;
-    let blogsData = loadBlogsData();
-    let nextBlogId = (blogsData.length > 0 ? Math.max(...blogsData.map(b => b.id)) : 0) + 1;
 
     const blogCardsContainer = document.getElementById('blog-cards-container');
     const addBlogBtn = document.getElementById('add-blog-btn');
@@ -1090,21 +1114,28 @@ saveServiceBtn.addEventListener('click', async () => {
     const deleteBlogBtn = document.getElementById('delete-blog-btn');
     const previewBlogBtn = document.getElementById('preview-blog-btn');
     const blogModal = new bootstrap.Modal(document.getElementById('blog-modal'));
-    const blogPreviewModal = new bootstrap.Modal(document.getElementById('blog-preview-modal'));
     const blogModalTitle = document.getElementById('blog-modal-title');
     const blogForm = document.getElementById('blog-form');
     const saveBlogBtn = document.getElementById('save-blog-btn');
-    const addBlogSectionBtn = document.getElementById('add-blog-section-btn');
-    const blogDynamicSectionsContainer = document.getElementById('blog-dynamic-sections-container');
-    const blogSectionTemplate = document.getElementById('blog-section-template');
+    const addSectionBtn = document.getElementById('add-blog-section-btn');
+    const dynamicSectionsContainer = document.getElementById('blog-dynamic-sections-container');
+    const sectionTemplate = document.getElementById('blog-section-template');
 
-    function loadBlogsData() {
-        const savedData = localStorage.getItem('raisCmsBlogsData');
-        return savedData ? JSON.parse(savedData) : initialBlogsData;
-    }
+    const getApiPath = (file) => `../api/${file}`;
 
-    function saveBlogsData(data) {
-        localStorage.setItem('raisCmsBlogsData', JSON.stringify(data));
+    async function fetchAndRenderBlogs() {
+        try {
+            const response = await fetch(getApiPath('blogs_handler.php?action=get'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                blogsData = result.data;
+                renderBlogCards();
+            } else {
+                console.error("Failed to fetch blogs:", result.message);
+            }
+        } catch (error) {
+            console.error("Error fetching blogs:", error);
+        }
     }
 
     function renderBlogCards() {
@@ -1115,9 +1146,9 @@ saveServiceBtn.addEventListener('click', async () => {
             const card = document.createElement('div');
             card.className = 'card blog-card';
             card.dataset.id = blog.id;
-            if (blog.id === selectedBlogId) card.classList.add('selected');
-            const mediaUrl = blog.heroMediaDataUrl || 'https://via.placeholder.com/800x600.png?text=Blog+Image';
-            card.innerHTML = `<img src="${mediaUrl}" class="card-img-top blog-card-img" alt="${blog.title}"><div class="card-body"><h5 class="card-title">${blog.title}</h5><p class="card-text text-muted">${blog.summary}</p></div>`;
+            if (blog.id == selectedBlogId) card.classList.add('selected');
+            const mediaUrl = blog.hero_media_path ? `../${blog.hero_media_path}` : 'https://via.placeholder.com/800x600.png?text=Blog+Media';
+            card.innerHTML = `<img src="${mediaUrl}" class="card-img-top" alt="${blog.title}"><div class="card-body"><h5 class="card-title">${blog.title}</h5><p class="card-text text-muted">${blog.summary || ''}</p></div>`;
             cardCol.appendChild(card);
             blogCardsContainer.appendChild(cardCol);
         });
@@ -1131,234 +1162,188 @@ saveServiceBtn.addEventListener('click', async () => {
     }
 
     function selectCard(blogId) {
-        selectedBlogId = (selectedBlogId === blogId) ? null : blogId;
+        selectedBlogId = (selectedBlogId == blogId) ? null : blogId;
         renderBlogCards();
         updateFabState();
     }
 
     function createSectionElement(data = {}) {
-        const newSection = blogSectionTemplate.content.cloneNode(true).firstElementChild;
-        newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
-            newSection.remove();
-            updateSectionNumbers();
-        });
-        if (data.title) newSection.querySelector('.section-title').value = data.title;
-        if (data.description) newSection.querySelector('.section-description').value = data.description;
+    const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
+    newSection.dataset.existingMediaPath = data.media_path || '';
+    newSection.querySelector('.remove-section-btn').addEventListener('click', () => { newSection.remove(); updateSectionNumbers(); });
+    if (data.title) newSection.querySelector('.section-title').value = data.title;
+    if (data.content) newSection.querySelector('.section-content').value = data.content;
+
+    // *** START: MODIFIED SECTION ***
+    if (data.media_path) {
+        const mediaPreviewContainer = document.createElement('div');
+        mediaPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container';
+        const mediaUrl = `../${data.media_path}`;
+
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'btn btn-sm btn-outline-danger float-end';
+        clearBtn.innerHTML = '<i class="bi bi-trash"></i> Clear';
+        clearBtn.onclick = () => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'cleared_section_paths[]';
+                hiddenInput.value = data.media_path;
+                blogForm.appendChild(hiddenInput); // Use blogForm here
+
+                newSection.dataset.existingMediaPath = '';
+                mediaPreviewContainer.remove();
+            };
+
+            mediaPreviewContainer.innerHTML = `<p class="small text-muted mb-1 d-flex justify-content-between align-items-center">Current Media:</p>`;
+            mediaPreviewContainer.querySelector('p').appendChild(clearBtn);
+
+            const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+            const mediaElement = document.createElement(isVideo ? 'video' : 'img');
+            mediaElement.src = mediaUrl;
+            mediaElement.className = 'img-fluid rounded mt-2';
+            if(isVideo) mediaElement.controls = true;
+            mediaPreviewContainer.appendChild(mediaElement);
+
+            newSection.querySelector('.section-media').after(mediaPreviewContainer);
+        }
+        // *** END: MODIFIED SECTION ***
         return newSection;
     }
 
     function updateSectionNumbers() {
-        blogDynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((section, index) => {
+        dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((section, index) => {
             section.querySelector('.section-number').textContent = `Section ${index + 1}`;
+            section.querySelector('.section-media').name = `section_media_${index}`;
         });
     }
 
-    function resetAndPrepareModal(mode = 'add', service = null) {
-    serviceForm.reset();
+    function resetAndPrepareModal(mode = 'add', blog = null) {
+    blogForm.reset();
     dynamicSectionsContainer.innerHTML = '';
-    serviceForm.classList.remove('was-validated');
-    
-    // Clear any previous hidden inputs
-    const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
+    blogForm.classList.remove('was-validated');
+
+    const existingPreviews = blogForm.querySelectorAll('.media-preview-container');
+    existingPreviews.forEach(p => p.remove());
+
+    // *** MODIFIED LINE: Also remove the hidden inputs for cleared paths ***
+    const existingHiddenInputs = blogForm.querySelectorAll('input[type="hidden"], input[name^="cleared_section_paths"]');
     existingHiddenInputs.forEach(input => input.remove());
-    
-    // Make sure hero media input has the correct name attribute
-    document.getElementById('service-hero-media').name = 'hero_media';
 
     if (mode === 'add') {
-        serviceModalTitle.textContent = 'Add New Service';
-        saveServiceBtn.textContent = 'Add Service';
-        saveServiceBtn.dataset.mode = 'add';
-        saveServiceBtn.dataset.id = '';
-    } else if (mode === 'edit' && service) {
-        serviceModalTitle.textContent = `Edit Service: ${service.name}`;
-        saveServiceBtn.textContent = 'Update Service';
-        saveServiceBtn.dataset.mode = 'edit';
-        saveServiceBtn.dataset.id = service.id;
-        document.getElementById('service-name').value = service.name;
-        document.getElementById('service-description').value = service.description;
+        blogModalTitle.textContent = 'Add New Blog';
+        saveBlogBtn.textContent = 'Add Blog';
+        saveBlogBtn.dataset.mode = 'add';
+    } else if (mode === 'edit' && blog) {
+        blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
+        saveBlogBtn.textContent = 'Update Blog';
+        saveBlogBtn.dataset.mode = 'edit';
+        document.getElementById('blog-title').value = blog.title;
+        document.getElementById('blog-author').value = blog.author;
+        document.getElementById('blog-publish-date').value = blog.publish_date;
+        document.getElementById('blog-summary').value = blog.summary;
 
-        // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
-        const heroPreviewContainer = document.createElement('div');
-        heroPreviewContainer.className = 'mt-2 border rounded p-2';
-        if (service.hero_media_path) {
-            const mediaUrl = `../${service.hero_media_path}`;
-            heroPreviewContainer.innerHTML = `<p class="small text-muted mb-1">Current Media:</p><img src="${mediaUrl}" class="img-fluid rounded">`;
+        if (blog.hero_media_path) {
+            const heroPreview = document.createElement('div');
+            heroPreview.className = 'mt-2 border rounded p-2 media-preview-container';
+            heroPreview.innerHTML = `<p class="small text-muted mb-1">Current Hero Media:</p><img src="../${blog.hero_media_path}" class="img-fluid rounded">`;
+            document.getElementById('blog-hero-media').after(heroPreview);
         }
-        document.getElementById('service-hero-media').after(heroPreviewContainer);
-
-        // Hidden input to track existing hero path for saving
-        const existingHeroInput = document.createElement('input');
-        existingHeroInput.type = 'hidden';
-        existingHeroInput.name = 'existing_hero_path';
-        existingHeroInput.value = service.hero_media_path || '';
-        serviceForm.appendChild(existingHeroInput);
-
-        (service.sections || []).forEach(sectionData => {
-            // Pass section data to create a fully populated element with previews
-            dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
-        });
+        (blog.sections || []).forEach(sec => dynamicSectionsContainer.appendChild(createSectionElement(sec)));
         updateSectionNumbers();
     }
 }
 
     blogCardsContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.blog-card');
-        if (card) selectCard(parseInt(card.dataset.id));
+        if (card) selectCard(card.dataset.id);
     });
-    addBlogBtn.addEventListener('click', () => {
-        resetAndPrepareModal('add');
-        blogModal.show();
-    });
+
+    addBlogBtn.addEventListener('click', () => { resetAndPrepareModal('add'); blogModal.show(); });
+
     editBlogBtn.addEventListener('click', () => {
         if (selectedBlogId === null) return;
-        const blog = blogsData.find(b => b.id === selectedBlogId);
+        const blog = blogsData.find(b => b.id == selectedBlogId);
         resetAndPrepareModal('edit', blog);
         blogModal.show();
     });
-    addBlogSectionBtn.addEventListener('click', () => {
-        blogDynamicSectionsContainer.appendChild(createSectionElement());
+
+    addSectionBtn.addEventListener('click', () => {
+        dynamicSectionsContainer.appendChild(createSectionElement());
         updateSectionNumbers();
     });
 
-    saveBlogBtn.addEventListener('click', () => {
+    saveBlogBtn.addEventListener('click', async () => {
         if (!blogForm.checkValidity()) {
             blogForm.classList.add('was-validated');
-            blogForm.reportValidity();
             return;
         }
+        const formData = new FormData(blogForm);
         const mode = saveBlogBtn.dataset.mode;
-        confirmationModalTitle.textContent = "Confirm Save";
-        confirmationModalBody.textContent = `Are you sure you want to ${mode === 'add' ? 'add this new' : 'update this'} blog post?`;
+        formData.append('action', mode);
 
-        confirmActionBtn.onclick = async () => {
-            blogModal.hide();
-            const blogDataToSave = {
-                title: document.getElementById('blog-title').value,
-                author: document.getElementById('blog-author').value,
-                publishDate: document.getElementById('blog-publish-date').value,
-                summary: document.getElementById('blog-summary').value,
-            };
-            const heroFile = document.getElementById('blog-hero-media').files[0];
-            const sectionPromises = Array.from(blogDynamicSectionsContainer.querySelectorAll('.dynamic-section')).map(async (el) => {
-                const sectionFile = el.querySelector('.section-media').files[0];
-                return { title: el.querySelector('.section-title').value, description: el.querySelector('.section-description').value, file: sectionFile };
-            });
-            const sectionsWithFiles = await Promise.all(sectionPromises);
-            blogDataToSave.heroMediaDataUrl = heroFile ? await readFileAsDataURL(heroFile) : null;
-            blogDataToSave.sections = await Promise.all(sectionsWithFiles.map(async sec => ({ title: sec.title, description: sec.description, mediaDataUrl: sec.file ? await readFileAsDataURL(sec.file) : null })));
-            if (mode === 'add') {
-                blogDataToSave.id = nextBlogId++;
-                blogsData.push(blogDataToSave);
-            } else {
-                const blogIndex = blogsData.findIndex(b => b.id === selectedBlogId);
-                const originalBlog = blogsData[blogIndex];
-                if (!blogDataToSave.heroMediaDataUrl) blogDataToSave.heroMediaDataUrl = originalBlog.heroMediaDataUrl;
-                blogDataToSave.sections = blogDataToSave.sections.map((sec, index) => {
-                    if (!sec.mediaDataUrl) sec.mediaDataUrl = originalBlog.sections[index]?.mediaDataUrl || null;
-                    return sec;
+        if (mode === 'edit') {
+            formData.append('id', selectedBlogId);
+            const blog = blogsData.find(s => s.id == selectedBlogId);
+            if (blog) {
+                if (!document.getElementById('blog-hero-media').files[0] && blog.hero_media_path) {
+                    formData.append('existing_hero_path', blog.hero_media_path);
+                }
+                dynamicSectionsContainer.querySelectorAll('.dynamic-section').forEach((el, i) => {
+                    formData.append(`existing_section_paths[${i}]`, el.dataset.existingMediaPath || '');
                 });
-                blogsData[blogIndex] = { ...originalBlog, ...blogDataToSave };
             }
-            saveBlogsData(blogsData);
-            renderBlogCards();
-            updateFabState();
-            confirmationModal.hide();
-        };
-        
-        // 📌 FIX: Manually set the z-index to ensure it appears on top of the blog modal
-        confirmationModalEl.style.zIndex = "1060";
-        confirmationModal.show();
+        }
+
+        const response = await fetch(getApiPath('blogs_handler.php'), { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.status === 'success') {
+            blogModal.hide();
+            fetchAndRenderBlogs();
+        } else {
+            alert('Error: ' + result.message);
+        }
     });
 
     deleteBlogBtn.addEventListener('click', () => {
         if (selectedBlogId === null) return;
-        const blog = blogsData.find(b => b.id === selectedBlogId);
+        const blog = blogsData.find(b => b.id == selectedBlogId);
         confirmationModalTitle.textContent = "Confirm Deletion";
-        confirmationModalBody.innerHTML = `Are you sure you want to delete the blog post: <strong>${blog.title}</strong>?`;
-        confirmActionBtn.onclick = () => {
-            blogsData = blogsData.filter(b => b.id !== selectedBlogId);
-            saveBlogsData(blogsData);
-            selectedBlogId = null;
-            renderBlogCards();
-            updateFabState();
+        confirmationModalBody.innerHTML = `Are you sure you want to delete the blog: <strong>${blog.title}</strong>?`;
+        confirmActionBtn.className = 'btn btn-danger';
+        confirmActionBtn.onclick = async () => {
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', selectedBlogId);
+            formData.append('file_path', blog.file_path);
+
+            const response = await fetch(getApiPath('blogs_handler.php'), { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.status === 'success') {
+                selectedBlogId = null;
+                fetchAndRenderBlogs();
+                updateFabState();
+            } else {
+                alert('Error: ' + result.message);
+            }
             confirmationModal.hide();
         };
         confirmationModal.show();
     });
 
-    // 📌 CHANGE: Revamped preview logic for the new card-based layout
     previewBlogBtn.addEventListener('click', () => {
         if (selectedBlogId === null) return;
-        const blog = blogsData.find(b => b.id === selectedBlogId);
-        document.getElementById('blog-preview-title').textContent = `Preview: ${blog.title}`;
-        const previewBody = document.getElementById('blog-preview-body');
-
-        const formatDate = (dateString) => {
-            if (!dateString) return '';
-            const date = new Date(dateString + 'T00:00:00');
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        };
-        
-        let content = `<div style="background-color: #f8f9fa; padding: 2rem;">
-                        <div class="container">`;
-
-        // Title and Byline (outside the cards)
-        content += `<div class="text-center mb-4">
-                        <h1 class="display-5">${blog.title}</h1>
-                        <p class="text-muted">Written by ${blog.author || 'N/A'} on ${formatDate(blog.publishDate)}</p>
-                    </div>`;
-        
-        // --- First Card: Hero Image and Intro ---
-        if (blog.heroMediaDataUrl || (blog.sections && blog.sections.length > 0)) {
-            content += `<div class="blog-section-card">`;
-            if (blog.heroMediaDataUrl) {
-                content += `<img src="${blog.heroMediaDataUrl}" class="img-fluid rounded mb-4" alt="Hero Image">`;
-            }
-            if (blog.sections && blog.sections.length > 0) {
-                const introSection = blog.sections[0];
-                content += `<p class="lead">${introSection.description.replace(/\n/g, '<br>')}</p>`;
-            }
-            content += `</div>`;
+        const blog = blogsData.find(b => b.id == selectedBlogId);
+        if (blog && blog.file_path) {
+            window.open(`../${blog.file_path}`, '_blank');
+        } else {
+            alert('This blog does not have a page generated yet.');
         }
-
-        // --- Subsequent Cards: One for each remaining section ---
-        if (blog.sections && blog.sections.length > 1) {
-            const otherSections = blog.sections.slice(1);
-            otherSections.forEach((section, index) => {
-                content += `<div class="blog-section-card">`;
-                if (section.title) {
-                    content += `<h3 class="mb-3">${section.title}</h3>`;
-                }
-
-                const hasMedia = !!section.mediaDataUrl;
-                const textColClass = hasMedia ? 'col-lg-7' : 'col-lg-12';
-                const imageOrderClass = index % 2 === 0 ? '' : 'order-lg-2';
-
-                content += `<div class="row align-items-center">`;
-                if (hasMedia) {
-                    content += `<div class="col-lg-5 ${imageOrderClass}">
-                                    <img src="${section.mediaDataUrl}" class="img-fluid rounded">
-                                </div>`;
-                }
-                content += `<div class="${textColClass}">
-                                <p>${section.description.replace(/\n/g, '<br>')}</p>
-                            </div>
-                        </div>`; // close .row
-                content += `</div>`; // close .blog-section-card
-            });
-        }
-        
-        content += `</div></div>`; // Close container and wrapper
-        previewBody.innerHTML = content;
-        blogPreviewModal.show();
     });
 
-    renderBlogCards();
+    fetchAndRenderBlogs();
     updateFabState();
 })();
-
-    // ... after the closing })(); for the blog management script ...
 
 // --- START: SCRIPT FOR EXAMS MANAGEMENT ---
 (function() {
