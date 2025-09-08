@@ -242,11 +242,9 @@ $footerData = [
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
     <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
-    <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>
-    <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><nav class="nav nav-tabs mb-3"><a class="nav-link active" href="#" data-pane="exam-pane-info">Exam Info</a><a class="nav-link" href="#" data-pane="exam-pane-about">About</a><a class="nav-link" href="#" data-pane="exam-pane-format">Test Format</a><a class="nav-link" href="#" data-pane="exam-pane-cards">Info Cards</a><a class="nav-link" href="#" data-pane="exam-pane-faqs">FAQs</a></nav><div id="exam-pane-info" class="exam-pane active"><div class="p-3 border rounded"><h6><i class="bi bi-card-heading me-2"></i>Exam Info & Hero Section</h6><div class="mb-3"><label for="exam-name" class="form-label">Exam Name (e.g., IELTS)</label><input type="text" class="form-control" id="exam-name" required></div><div class="mb-3"><label for="exam-hero-media" class="form-label">Hero Section Media (Image or Video)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*,video/*"></div></div></div><div id="exam-pane-about" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-info-circle me-2"></i>About Section</h6><div class="mb-3"><label for="exam-about-content" class="form-label">About Content</label><textarea class="form-control" id="exam-about-content" rows="4"></textarea></div><div class="mb-3"><label for="exam-about-media" class="form-label">Optional Media for About Section</label><input type="file" class="form-control" id="exam-about-media" accept="image/*,video/*"></div></div></div><div id="exam-pane-format" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-card-checklist me-2"></i>Test Format</h6><p class="text-muted small">Add items that appear in the test format section.</p><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div></div><div id="exam-pane-cards" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-grid-1x2 me-2"></i>Informational Cards</h6><p class="text-muted small">Add cards for sections like "How does it work?" or "Why choose us?".</p><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add Card</button></div></div><div id="exam-pane-faqs" class="exam-pane" style="display: none;"><div class="p-3 border rounded"><h6><i class="bi bi-patch-question me-2"></i>Frequently Asked Questions</h6><p class="text-muted small">Add question and answer pairs.</p><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary btn-sm mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div><div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body" style="background-color: #f8f9fa;"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div><template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon Class (e.g., 'bi bi-headphones')</label><input type="text" class="form-control form-control-sm format-icon"></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template><template id="exam-infocard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Info Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm infocard-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm infocard-description" rows="3" required></textarea></div></div></template><template id="exam-faq-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">FAQ Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Question</label><input type="text" class="form-control form-control-sm faq-question" required></div><div><label class="form-label small">Answer</label><textarea class="form-control form-control-sm faq-answer" rows="3" required></textarea></div></div></template>    <div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body" style="background-color: #f8f9fa;"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
-    <div class="modal fade" id="footer-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="footer-modal-title">Add Social Media Link</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="footer-form" novalidate><div class="mb-3"><label for="footer-label" class="form-label">Label</label><input type="text" class="form-control" id="footer-label" placeholder="e.g., Facebook" required></div><div class="mb-3"><label for="footer-description" class="form-label">Description / Link</label><input type="text" class="form-control" id="footer-description" placeholder="e.g., https://facebook.com/your-page" required></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-footer-item-btn">Save Item</button></div></div></div></div>
+    <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><div class="accordion" id="map-details-accordion"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapDetails" aria-expanded="false" aria-controls="collapseMapDetails">📍 Optional: Add Map Pin Details</button></h2><div id="collapseMapDetails" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#map-details-accordion"><div class="accordion-body"><p class="small text-muted">Enter an address and click "Find" to automatically get the coordinates for the map pin.</p><div class="row g-3"><div class="col-12"><label for="blog-map-title" class="form-label">Map Pin Title</label><input type="text" class="form-control" id="blog-map-title" name="map_title" placeholder="e.g., Event at 9.0 Niner Calamba"></div><div class="col-12"><label for="blog-map-summary" class="form-label">Map Pin Summary</label><textarea class="form-control" id="blog-map-summary" name="map_summary" rows="2" placeholder="A short summary for the popup."></textarea></div><div class="col-12"><label for="blog-map-address" class="form-label">Address</label><div class="input-group"><input type="text" class="form-control" id="blog-map-address" name="map_address" placeholder="e.g., 123 Example St, Santo Tomas, Batangas"><button class="btn btn-outline-secondary" type="button" id="geocode-btn">Find</button></div><div id="geocode-status" class="form-text"></div></div><input type="hidden" id="blog-map-latitude" name="map_latitude"><input type="hidden" id="blog-map-longitude" name="map_longitude"></div></div></div></div></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>    
     
-    <template id="about-text-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="text"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Text Paragraph</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><textarea class="form-control block-content" rows="5" placeholder="Enter paragraph text here..."></textarea></div></template>
+<template id="about-text-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="text"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Text Paragraph</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><textarea class="form-control block-content" rows="5" placeholder="Enter paragraph text here..."></textarea></div></template>
     <template id="about-media-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="media"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Media Block</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><div class="input-group"><input type="file" class="form-control block-media-file" accept="image/*,video/*"><button class="btn btn-outline-danger btn-sm clear-block-media-btn" type="button" title="Clear Media"><i class="bi bi-x-lg"></i></button></div><div class="mt-2 border rounded p-2 block-media-preview" style="min-height: 100px;"></div></div></template>
     <template id="about-card-template"><div class="p-3 border rounded mb-3 dynamic-about-card"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Tabbed Card</h6><button type="button" class="btn-close remove-about-card-btn"></button></div><div class="row"><div class="col-md-6 mb-2"><label class="form-label small">Tab Title</label><input type="text" class="form-control card-tab-title" placeholder="e.g., Mission"></div><div class="col-md-6 mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control card-title" placeholder="e.g., Mission Statement"></div></div><div class="mb-2"><label class="form-label small">Card Content</label><textarea class="form-control card-content" rows="4"></textarea></div></div></template>
     <template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon Class (e.g., 'bi bi-headphones')</label><input type="text" class="form-control form-control-sm format-icon"></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template>
@@ -465,52 +463,53 @@ $footerData = [
         }
     }
 
-    function resetAndPrepareModal(mode = 'add', service = null) {
-        serviceForm.reset();
-        dynamicSectionsContainer.innerHTML = '';
-        serviceForm.classList.remove('was-validated');
-        
-        // **THE FIX**: Clear any old, dynamically added preview containers
-        const existingPreviews = serviceForm.querySelectorAll('.media-preview-container');
-        existingPreviews.forEach(preview => preview.remove());
-        
-        const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
-        existingHiddenInputs.forEach(input => input.remove());
-        
-        document.getElementById('service-hero-media').name = 'hero_media';
+    function resetAndPrepareModal(mode = 'add', blog = null) {
+    blogForm.reset();
+    dynamicSectionsContainer.innerHTML = '';
+    blogForm.classList.remove('was-validated');
+    
+    // This part remains the same
+    const existingPreviews = blogForm.querySelectorAll('.media-preview-container');
+    existingPreviews.forEach(p => p.remove());
+    const existingHiddenInputs = blogForm.querySelectorAll('input[type="hidden"], input[name^="cleared_section_paths"]');
+    existingHiddenInputs.forEach(input => input.remove());
 
-        if (mode === 'add') {
-            serviceModalTitle.textContent = 'Add New Service';
-            saveServiceBtn.textContent = 'Add Service';
-            saveServiceBtn.dataset.mode = 'add';
-            saveServiceBtn.dataset.id = '';
-        } else if (mode === 'edit' && service) {
-            serviceModalTitle.textContent = `Edit Service: ${service.name}`;
-            saveServiceBtn.textContent = 'Update Service';
-            saveServiceBtn.dataset.mode = 'edit';
-            saveServiceBtn.dataset.id = service.id;
-            document.getElementById('service-name').value = service.name;
-            document.getElementById('service-description').value = service.description;
-
-            // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
-            if (service.hero_media_path) {
-                const heroPreviewContainer = document.createElement('div');
-                heroPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container'; // Added class for easy removal
-                const mediaUrl = `../${service.hero_media_path}`;
-                const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
-                heroPreviewContainer.innerHTML = `
-                    <p class="small text-muted mb-1">Current Hero Media:</p>
-                    ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
-                `;
-                document.getElementById('service-hero-media').after(heroPreviewContainer);
-            }
-
-            (service.sections || []).forEach(sectionData => {
-                dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
-            });
-            updateSectionNumbers();
-        }
+    // Close the accordion by default
+    const mapCollapse = document.getElementById('collapseMapDetails');
+    if (mapCollapse.classList.contains('show')) {
+        new bootstrap.Collapse(mapCollapse, { toggle: false }).hide();
     }
+
+    if (mode === 'add') {
+        blogModalTitle.textContent = 'Add New Blog';
+        saveBlogBtn.textContent = 'Add Blog';
+        saveBlogBtn.dataset.mode = 'add';
+    } else if (mode === 'edit' && blog) {
+        blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
+        saveBlogBtn.textContent = 'Update Blog';
+        saveBlogBtn.dataset.mode = 'edit';
+        document.getElementById('blog-title').value = blog.title;
+        document.getElementById('blog-author').value = blog.author;
+        document.getElementById('blog-publish-date').value = blog.publish_date;
+        document.getElementById('blog-summary').value = blog.summary;
+
+        // *** START: NEW CODE TO POPULATE MAP FIELDS ***
+        document.getElementById('blog-map-title').value = blog.map_title || '';
+        document.getElementById('blog-map-summary').value = blog.map_summary || '';
+        document.getElementById('blog-map-latitude').value = blog.map_latitude || '';
+        document.getElementById('blog-map-longitude').value = blog.map_longitude || '';
+        // *** END: NEW CODE TO POPULATE MAP FIELDS ***
+
+        if (blog.hero_media_path) {
+            const heroPreview = document.createElement('div');
+            heroPreview.className = 'mt-2 border rounded p-2 media-preview-container';
+            heroPreview.innerHTML = `<p class="small text-muted mb-1">Current Hero Media:</p><img src="../${blog.hero_media_path}" class="img-fluid rounded">`;
+            document.getElementById('blog-hero-media').after(heroPreview);
+        }
+        (blog.sections || []).forEach(sec => dynamicSectionsContainer.appendChild(createSectionElement(sec)));
+        updateSectionNumbers();
+    }
+}
 
     // Initial Load
     fetchAndRenderTable();
@@ -1121,6 +1120,41 @@ saveServiceBtn.addEventListener('click', async () => {
     const dynamicSectionsContainer = document.getElementById('blog-dynamic-sections-container');
     const sectionTemplate = document.getElementById('blog-section-template');
 
+        // *** START: NEW GEOCODING CODE ***
+    const geocodeBtn = document.getElementById('geocode-btn');
+    const geocodeStatus = document.getElementById('geocode-status');
+    const addressInput = document.getElementById('blog-map-address');
+    const latInput = document.getElementById('blog-map-latitude');
+    const lonInput = document.getElementById('blog-map-longitude');
+    
+    geocodeBtn.addEventListener('click', async () => {
+        const address = addressInput.value;
+        if (!address) {
+            geocodeStatus.textContent = 'Please enter an address.';
+            geocodeStatus.className = 'form-text text-danger';
+            return;
+        }
+        geocodeStatus.textContent = 'Searching...';
+        geocodeStatus.className = 'form-text text-muted';
+        latInput.value = '';
+        lonInput.value = '';
+    
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`);
+        const data = await response.json();
+    
+        if (data && data.length > 0) {
+            const location = data[0];
+            latInput.value = location.lat;
+            lonInput.value = location.lon;
+            geocodeStatus.innerHTML = `✅ Found: ${location.display_name}`;
+            geocodeStatus.className = 'form-text text-success';
+        } else {
+            geocodeStatus.textContent = '❌ Location not found. Please try a different address.';
+            geocodeStatus.className = 'form-text text-danger';
+        }
+    });
+    // *** END: NEW GEOCODING CODE ***
+
     const getApiPath = (file) => `../api/${file}`;
 
     async function fetchAndRenderBlogs() {
@@ -1219,40 +1253,51 @@ saveServiceBtn.addEventListener('click', async () => {
     }
 
     function resetAndPrepareModal(mode = 'add', blog = null) {
-    blogForm.reset();
-    dynamicSectionsContainer.innerHTML = '';
-    blogForm.classList.remove('was-validated');
+        blogForm.reset();
+        dynamicSectionsContainer.innerHTML = '';
+        blogForm.classList.remove('was-validated');
+        geocodeStatus.textContent = ''; // Clear geocode status
 
-    const existingPreviews = blogForm.querySelectorAll('.media-preview-container');
-    existingPreviews.forEach(p => p.remove());
+        const existingPreviews = blogForm.querySelectorAll('.media-preview-container');
+        existingPreviews.forEach(p => p.remove());
+        const existingHiddenInputs = blogForm.querySelectorAll('input[type="hidden"][name^="cleared_section_paths"]'); // Only clear the cleared_paths inputs
+        existingHiddenInputs.forEach(input => input.remove());
 
-    // *** MODIFIED LINE: Also remove the hidden inputs for cleared paths ***
-    const existingHiddenInputs = blogForm.querySelectorAll('input[type="hidden"], input[name^="cleared_section_paths"]');
-    existingHiddenInputs.forEach(input => input.remove());
-
-    if (mode === 'add') {
-        blogModalTitle.textContent = 'Add New Blog';
-        saveBlogBtn.textContent = 'Add Blog';
-        saveBlogBtn.dataset.mode = 'add';
-    } else if (mode === 'edit' && blog) {
-        blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
-        saveBlogBtn.textContent = 'Update Blog';
-        saveBlogBtn.dataset.mode = 'edit';
-        document.getElementById('blog-title').value = blog.title;
-        document.getElementById('blog-author').value = blog.author;
-        document.getElementById('blog-publish-date').value = blog.publish_date;
-        document.getElementById('blog-summary').value = blog.summary;
-
-        if (blog.hero_media_path) {
-            const heroPreview = document.createElement('div');
-            heroPreview.className = 'mt-2 border rounded p-2 media-preview-container';
-            heroPreview.innerHTML = `<p class="small text-muted mb-1">Current Hero Media:</p><img src="../${blog.hero_media_path}" class="img-fluid rounded">`;
-            document.getElementById('blog-hero-media').after(heroPreview);
+        const mapCollapse = document.getElementById('collapseMapDetails');
+        if (mapCollapse.classList.contains('show')) {
+            new bootstrap.Collapse(mapCollapse, { toggle: false }).hide();
         }
-        (blog.sections || []).forEach(sec => dynamicSectionsContainer.appendChild(createSectionElement(sec)));
-        updateSectionNumbers();
+
+        if (mode === 'add') {
+            blogModalTitle.textContent = 'Add New Blog';
+            saveBlogBtn.textContent = 'Add Blog';
+            saveBlogBtn.dataset.mode = 'add';
+        } else if (mode === 'edit' && blog) {
+            blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
+            saveBlogBtn.textContent = 'Update Blog';
+            saveBlogBtn.dataset.mode = 'edit';
+            document.getElementById('blog-title').value = blog.title;
+            document.getElementById('blog-author').value = blog.author;
+            document.getElementById('blog-publish-date').value = blog.publish_date;
+            document.getElementById('blog-summary').value = blog.summary;
+
+            // *** MODIFIED TO HANDLE ADDRESS AND HIDDEN LAT/LON ***
+            document.getElementById('blog-map-title').value = blog.map_title || '';
+            document.getElementById('blog-map-summary').value = blog.map_summary || '';
+            document.getElementById('blog-map-address').value = blog.map_address || '';
+            document.getElementById('blog-map-latitude').value = blog.map_latitude || '';
+            document.getElementById('blog-map-longitude').value = blog.map_longitude || '';
+
+            if (blog.hero_media_path) {
+                const heroPreview = document.createElement('div');
+                heroPreview.className = 'mt-2 border rounded p-2 media-preview-container';
+                heroPreview.innerHTML = `<p class="small text-muted mb-1">Current Hero Media:</p><img src="../${blog.hero_media_path}" class="img-fluid rounded">`;
+                document.getElementById('blog-hero-media').after(heroPreview);
+            }
+            (blog.sections || []).forEach(sec => dynamicSectionsContainer.appendChild(createSectionElement(sec)));
+            updateSectionNumbers();
+        }
     }
-}
 
     blogCardsContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.blog-card');
@@ -1501,7 +1546,7 @@ saveServiceBtn.addEventListener('click', async () => {
         confirmationModalBody.textContent = `Are you sure you want to ${mode === 'add' ? 'add this new' : 'update this'} exam?`;
 
         // FIX: Change button color for save
-        confirmActionBtn.className = 'btn btn-primary';
+        confirmActionBtn.className = 'btn btn-success';
 
         confirmActionBtn.onclick = async () => {
             const examDataToSave = {

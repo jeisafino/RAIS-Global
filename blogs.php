@@ -345,13 +345,16 @@ foreach ($events as $event) {
       const marker = L.marker(location.coordinates).addTo(map);
       marker.bindPopup(`<h5>${location.title}</h5><p>${location.summary}</p><a href="${location.url}" target="_blank">Read Blog →</a>`);
       marker.on('click', () => {
-        map.setView(location.coordinates, 13);
+        map.flyTo(location.coordinates, 13, {
+          animate: true,
+          duration: 1.5 // Animation duration in seconds
+        });
         document.querySelectorAll('.blog-card').forEach(card => card.classList.remove('hovered'));
         if (location.cardId) {
           const card = document.getElementById(location.cardId);
           if (card) {
             card.classList.add('hovered');
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            //card.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }
       });

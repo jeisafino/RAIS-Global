@@ -406,7 +406,7 @@ foreach ($events as $event) {
           const card = document.getElementById(location.cardId);
           if (card) {
             card.classList.add('hovered');
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // card.scrollIntoView({ behavior: 'smooth', block: 'center' }); // This line caused the scroll
           }
         }
       });
