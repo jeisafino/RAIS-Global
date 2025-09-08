@@ -1,6 +1,6 @@
 <?php
 // This placeholder will be replaced with the actual service ID when the file is generated.
-$service_id = 8;
+$service_id = 7;
 
 // Establish database connection
 require_once __DIR__ . '/../db_connect.php';

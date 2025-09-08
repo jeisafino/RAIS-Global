@@ -464,24 +464,50 @@ $footerData = [
         }
     }
 
-    function resetAndPrepareModal(mode = 'add', media = null) {
-        uploadForm.reset();
-        uploadForm.classList.remove('was-validated');
-        const modalTitle = document.getElementById('uploadMediaModalLabel');
-        const mediaFileInput = document.getElementById('mediaFile');
+    function resetAndPrepareModal(mode = 'add', service = null) {
+        serviceForm.reset();
+        dynamicSectionsContainer.innerHTML = '';
+        serviceForm.classList.remove('was-validated');
+        
+        // **THE FIX**: Clear any old, dynamically added preview containers
+        const existingPreviews = serviceForm.querySelectorAll('.media-preview-container');
+        existingPreviews.forEach(preview => preview.remove());
+        
+        const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
+        existingHiddenInputs.forEach(input => input.remove());
+        
+        document.getElementById('service-hero-media').name = 'hero_media';
 
         if (mode === 'add') {
-            modalTitle.textContent = 'Add New Hero Media';
-            saveMediaBtn.textContent = 'Add Media';
-            saveMediaBtn.dataset.mode = 'add';
-            mediaFileInput.required = true;
-        } else if (mode === 'edit' && media) {
-            modalTitle.textContent = `Edit Media: ${media.media_name}`;
-            saveMediaBtn.textContent = 'Update Media';
-            saveMediaBtn.dataset.mode = 'edit';
-            document.getElementById('mediaName').value = media.media_name;
-            document.getElementById('uploaderName').value = media.uploader;
-            mediaFileInput.required = false; // Not required to upload a new file on edit
+            serviceModalTitle.textContent = 'Add New Service';
+            saveServiceBtn.textContent = 'Add Service';
+            saveServiceBtn.dataset.mode = 'add';
+            saveServiceBtn.dataset.id = '';
+        } else if (mode === 'edit' && service) {
+            serviceModalTitle.textContent = `Edit Service: ${service.name}`;
+            saveServiceBtn.textContent = 'Update Service';
+            saveServiceBtn.dataset.mode = 'edit';
+            saveServiceBtn.dataset.id = service.id;
+            document.getElementById('service-name').value = service.name;
+            document.getElementById('service-description').value = service.description;
+
+            // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
+            if (service.hero_media_path) {
+                const heroPreviewContainer = document.createElement('div');
+                heroPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container'; // Added class for easy removal
+                const mediaUrl = `../${service.hero_media_path}`;
+                const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+                heroPreviewContainer.innerHTML = `
+                    <p class="small text-muted mb-1">Current Hero Media:</p>
+                    ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
+                `;
+                document.getElementById('service-hero-media').after(heroPreviewContainer);
+            }
+
+            (service.sections || []).forEach(sectionData => {
+                dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
+            });
+            updateSectionNumbers();
         }
     }
 
@@ -855,12 +881,28 @@ $footerData = [
     function createSectionElement(data = {}) {
         const newSection = sectionTemplate.content.cloneNode(true).firstElementChild;
         newSection.dataset.existingMediaPath = data.media_path || '';
+
         newSection.querySelector('.remove-section-btn').addEventListener('click', () => {
             newSection.remove();
             updateSectionNumbers();
         });
+
         if (data.title) newSection.querySelector('.section-title').value = data.title;
         if (data.content) newSection.querySelector('.section-description').value = data.content;
+
+        // **THE FIX FOR SECTION MEDIA DISPLAY**: Create a preview if media exists.
+        if (data.media_path) {
+            const mediaPreviewContainer = document.createElement('div');
+            mediaPreviewContainer.className = 'mt-2 border rounded p-2';
+            const mediaUrl = `../${data.media_path}`;
+            const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+            mediaPreviewContainer.innerHTML = `
+                <p class="small text-muted mb-1">Current Section Media:</p>
+                ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
+            `;
+            // Insert the preview after the file input
+            newSection.querySelector('.section-media').after(mediaPreviewContainer);
+        }
         return newSection;
     }
 
@@ -877,7 +919,13 @@ $footerData = [
         dynamicSectionsContainer.innerHTML = '';
         serviceForm.classList.remove('was-validated');
         
-        // Make sure hero media input has the correct name attribute
+        // **THE FIX**: Clear any old, dynamically added preview containers
+        const existingPreviews = serviceForm.querySelectorAll('.media-preview-container');
+        existingPreviews.forEach(preview => preview.remove());
+        
+        const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
+        existingHiddenInputs.forEach(input => input.remove());
+        
         document.getElementById('service-hero-media').name = 'hero_media';
 
         if (mode === 'add') {
@@ -892,12 +940,19 @@ $footerData = [
             saveServiceBtn.dataset.id = service.id;
             document.getElementById('service-name').value = service.name;
             document.getElementById('service-description').value = service.description;
-            // Hidden input to track existing hero path
-            const existingHeroInput = document.createElement('input');
-            existingHeroInput.type = 'hidden';
-            existingHeroInput.name = 'existing_hero_path';
-            existingHeroInput.value = service.hero_media_path || '';
-            serviceForm.appendChild(existingHeroInput);
+
+            // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
+            if (service.hero_media_path) {
+                const heroPreviewContainer = document.createElement('div');
+                heroPreviewContainer.className = 'mt-2 border rounded p-2 media-preview-container'; // Added class for easy removal
+                const mediaUrl = `../${service.hero_media_path}`;
+                const isVideo = mediaUrl.match(/\.(mp4|webm|mov)$/i);
+                heroPreviewContainer.innerHTML = `
+                    <p class="small text-muted mb-1">Current Hero Media:</p>
+                    ${isVideo ? `<video src="${mediaUrl}" class="img-fluid rounded" controls></video>` : `<img src="${mediaUrl}" class="img-fluid rounded">`}
+                `;
+                document.getElementById('service-hero-media').after(heroPreviewContainer);
+            }
 
             (service.sections || []).forEach(sectionData => {
                 dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
@@ -975,27 +1030,32 @@ saveServiceBtn.addEventListener('click', async () => {
         return;
     }
 
-    // This constructor correctly gathers ALL named fields from the form,
-    // including the arrays of section titles, descriptions, and media files.
     const formData = new FormData(serviceForm);
     const mode = saveServiceBtn.dataset.mode;
-    
     formData.append('action', mode);
 
     if (mode === 'edit') {
         formData.append('id', selectedServiceId);
+        
+        // Find the original service data to get existing media paths
+        const service = servicesData.find(s => s.id == selectedServiceId);
+        if (service) {
+            // **THE FIX FOR HERO MEDIA**: If no new hero file is selected,
+            // explicitly tell the backend to keep the old one.
+            const heroMediaInput = document.getElementById('service-hero-media');
+            if (!heroMediaInput.files[0] && service.hero_media_path) {
+                formData.append('existing_hero_path', service.hero_media_path);
+            }
+
+            // **THE FIX FOR SECTION MEDIA**: Send all existing paths for sections.
+            // The backend will match them to the sections by their order.
+            const dynamicSectionElements = dynamicSectionsContainer.querySelectorAll('.dynamic-section');
+            dynamicSectionElements.forEach((sectionElement, index) => {
+                formData.append(`existing_section_paths[${index}]`, sectionElement.dataset.existingMediaPath || '');
+            });
+        }
     }
     
-    // We also need to get existing media paths for edits
-    const dynamicSectionElements = dynamicSectionsContainer.querySelectorAll('.dynamic-section');
-    dynamicSectionElements.forEach((sectionElement, index) => {
-        const mediaInput = sectionElement.querySelector('.section-media');
-        // If no new file is chosen for an existing section, we need to know the old path
-        if (!mediaInput.files[0]) {
-            formData.append(`existing_media_path[${index}]`, sectionElement.dataset.existingMediaPath || '');
-        }
-    });
-
     try {
         const response = await fetch(getApiPath('services_handler.php'), {
             method: 'POST',
@@ -1093,28 +1153,54 @@ saveServiceBtn.addEventListener('click', async () => {
         });
     }
 
-    function resetAndPrepareModal(mode = 'add', blog = null) {
-        blogForm.reset();
-        blogDynamicSectionsContainer.innerHTML = '';
-        blogForm.classList.remove('was-validated');
-        if (mode === 'add') {
-            blogModalTitle.textContent = 'Add New Blog Post';
-            saveBlogBtn.textContent = 'Add Blog Post';
-            saveBlogBtn.dataset.mode = 'add';
-        } else if (mode === 'edit' && blog) {
-            blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
-            saveBlogBtn.textContent = 'Update Blog Post';
-            saveBlogBtn.dataset.mode = 'edit';
-            document.getElementById('blog-title').value = blog.title;
-            document.getElementById('blog-author').value = blog.author;
-            document.getElementById('blog-publish-date').value = blog.publishDate;
-            document.getElementById('blog-summary').value = blog.summary;
-            (blog.sections || []).forEach(sectionData => {
-                blogDynamicSectionsContainer.appendChild(createSectionElement(sectionData));
-            });
-            updateSectionNumbers();
+    function resetAndPrepareModal(mode = 'add', service = null) {
+    serviceForm.reset();
+    dynamicSectionsContainer.innerHTML = '';
+    serviceForm.classList.remove('was-validated');
+    
+    // Clear any previous hidden inputs
+    const existingHiddenInputs = serviceForm.querySelectorAll('input[type="hidden"]');
+    existingHiddenInputs.forEach(input => input.remove());
+    
+    // Make sure hero media input has the correct name attribute
+    document.getElementById('service-hero-media').name = 'hero_media';
+
+    if (mode === 'add') {
+        serviceModalTitle.textContent = 'Add New Service';
+        saveServiceBtn.textContent = 'Add Service';
+        saveServiceBtn.dataset.mode = 'add';
+        saveServiceBtn.dataset.id = '';
+    } else if (mode === 'edit' && service) {
+        serviceModalTitle.textContent = `Edit Service: ${service.name}`;
+        saveServiceBtn.textContent = 'Update Service';
+        saveServiceBtn.dataset.mode = 'edit';
+        saveServiceBtn.dataset.id = service.id;
+        document.getElementById('service-name').value = service.name;
+        document.getElementById('service-description').value = service.description;
+
+        // **THE FIX FOR HERO MEDIA DISPLAY**: Create a preview if media exists.
+        const heroPreviewContainer = document.createElement('div');
+        heroPreviewContainer.className = 'mt-2 border rounded p-2';
+        if (service.hero_media_path) {
+            const mediaUrl = `../${service.hero_media_path}`;
+            heroPreviewContainer.innerHTML = `<p class="small text-muted mb-1">Current Media:</p><img src="${mediaUrl}" class="img-fluid rounded">`;
         }
+        document.getElementById('service-hero-media').after(heroPreviewContainer);
+
+        // Hidden input to track existing hero path for saving
+        const existingHeroInput = document.createElement('input');
+        existingHeroInput.type = 'hidden';
+        existingHeroInput.name = 'existing_hero_path';
+        existingHeroInput.value = service.hero_media_path || '';
+        serviceForm.appendChild(existingHeroInput);
+
+        (service.sections || []).forEach(sectionData => {
+            // Pass section data to create a fully populated element with previews
+            dynamicSectionsContainer.appendChild(createSectionElement(sectionData));
+        });
+        updateSectionNumbers();
     }
+}
 
     blogCardsContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.blog-card');
