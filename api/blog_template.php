@@ -110,6 +110,8 @@ $hero_path = "../" . htmlspecialchars($blog['hero_media_path']); // Prepend ../ 
       padding: 2.5rem; /* Increased padding */
       margin-top: 2rem;
       border: 1px solid #e9ecef; /* Subtle border */
+      /* *** START: ADD THIS LINE *** */
+      border-left: 5px solid var(--primary-color); /* Green vertical line on the left */
     }
 
     .blog-header {
