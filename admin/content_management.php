@@ -85,7 +85,6 @@ $footerData = [
 </head>
 
 <body>
-    <h1>THIS IS A TEST</h1>
     <div class="main-wrapper">
         <?php require_once 'sidebar.php'; ?>
 
