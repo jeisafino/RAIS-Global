@@ -85,6 +85,7 @@ $footerData = [
 </head>
 
 <body>
+    <h1>THIS IS A TEST</h1>
     <div class="main-wrapper">
         <?php require_once 'sidebar.php'; ?>
 
@@ -238,12 +239,56 @@ $footerData = [
     </div>
 
     <!-- ALL MODALS AND TEMPLATES -->
-    <div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" name="mediaName" required></div><div class="mb-3"><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" name="uploaderName" required></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" name="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
+<div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" name="mediaName" required></div><div class="mb-3"><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" name="uploaderName" required></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" name="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
     <div class="modal fade" id="landscapeWarningModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Image Orientation Warning</h5> <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>The chosen photo is not a landscape photo. If you wish to continue, the photo may be stretched or cropped.</p></div><div class="modal-footer"> <button type="button" class="btn btn-secondary" id="repick-photo-btn">Repick Photo</button> <button type="button" class="btn btn-primary" id="continue-anyway-btn">Continue Anyway</button></div></div></div></div>
     <div class="modal fade" id="landing-confirmation-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-confirmation-title">Confirm Action</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-confirmation-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirm-landing-action-btn">Confirm</button></div></div></div></div>
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
-    <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
+    <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    
+    
+    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="partner-modal-title">Add New Partner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="partner-form" novalidate>
+                        <div class="mb-3">
+                            <label for="partner-name" class="form-label">Partner Name</label>
+                            <input type="text" class="form-control" id="partner-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="partner-link" class="form-label">Website Link</label>
+                            <input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="partner-logo" class="form-label">Partner Logo</label>
+                            <input class="form-control" type="file" id="partner-logo" accept="image/*">
+                            <div class="form-text">Upload a logo for the partner.</div>
+                            <div class="text-center mt-2">
+                                <img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="bg-light p-1" style="max-height: 80px;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="partner-background" class="form-label">Background Image</label>
+                            <input class="form-control" type="file" id="partner-background" accept="image/*">
+                            <div class="form-text">This image appears behind the logo in the slider.</div>
+                            <div class="text-center mt-2">
+                                <img src="https://via.placeholder.com/200x100.png?text=Background" alt="Background Preview" id="partner-background-preview" class="bg-light p-1 img-fluid" style="max-height: 100px;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><div class="accordion" id="map-details-accordion"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapDetails" aria-expanded="false" aria-controls="collapseMapDetails">📍 Optional: Add Map Pin Details</button></h2><div id="collapseMapDetails" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#map-details-accordion"><div class="accordion-body"><p class="small text-muted">Enter an address and click "Find" to automatically get the coordinates for the map pin.</p><div class="row g-3"><div class="col-12"><label for="blog-map-title" class="form-label">Map Pin Title</label><input type="text" class="form-control" id="blog-map-title" name="map_title" placeholder="e.g., Event at 9.0 Niner Calamba"></div><div class="col-12"><label for="blog-map-summary" class="form-label">Map Pin Summary</label><textarea class="form-control" id="blog-map-summary" name="map_summary" rows="2" placeholder="A short summary for the popup."></textarea></div><div class="col-12"><label for="blog-map-address" class="form-label">Address</label><div class="input-group"><input type="text" class="form-control" id="blog-map-address" name="map_address" placeholder="e.g., 123 Example St, Santo Tomas, Batangas"><button class="btn btn-outline-secondary" type="button" id="geocode-btn">Find</button></div><div id="geocode-status" class="form-text"></div></div><input type="hidden" id="blog-map-latitude" name="map_latitude"><input type="hidden" id="blog-map-longitude" name="map_longitude"></div></div></div></div></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>    
     <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><ul class="nav nav-tabs" id="examTab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#exam-pane-info" type="button">1. Main Info</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-format" type="button">2. Test Format</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-choicecards" type="button">3. Choice Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-infocards" type="button">4. Info Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-faq" type="button">5. FAQs</button></li></ul><div class="tab-content pt-3"><div class="tab-pane fade show active" id="exam-pane-info"><div class="row g-3 align-items-start"><div class="col-md-6"><label for="exam-name" class="form-label">Exam Name</label><input type="text" class="form-control" id="exam-name" required></div><div class="col-md-6"><label for="exam-hero-media" class="form-label">Hero Image (Background)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*"></div><div class="col-md-6"><label for="exam-description" class="form-label">Short Description (for Hero & Main Page)</label><textarea class="form-control" id="exam-description" rows="2" required></textarea></div><div class="col-md-6"><label for="exam-hero-logo" class="form-label">Hero Logo (Top Right)</label><input type="file" class="form-control" id="exam-hero-logo" accept="image/*,.svg"></div><hr class="my-4"><div class="col-md-6"><label for="exam-about-content" class="form-label">About Section Content</label><textarea class="form-control" id="exam-about-content" rows="6"></textarea></div><div class="col-md-6"><label for="exam-about-media" class="form-label">About Section Image</label><input type="file" class="form-control" id="exam-about-media" accept="image/*"></div></div></div><div class="tab-pane fade" id="exam-pane-format"><h6>Add items that appear in the "Test Format" section.</h6><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div><div class="tab-pane fade" id="exam-pane-choicecards"><h6>Add cards for the "Why should you choose..." section. (Max 6 recommended)</h6><div id="exam-choicecards-container"></div><button type="button" id="add-exam-choicecard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Card</button></div><div class="tab-pane fade" id="exam-pane-infocards"><div class="mb-3"><label for="exam-infocards-intro" class="form-label">Introductory Text</label><textarea class="form-control" id="exam-infocards-intro" rows="3" placeholder="This text appears above the info cards..."></textarea></div><hr><h6>Add the cards for the "How does it work?" section.</h6><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Info Card</button></div><div class="tab-pane fade" id="exam-pane-faq"><h6>Add questions and answers for the FAQ section.</h6><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div>
     <div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
@@ -254,7 +299,6 @@ $footerData = [
     <template id="about-media-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="media"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Media Block</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><div class="input-group"><input type="file" class="form-control block-media-file" accept="image/*,video/*"><button class="btn btn-outline-danger btn-sm clear-block-media-btn" type="button" title="Clear Media"><i class="bi bi-x-lg"></i></button></div><div class="mt-2 border rounded p-2 block-media-preview" style="min-height: 100px;"></div></div></template>
     <template id="about-card-template"><div class="p-3 border rounded mb-3 dynamic-about-card"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Tabbed Card</h6><button type="button" class="btn-close remove-about-card-btn"></button></div><div class="row"><div class="col-md-6 mb-2"><label class="form-label small">Tab Title</label><input type="text" class="form-control card-tab-title" placeholder="e.g., Mission"></div><div class="col-md-6 mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control card-title" placeholder="e.g., Mission Statement"></div></div><div class="mb-2"><label class="form-label small">Card Content</label><textarea class="form-control card-content" rows="4"></textarea></div></div></template>
     <template id="exam-choicecard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Choice Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Image</label><input type="file" class="form-control form-control-sm choice-image" accept="image/*"></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm choice-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm choice-description" rows="3" required></textarea></div></div></template>
-
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -1661,94 +1705,177 @@ saveServiceBtn.addEventListener('click', async () => {
     updateFabState();
 })();    
     // --- START: SCRIPT FOR PARTNERS PAGE MANAGEMENT ---
-    (function() {
-        let selectedPartnerId = null;
-        let partnersData = loadPartnersData();
-        let nextPartnerId = (partnersData.length > 0 ? Math.max(...partnersData.map(p => p.id)) : 0) + 1;
-        
-        const partnersTableBody = document.getElementById('partners-table-body');
-        const addPartnerBtn = document.getElementById('add-partner-btn');
-        const editPartnerBtn = document.getElementById('edit-partner-btn');
-        const deletePartnerBtn = document.getElementById('delete-partner-btn');
-        const visitPartnerBtn = document.getElementById('visit-partner-btn');
-        const partnerModal = new bootstrap.Modal(document.getElementById('partner-modal'));
-        const partnerForm = document.getElementById('partner-form');
-        const partnerModalTitle = document.getElementById('partner-modal-title');
-        const savePartnerBtn = document.getElementById('save-partner-btn');
-        const logoInput = document.getElementById('partner-logo');
-        const logoPreview = document.getElementById('partner-logo-preview');
+(function() {
+    let partnersData = [];
+    let selectedPartnerId = null;
 
-        function loadPartnersData() {
-            const savedData = localStorage.getItem('raisCmsPartnersData');
-            return savedData ? JSON.parse(savedData) : initialPartnersData;
-        }
+    const partnersTableBody = document.getElementById('partners-table-body');
+    const addPartnerBtn = document.getElementById('add-partner-btn');
+    const editPartnerBtn = document.getElementById('edit-partner-btn');
+    const deletePartnerBtn = document.getElementById('delete-partner-btn');
+    const visitPartnerBtn = document.getElementById('visit-partner-btn');
+    const partnerModal = new bootstrap.Modal(document.getElementById('partner-modal'));
+    const partnerForm = document.getElementById('partner-form');
+    const partnerModalTitle = document.getElementById('partner-modal-title');
+    const savePartnerBtn = document.getElementById('save-partner-btn');
+    const logoInput = document.getElementById('partner-logo');
+    const logoPreview = document.getElementById('partner-logo-preview');
+    const backgroundInput = document.getElementById('partner-background');
+    const backgroundPreview = document.getElementById('partner-background-preview');
+    
+    const getApiPath = (file) => `../api/${file}`;
 
-        function savePartnersData(data) {
-            localStorage.setItem('raisCmsPartnersData', JSON.stringify(data));
-        }
-
-        function renderTable() {
-            partnersTableBody.innerHTML = '';
-            partnersData.forEach(p => {
-                const row = partnersTableBody.insertRow();
-                row.dataset.id = p.id;
-                if (p.id === selectedPartnerId) row.classList.add('selected');
-                row.innerHTML = `<td><img src="${p.logoDataUrl || 'https://via.placeholder.com/30x30.png?text=L'}" alt="${p.name}" class="me-2" style="width:30px; height:30px; object-fit:contain;">${p.name}</td><td><a href="${p.link}" target="_blank">${p.link}</a></td>`;
-            });
-        }
-        function updateFabState() { const isSelected = selectedPartnerId !== null; editPartnerBtn.disabled = !isSelected; deletePartnerBtn.disabled = !isSelected; visitPartnerBtn.disabled = !isSelected; }
-        function selectRow(partnerId) { selectedPartnerId = (selectedPartnerId === partnerId) ? null : partnerId; renderTable(); updateFabState(); }
-        function resetAndPrepareModal(mode = 'add', partner = null) {
-            partnerForm.reset(); partnerForm.classList.remove('was-validated');
-            logoPreview.src = 'https://via.placeholder.com/100x100.png?text=Logo';
-            if (mode === 'add') {
-                partnerModalTitle.textContent = 'Add New Partner'; savePartnerBtn.textContent = 'Add Partner'; savePartnerBtn.dataset.mode = 'add';
-            } else if (mode === 'edit' && partner) {
-                partnerModalTitle.textContent = `Edit Partner: ${partner.name}`; savePartnerBtn.textContent = 'Update Partner'; savePartnerBtn.dataset.mode = 'edit';
-                document.getElementById('partner-name').value = partner.name;
-                document.getElementById('partner-link').value = partner.link;
-                if (partner.logoDataUrl) { logoPreview.src = partner.logoDataUrl; }
-            }
-        }
-        partnersTableBody.addEventListener('click', e => { const row = e.target.closest('tr'); if (row) selectRow(parseInt(row.dataset.id)); });
-        logoInput.addEventListener('change', function() { if (this.files[0]) { readFileAsDataURL(this.files[0]).then(url => logoPreview.src = url); } });
-        addPartnerBtn.addEventListener('click', () => { resetAndPrepareModal('add'); partnerModal.show(); });
-        editPartnerBtn.addEventListener('click', () => { if (selectedPartnerId === null) return; const partner = partnersData.find(p => p.id === selectedPartnerId); resetAndPrepareModal('edit', partner); partnerModal.show(); });
-        visitPartnerBtn.addEventListener('click', () => { if (selectedPartnerId === null) return; const partner = partnersData.find(p => p.id === selectedPartnerId); window.open(partner.link, '_blank'); });
-        deletePartnerBtn.addEventListener('click', () => {
-            if (selectedPartnerId === null) return;
-            const partner = partnersData.find(p => p.id === selectedPartnerId);
-            confirmationModalTitle.textContent = "Confirm Deletion";
-            confirmationModalBody.innerHTML = `Are you sure you want to delete the partner: <strong>${partner.name}</strong>?`;
-            confirmActionBtn.onclick = () => {
-                partnersData = partnersData.filter(p => p.id !== selectedPartnerId);
-                savePartnersData(partnersData);
-                selectedPartnerId = null; renderTable(); updateFabState(); confirmationModal.hide();
-            };
-            confirmationModal.show();
-        });
-        savePartnerBtn.addEventListener('click', async () => {
-            if (!partnerForm.checkValidity()) { partnerForm.classList.add('was-validated'); partnerForm.reportValidity(); return; }
-            const mode = savePartnerBtn.dataset.mode;
-            const name = document.getElementById('partner-name').value;
-            const link = document.getElementById('partner-link').value;
-            const logoFile = logoInput.files[0];
-            let logoDataUrl = null;
-            if(logoFile) logoDataUrl = await readFileAsDataURL(logoFile);
-
-            if (mode === 'add') {
-                partnersData.push({ id: nextPartnerId++, name, link, logoDataUrl });
+    async function fetchAndRenderPartners() {
+        try {
+            const response = await fetch(getApiPath('partners_handler.php?action=get'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                partnersData = result.data;
+                renderTable();
             } else {
-                const partner = partnersData.find(p => p.id === selectedPartnerId);
-                partner.name = name;
-                partner.link = link;
-                if (logoDataUrl) partner.logoDataUrl = logoDataUrl;
+                console.error("Failed to fetch partners:", result.message);
             }
-            savePartnersData(partnersData);
-            renderTable(); partnerModal.hide();
+        } catch (error) {
+            console.error("Error fetching partners:", error);
+        }
+    }
+
+    function renderTable() {
+        partnersTableBody.innerHTML = '';
+        partnersData.forEach(p => {
+            const row = partnersTableBody.insertRow();
+            row.dataset.id = p.id;
+            if (p.id == selectedPartnerId) row.classList.add('selected');
+            const logoUrl = p.logo_path ? `../${p.logo_path}` : 'https://via.placeholder.com/30x30.png?text=L';
+            row.innerHTML = `<td><img src="${logoUrl}" alt="${p.name}" class="me-2" style="width:30px; height:30px; object-fit:contain;">${p.name}</td><td><a href="${p.website_link}" target="_blank">${p.website_link}</a></td>`;
         });
-        renderTable(); updateFabState();
-    })();
+    }
+
+    function updateFabState() {
+        const isSelected = selectedPartnerId !== null;
+        editPartnerBtn.disabled = !isSelected;
+        deletePartnerBtn.disabled = !isSelected;
+        visitPartnerBtn.disabled = !isSelected;
+    }
+
+    function selectRow(partnerId) {
+        selectedPartnerId = (selectedPartnerId == partnerId) ? null : partnerId;
+        renderTable();
+        updateFabState();
+    }
+    
+    function resetAndPrepareModal(mode = 'add', partner = null) {
+        partnerForm.reset();
+        partnerForm.classList.remove('was-validated');
+        logoPreview.src = 'https://via.placeholder.com/100x100.png?text=Logo';
+        backgroundPreview.src = 'https://via.placeholder.com/200x100.png?text=Background';
+
+        if (mode === 'add') {
+            partnerModalTitle.textContent = 'Add New Partner';
+            savePartnerBtn.textContent = 'Add Partner';
+            savePartnerBtn.dataset.mode = 'add';
+        } else if (mode === 'edit' && partner) {
+            partnerModalTitle.textContent = `Edit Partner: ${partner.name}`;
+            savePartnerBtn.textContent = 'Update Partner';
+            savePartnerBtn.dataset.mode = 'edit';
+            document.getElementById('partner-name').value = partner.name;
+            document.getElementById('partner-link').value = partner.website_link;
+            if (partner.logo_path) logoPreview.src = `../${partner.logo_path}`;
+            if (partner.background_image_path) backgroundPreview.src = `../${partner.background_image_path}`;
+        }
+    }
+    
+    async function showPreviewOnChange(input, previewElement) {
+        if (input.files && input.files[0]) {
+            previewElement.src = await readFileAsDataURL(input.files[0]);
+        }
+    }
+
+    partnersTableBody.addEventListener('click', e => {
+        const row = e.target.closest('tr');
+        if (row) selectRow(row.dataset.id);
+    });
+
+    logoInput.addEventListener('change', () => showPreviewOnChange(logoInput, logoPreview));
+    backgroundInput.addEventListener('change', () => showPreviewOnChange(backgroundInput, backgroundPreview));
+    
+    addPartnerBtn.addEventListener('click', () => { resetAndPrepareModal('add'); partnerModal.show(); });
+    
+    editPartnerBtn.addEventListener('click', () => {
+        if (selectedPartnerId === null) return;
+        const partner = partnersData.find(p => p.id == selectedPartnerId);
+        resetAndPrepareModal('edit', partner);
+        partnerModal.show();
+    });
+    
+    visitPartnerBtn.addEventListener('click', () => {
+        if (selectedPartnerId === null) return;
+        const partner = partnersData.find(p => p.id == selectedPartnerId);
+        window.open(partner.website_link, '_blank');
+    });
+
+    deletePartnerBtn.addEventListener('click', () => {
+        if (selectedPartnerId === null) return;
+        const partner = partnersData.find(p => p.id == selectedPartnerId);
+        confirmationModalTitle.textContent = "Confirm Deletion";
+        confirmationModalBody.innerHTML = `Are you sure you want to delete the partner: <strong>${partner.name}</strong>? This cannot be undone.`;
+        confirmActionBtn.className = 'btn btn-danger';
+        confirmActionBtn.onclick = async () => {
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', selectedPartnerId);
+            const response = await fetch(getApiPath('partners_handler.php'), { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.status === 'success') {
+                selectedPartnerId = null;
+                fetchAndRenderPartners();
+                updateFabState();
+            } else {
+                alert('Error deleting partner: ' + result.message);
+            }
+            confirmationModal.hide();
+        };
+        confirmationModal.show();
+    });
+
+    savePartnerBtn.addEventListener('click', async () => {
+        if (!partnerForm.checkValidity()) {
+            partnerForm.classList.add('was-validated');
+            partnerForm.reportValidity();
+            return;
+        }
+
+        const formData = new FormData();
+        const mode = savePartnerBtn.dataset.mode;
+        formData.append('action', mode);
+        formData.append('name', document.getElementById('partner-name').value);
+        formData.append('link', document.getElementById('partner-link').value);
+
+        if (logoInput.files[0]) formData.append('logo_file', logoInput.files[0]);
+        if (backgroundInput.files[0]) formData.append('background_file', backgroundInput.files[0]);
+
+        if (mode === 'edit') {
+            formData.append('id', selectedPartnerId);
+        }
+
+        try {
+            const response = await fetch(getApiPath('partners_handler.php'), { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.status === 'success') {
+                partnerModal.hide();
+                fetchAndRenderPartners();
+            } else {
+                alert('Error saving partner: ' + result.message);
+            }
+        } catch (error) {
+             alert('An error occurred: ' + error.message);
+        }
+    });
+
+    // Initial load
+    fetchAndRenderPartners();
+    updateFabState();
+})();
     
     // --- GLOBAL FAB VISIBILITY MANAGER ---
     (function() {

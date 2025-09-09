@@ -88,7 +88,6 @@ $partners = [
 ];
 
 // Exams Data
-// Exams Data
 $exams = [];
 $exams_result = $conn->query("SELECT name, description, hero_media_path AS image, file_path AS url FROM exams ORDER BY name ASC");
 if ($exams_result && $exams_result->num_rows > 0) {
@@ -96,6 +95,20 @@ if ($exams_result && $exams_result->num_rows > 0) {
         // Add an 'alt' key for consistency with the original structure
         $exam_row['alt'] = 'Image for ' . htmlspecialchars($exam_row['name']);
         $exams[] = $exam_row;
+    }
+}
+
+// Partners Data
+$partners = [];
+$partners_result = $conn->query("SELECT name, website_link, logo_path, background_image_path FROM partners ORDER BY name ASC");
+if ($partners_result && $partners_result->num_rows > 0) {
+    while ($row = $partners_result->fetch_assoc()) {
+        $partners[] = [
+            "name" => $row['name'],
+            "logo" => $row['logo_path'], // The path from the database, e.g., 'uploads/partner/...'
+            "backgroundImage" => $row['background_image_path'],
+            "url" => $row['website_link']
+        ];
     }
 }
 ?>
