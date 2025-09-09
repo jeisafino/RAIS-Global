@@ -1,7 +1,24 @@
 <?php
-// This is the updated footer file.
-// It includes the new two-part structure with a toggle button,
-// along with all its necessary CSS and JavaScript.
+// This is the updated, dynamic footer file.
+
+// Establish database connection
+// Use __DIR__ to ensure the path is correct regardless of where this file is included from.
+require_once __DIR__ . '/db_connect.php';
+
+// Fetch all footer items from the database
+$static_items = [];
+$social_items = [];
+$result = $conn->query("SELECT * FROM footer_items ORDER BY display_order ASC");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        if ($row['type'] === 'static') {
+            // Use label as key for easy access
+            $static_items[$row['label']] = htmlspecialchars($row['value']);
+        } else {
+            $social_items[] = $row;
+        }
+    }
+}
 ?>
 
 <style>
@@ -226,22 +243,6 @@
         color: #3BA43B;
         transform: scale(1.15);
     }
-    .footer-socials a .bi-twitter-x::before {
-    /* This forces the browser to draw the correct icon character */
-    content: "\f879" !important;
-
-    /* These force the browser to use the correct font and styling */
-    font-family: "bootstrap-icons" !important;
-    font-weight: normal !important;
-    color: white !important;
-    font-size: 22px !important;
-
-    /* These prevent other styles from hiding or transforming the icon */
-    display: inline-block !important;
-    vertical-align: middle !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
 
     /* --- Subscription Notice Styles --- */
     .subscription-notice {
@@ -378,26 +379,18 @@
             <div class="footer-right">
                 <h3>Get In Touch</h3>
                 <p>
-                    <i class="bi bi-envelope-fill me-2"></i> assessment@romancis.ca<br />
-                    <i class="bi bi-telephone-fill me-2"></i> +63 917 185 7247 | (250) 667-0565<br />
-                    <i class="bi bi-geo-alt-fill me-2"></i> City Sleep Inn Hotel and Events Centre, Barangay Sico,
-                    Lipa City,
-                    Batangas
+                    <i class="bi bi-envelope-fill me-2"></i> <?php echo $static_items['Email'] ?? 'Email not set'; ?><br />
+                    <i class="bi bi-telephone-fill me-2"></i> <?php echo $static_items['Contacts'] ?? 'Contacts not set'; ?><br />
+                    <i class="bi bi-geo-alt-fill me-2"></i> <?php echo $static_items['Location'] ?? 'Location not set'; ?>
                 </p>
             </div>
         </div>
         <div class="footer-socials">
-            <a href="https://www.facebook.com/RomansandAssociatesImmigrationServices" target="_blank"><i
-                    class="bi bi-facebook"></i></a>
-          <a href="https://x.com/RCIS2022" target="_blank">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
-    </svg>
-</a>
-            <a href="https://www.instagram.com/romancis.ca/" target="_blank"><i class="bi bi-instagram"></i></a>
-            <a href="https://www.linkedin.com/company/roman-associates-immigration-services-ltd/" target="_blank"><i
-                    class="bi bi-linkedin"></i></a>
-            <a href="mailto:assessment@romancis.ca" target="_blank"><i class="bi bi-envelope-fill"></i></a>
+            <?php foreach ($social_items as $item): ?>
+                <a href="<?php echo htmlspecialchars($item['value']); ?>" target="_blank" aria-label="<?php echo htmlspecialchars($item['label']); ?>">
+                    <i class="<?php echo htmlspecialchars($item['icon_class']); ?>"></i>
+                </a>
+            <?php endforeach; ?>
         </div>
          <p class="text-center mt-4 mb-0">© <?php echo date("Y"); ?> Roman & Associates Immigration Services LTD. All Rights Reserved.</p>
     </footer>
@@ -405,8 +398,8 @@
 
 <script>
     // --- Footer Scripts ---
-    // This script runs after the footer HTML is loaded.
     (function() {
+        // This function is defined within an IIFE to avoid polluting the global scope
         function showSubscriptionForm() {
             const form = document.getElementById("subscription-form");
             const button = document.querySelector(".subscribe-btn");
@@ -421,7 +414,6 @@
             let message = "";
             let isSuccess = false;
 
-            // Basic email validation
             if (emailInput && emailInput.value && /^\S+@\S+\.\S+$/.test(emailInput.value)) {
                 message = "Subscribed successfully with: " + emailInput.value;
                 isSuccess = true;
@@ -433,25 +425,20 @@
                 isSuccess = false;
             }
             
-            // Create and show a non-blocking notification
             const notice = document.createElement('div');
             notice.textContent = message;
             notice.className = `subscription-notice ${isSuccess ? 'success' : 'error'}`;
             document.body.appendChild(notice);
 
-            // Animate in
-            setTimeout(() => {
-                notice.classList.add('show');
-            }, 10);
+            setTimeout(() => { notice.classList.add('show'); }, 10);
 
-            // Animate out and remove after a few seconds
             setTimeout(() => {
                 notice.classList.remove('show');
                 setTimeout(() => {
                     if (document.body.contains(notice)) {
                         document.body.removeChild(notice);
                     }
-                }, 500); // Wait for fade out transition
+                }, 500);
             }, 4000);
         }
 
@@ -491,7 +478,6 @@
         if (upButton) upButton.addEventListener('click', showFooterTop);
         if (topCloseButton) topCloseButton.addEventListener('click', showMainFooter);
 
-        // Set initial height after a short delay and add a listener for resizing.
         setTimeout(setWrapperHeight, 150);
         window.addEventListener('resize', setWrapperHeight);
     })();
