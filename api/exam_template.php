@@ -18,6 +18,7 @@ if (!$exam) {
 
 // Fetch related sections
 $formats = $conn->query("SELECT * FROM exam_formats WHERE exam_id = $exam_id ORDER BY display_order ASC")->fetch_all(MYSQLI_ASSOC);
+$choice_cards = $conn->query("SELECT * FROM exam_choice_cards WHERE exam_id = $exam_id ORDER BY display_order ASC")->fetch_all(MYSQLI_ASSOC);
 $infocards = $conn->query("SELECT * FROM exam_infocards WHERE exam_id = $exam_id ORDER BY display_order ASC")->fetch_all(MYSQLI_ASSOC);
 $faqs = $conn->query("SELECT * FROM exam_faqs WHERE exam_id = $exam_id ORDER BY display_order ASC")->fetch_all(MYSQLI_ASSOC);
 
@@ -42,93 +43,43 @@ $page_title = htmlspecialchars($exam['name']);
     <div class="header-bg-img" style="background-image: url('<?php echo htmlspecialchars($exam['hero_media_path']); ?>');"></div>
     <div class="container d-flex flex-column justify-content-end" style="min-height: 80vh;">
       <div class="text-start mb-5 pb-4">
-        <h1 class="display-4 fw-bold text-white header-text-shadow"><?php echo htmlspecialchars($exam['name']); ?></h1>
-        <p class="lead mt-3 text-white header-text-shadow"><?php echo htmlspecialchars($exam['description']); ?></p>
+          <h1 class="display-4 fw-bold text-white header-text-shadow"><?php echo htmlspecialchars($exam['name']); ?></h1>
+          <p class="lead mt-3 text-white header-text-shadow"><?php echo htmlspecialchars($exam['description']); ?></p>
+          <a href="form.php" class="btn px-4 py-2 text-white" style="background-color: #0C470C;">Book Now</a>
       </div>
     </div>
   </header>
   <main>
     <?php if (!empty($exam['about_content'])): ?>
     <section id="about" class="py-5">
-      <div class="container">
-        <div class="row justify-content-center align-items-center g-5">
-          <div class="col-lg-7">
-            <h2 class="display-5 fw-bold">About <?php echo htmlspecialchars($exam['name']); ?></h2>
-            <p class="mt-4 fs-5"><?php echo nl2br(htmlspecialchars($exam['about_content'])); ?></p>
-          </div>
-          <?php if (!empty($exam['about_media_path'])): ?>
-          <div class="col-lg-5">
-            <img src="<?php echo htmlspecialchars($exam['about_media_path']); ?>" class="img-fluid rounded shadow-lg" alt="About <?php echo htmlspecialchars($exam['name']); ?>">
-          </div>
-          <?php endif; ?>
-        </div>
-      </div>
+        <div class="container"><div class="row justify-content-center align-items-center g-5"><div class="col-lg-7"><h2 class="display-5 fw-bold">About <?php echo htmlspecialchars($exam['name']); ?></h2><p class="mt-4 fs-5"><?php echo nl2br(htmlspecialchars($exam['about_content'])); ?></p></div><?php if (!empty($exam['about_media_path'])): ?><div class="col-lg-5"><img src="<?php echo htmlspecialchars($exam['about_media_path']); ?>" class="img-fluid rounded shadow-lg" alt="About <?php echo htmlspecialchars($exam['name']); ?>"></div><?php endif; ?></div></div>
     </section>
     <?php endif; ?>
 
     <?php if (!empty($formats)): ?>
     <section id="test-format" class="py-5 bg-light">
-      <div class="container">
-        <div class="text-center mb-5"><h2 class="display-5 fw-bold">Test Format</h2></div>
-        <div class="row g-4 justify-content-center">
-          <?php foreach ($formats as $format): ?>
-          <div class="col-lg-3 col-md-6">
-            <div class="bg-white rounded-4 text-center h-100 p-4 shadow-sm">
-              <i class="<?php echo htmlspecialchars($format['icon_class']); ?> display-3" style="color: #0C470C;"></i>
-              <h3 class="fs-4 fw-bold mt-3"><?php echo htmlspecialchars($format['title']); ?></h3>
-              <p class="mt-2"><?php echo htmlspecialchars($format['description']); ?></p>
-            </div>
-          </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
+        <div class="container"><div class="text-center mb-5"><h2 class="display-5 fw-bold">Test Format</h2></div><div class="row g-4 justify-content-center"><?php foreach ($formats as $format): ?><div class="col-lg-3 col-md-6"><div class="bg-white rounded-4 text-center h-100 p-4 shadow-sm"><i class="<?php echo htmlspecialchars($format['icon_class']); ?> display-3" style="color: #0C470C;"></i><h3 class="fs-4 fw-bold mt-3"><?php echo htmlspecialchars($format['title']); ?></h3><p class="mt-2"><?php echo htmlspecialchars($format['description']); ?></p></div></div><?php endforeach; ?></div></div>
+    </section>
+    <?php endif; ?>
+
+    <?php if (!empty($choice_cards)): ?>
+    <section class="py-5">
+        <div class="container"><h2 class="text-center mb-5 display-5 fw-bold">Why should you choose <?php echo htmlspecialchars($exam['name']); ?>?</h2><div class="row g-4"><?php foreach ($choice_cards as $card): ?><div class="col-lg-4 col-md-6"><div class="card h-100 shadow-sm border-0"><img src="<?php echo htmlspecialchars($card['image_path']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($card['title']); ?>" style="height: 200px; object-fit: cover;"><div class="card-body d-flex flex-column p-4"><h4 class="card-title fw-bold"><?php echo htmlspecialchars($card['title']); ?></h4><p class="card-text"><?php echo htmlspecialchars($card['description']); ?></p></div></div></div><?php endforeach; ?></div></div>
     </section>
     <?php endif; ?>
 
     <?php if (!empty($infocards)): ?>
-    <section class="py-5">
-      <div class="container">
-        <h2 class="text-center mb-5 display-5 fw-bold">How does <?php echo htmlspecialchars($exam['name']); ?> work?</h2>
-        <div class="row g-4 justify-content-center">
-          <?php foreach ($infocards as $card): ?>
-          <div class="col-lg-5 col-md-8">
-            <div class="bg-white p-4 p-md-5 rounded-4 text-center h-100 border shadow-sm">
-              <h3 class="fw-bold fs-4 mb-3"><?php echo htmlspecialchars($card['title']); ?></h3>
-              <p class="mb-0"><?php echo htmlspecialchars($card['description']); ?></p>
-            </div>
-          </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
+    <section id="info-cards" class="py-5 bg-light">
+        <div class="container"><h2 class="text-center mb-5 display-5 fw-bold">How does <?php echo htmlspecialchars($exam['name']); ?> work?</h2><div class="row g-4 justify-content-center"><?php foreach ($infocards as $card): ?><div class="col-lg-5 col-md-8"><div class="bg-white p-4 p-md-5 rounded-4 text-center h-100 border shadow-sm"><h3 class="fw-bold fs-4 mb-3"><?php echo htmlspecialchars($card['title']); ?></h3><p class="mb-0"><?php echo htmlspecialchars($card['description']); ?></p></div></div><?php endforeach; ?></div></div>
     </section>
     <?php endif; ?>
 
     <?php if (!empty($faqs)): ?>
-    <section class="py-5 bg-light">
-      <div class="container my-md-4">
-        <div class="text-center mb-5"><h2 class="fw-bold">Frequently Asked Questions</h2></div>
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="accordion" id="faqAccordion">
-              <?php foreach ($faqs as $index => $faq): ?>
-              <div class="accordion-item mb-2 border-0 rounded-3">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed p-3 rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>">
-                    <?php echo htmlspecialchars($faq['question']); ?>
-                  </button>
-                </h2>
-                <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body"><?php echo nl2br(htmlspecialchars($faq['answer'])); ?></div>
-                </div>
-              </div>
-              <?php endforeach; ?>
-            </div>
-          </div>
-        </div>
-      </div>
+    <section id="faqs" class="py-5">
+        <div class="container my-md-4"><div class="text-center mb-5"><h2 class="fw-bold">Frequently Asked Questions</h2></div><div class="row justify-content-center"><div class="col-lg-10"><div class="accordion" id="faqAccordion"><?php foreach ($faqs as $index => $faq): ?><div class="accordion-item mb-2 border-0 rounded-3"><h2 class="accordion-header"><button class="accordion-button collapsed p-3 rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>"><?php echo htmlspecialchars($faq['question']); ?></button></h2><div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body"><?php echo nl2br(htmlspecialchars($faq['answer'])); ?></div></div></div><?php endforeach; ?></div></div></div></div>
     </section>
     <?php endif; ?>
-  </main>
+</main>
 
   <?php include 'footer.php'; ?>
 
