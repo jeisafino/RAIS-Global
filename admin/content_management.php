@@ -245,7 +245,7 @@ $footerData = [
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
     <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
     <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><div class="accordion" id="map-details-accordion"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapDetails" aria-expanded="false" aria-controls="collapseMapDetails">📍 Optional: Add Map Pin Details</button></h2><div id="collapseMapDetails" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#map-details-accordion"><div class="accordion-body"><p class="small text-muted">Enter an address and click "Find" to automatically get the coordinates for the map pin.</p><div class="row g-3"><div class="col-12"><label for="blog-map-title" class="form-label">Map Pin Title</label><input type="text" class="form-control" id="blog-map-title" name="map_title" placeholder="e.g., Event at 9.0 Niner Calamba"></div><div class="col-12"><label for="blog-map-summary" class="form-label">Map Pin Summary</label><textarea class="form-control" id="blog-map-summary" name="map_summary" rows="2" placeholder="A short summary for the popup."></textarea></div><div class="col-12"><label for="blog-map-address" class="form-label">Address</label><div class="input-group"><input type="text" class="form-control" id="blog-map-address" name="map_address" placeholder="e.g., 123 Example St, Santo Tomas, Batangas"><button class="btn btn-outline-secondary" type="button" id="geocode-btn">Find</button></div><div id="geocode-status" class="form-text"></div></div><input type="hidden" id="blog-map-latitude" name="map_latitude"><input type="hidden" id="blog-map-longitude" name="map_longitude"></div></div></div></div></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>    
-    <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><ul class="nav nav-tabs" id="examTab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#exam-pane-info" type="button">Main Info</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-format" type="button">Test Format</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-choicecards" type="button">Choice Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-infocards" type="button">Info Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-faq" type="button">FAQs</button></li></ul><div class="tab-content pt-3"><div class="tab-pane fade show active" id="exam-pane-info"><div class="row g-3"><div class="col-md-6"><label for="exam-name" class="form-label">Exam Name</label><input type="text" class="form-control" id="exam-name" required></div><div class="col-md-6"><label for="exam-hero-media" class="form-label">Hero Image (Background)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*"></div><div class="col-12"><label for="exam-description" class="form-label">Short Description (for Hero & Main Page)</label><textarea class="form-control" id="exam-description" rows="2" required></textarea></div><hr class="my-4"><div class="col-md-8"><label for="exam-about-content" class="form-label">About Section Content</label><textarea class="form-control" id="exam-about-content" rows="6"></textarea></div><div class="col-md-4"><label for="exam-about-media" class="form-label">About Section Image</label><input type="file" class="form-control" id="exam-about-media" accept="image/*"></div></div></div><div class="tab-pane fade" id="exam-pane-format"><h6>Add items that appear in the "Test Format" section.</h6><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div><div class="tab-pane fade" id="exam-pane-choicecards"><h6>Add cards for the "Why should you choose..." section. (Max 6 recommended)</h6><div id="exam-choicecards-container"></div><button type="button" id="add-exam-choicecard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Card</button></div><div class="tab-pane fade" id="exam-pane-infocards"><h6>Add the cards for the "How does it work?" section.</h6><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Info Card</button></div><div class="tab-pane fade" id="exam-pane-faq"><h6>Add questions and answers for the FAQ section.</h6><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div>
+    <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><ul class="nav nav-tabs" id="examTab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#exam-pane-info" type="button">1. Main Info</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-format" type="button">2. Test Format</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-choicecards" type="button">3. Choice Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-infocards" type="button">4. Info Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-faq" type="button">5. FAQs</button></li></ul><div class="tab-content pt-3"><div class="tab-pane fade show active" id="exam-pane-info"><div class="row g-3 align-items-start"><div class="col-md-6"><label for="exam-name" class="form-label">Exam Name</label><input type="text" class="form-control" id="exam-name" required></div><div class="col-md-6"><label for="exam-hero-media" class="form-label">Hero Image (Background)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*"></div><div class="col-md-6"><label for="exam-description" class="form-label">Short Description (for Hero & Main Page)</label><textarea class="form-control" id="exam-description" rows="2" required></textarea></div><div class="col-md-6"><label for="exam-hero-logo" class="form-label">Hero Logo (Top Right)</label><input type="file" class="form-control" id="exam-hero-logo" accept="image/*,.svg"></div><hr class="my-4"><div class="col-md-6"><label for="exam-about-content" class="form-label">About Section Content</label><textarea class="form-control" id="exam-about-content" rows="6"></textarea></div><div class="col-md-6"><label for="exam-about-media" class="form-label">About Section Image</label><input type="file" class="form-control" id="exam-about-media" accept="image/*"></div></div></div><div class="tab-pane fade" id="exam-pane-format"><h6>Add items that appear in the "Test Format" section.</h6><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div><div class="tab-pane fade" id="exam-pane-choicecards"><h6>Add cards for the "Why should you choose..." section. (Max 6 recommended)</h6><div id="exam-choicecards-container"></div><button type="button" id="add-exam-choicecard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Card</button></div><div class="tab-pane fade" id="exam-pane-infocards"><div class="mb-3"><label for="exam-infocards-intro" class="form-label">Introductory Text</label><textarea class="form-control" id="exam-infocards-intro" rows="3" placeholder="This text appears above the info cards..."></textarea></div><hr><h6>Add the cards for the "How does it work?" section.</h6><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Info Card</button></div><div class="tab-pane fade" id="exam-pane-faq"><h6>Add questions and answers for the FAQ section.</h6><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div>
     <div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     
     <template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon</label><div class="input-group"><select class="form-select form-select-sm format-icon"></select><span class="input-group-text icon-preview" style="width: 40px; justify-content: center;"><i class="bi bi-info-circle"></i></span></div></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template>    <template id="exam-infocard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Info Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm infocard-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm infocard-description" rows="3" required></textarea></div></div></template>
@@ -1397,7 +1397,7 @@ saveServiceBtn.addEventListener('click', async () => {
     updateFabState();
 })();
 
-// --- START: SCRIPT FOR EXAMS MANAGEMENT (DATABASE-DRIVEN & DYNAMIC ICONS) ---
+// --- START: SCRIPT FOR EXAMS MANAGEMENT (FINAL & COMPLETE) ---
 (async function() {
     
     async function loadBootstrapIcons() {
@@ -1476,6 +1476,10 @@ saveServiceBtn.addEventListener('click', async () => {
         const itemEl = template.firstElementChild;
         container.appendChild(itemEl);
         
+        if(data.image_path) {
+            itemEl.dataset.existingImagePath = data.image_path;
+        }
+
         function formatIcon (icon) {
             if (!icon.id) { return icon.text; }
             var $icon = $(`<span><i class="${icon.id} me-2"></i>${icon.text}</span>`);
@@ -1500,6 +1504,12 @@ saveServiceBtn.addEventListener('click', async () => {
         } else if (templateId.includes('choicecard')) {
             itemEl.querySelector('.choice-title').value = data.title || '';
             itemEl.querySelector('.choice-description').value = data.description || '';
+            if(data.image_path){
+                const preview = document.createElement('div');
+                preview.className = 'mt-2 border rounded p-2 text-center media-preview-container';
+                preview.innerHTML = `<img src="../${data.image_path}" class="img-fluid rounded" style="max-height: 100px;"><p class="small text-muted mb-0 mt-1">${data.image_path.split('/').pop()}</p>`;
+                itemEl.querySelector('.choice-image').after(preview);
+            }
         } else if (templateId.includes('infocard')) {
             itemEl.querySelector('.infocard-title').value = data.title || '';
             itemEl.querySelector('.infocard-description').value = data.description || '';
@@ -1518,30 +1528,43 @@ saveServiceBtn.addEventListener('click', async () => {
     function resetAndPrepareModal(mode = 'add', exam = null) {
         examForm.reset();
         examForm.classList.remove('was-validated');
+        document.querySelectorAll('.media-preview-container').forEach(el => el.remove());
         ['exam-format-container', 'exam-choicecards-container', 'exam-infocards-container', 'exam-faq-container'].forEach(id => document.getElementById(id).innerHTML = '');
         new bootstrap.Tab(document.querySelector('#examTab button[data-bs-target="#exam-pane-info"]')).show();
         
-        if (mode === 'add') {
-            examModalTitle.textContent = 'Add New Exam';
-            saveExamBtn.textContent = 'Add Exam';
-            saveExamBtn.dataset.mode = 'add';
-        } else if (mode === 'edit' && exam) {
+        if (mode === 'edit' && exam) {
             examModalTitle.textContent = `Edit Exam: ${exam.name}`;
             saveExamBtn.textContent = 'Update Exam';
             saveExamBtn.dataset.mode = 'edit';
             document.getElementById('exam-name').value = exam.name;
             document.getElementById('exam-description').value = exam.description;
-            document.getElementById('exam-booking-url').value = exam.booking_url || '';
             document.getElementById('exam-about-content').value = exam.about_content;
+            document.getElementById('exam-infocards-intro').value = exam.infocards_intro || '';
+
+            ['hero_media', 'hero_logo', 'about_media'].forEach(type => {
+                const path = exam[`${type}_path`];
+                if(path) {
+                    const input = document.getElementById(`exam-${type.replace('_', '-')}`);
+                    if (input) {
+                        const preview = document.createElement('div');
+                        preview.className = 'mt-2 border rounded p-2 text-center media-preview-container';
+                        preview.innerHTML = `<img src="../${path}" class="img-fluid rounded" style="max-height: 100px;"><p class="small text-muted mb-0 mt-1">${path.split('/').pop()}</p>`;
+                        input.after(preview);
+                    }
+                }
+            });
             
             (exam.formats || []).forEach(d => createDynamicElement('exam-format-container', 'exam-format-template', d));
             (exam.choice_cards || []).forEach(d => createDynamicElement('exam-choicecards-container', 'exam-choicecard-template', d));
             (exam.infocards || []).forEach(d => createDynamicElement('exam-infocards-container', 'exam-infocard-template', d));
             (exam.faqs || []).forEach(d => createDynamicElement('exam-faq-container', 'exam-faq-template', d));
+        } else {
+             examModalTitle.textContent = 'Add New Exam';
+             saveExamBtn.textContent = 'Add Exam';
+             saveExamBtn.dataset.mode = 'add';
         }
     }
 
-    // --- Event Listeners ---
     examCardsContainer.addEventListener('click', (e) => { const card = e.target.closest('.service-card'); if (card) selectCard(card.dataset.id); });
     addExamBtn.addEventListener('click', () => { resetAndPrepareModal('add'); examModal.show(); });
     editExamBtn.addEventListener('click', () => { if (!selectedExamId) return; const exam = examsData.find(e => e.id == selectedExamId); resetAndPrepareModal('edit', exam); examModal.show(); });
@@ -1561,7 +1584,6 @@ saveServiceBtn.addEventListener('click', async () => {
             const formData = new FormData();
             formData.append('action', 'delete');
             formData.append('id', selectedExamId);
-            formData.append('file_path', exam.file_path);
             const response = await fetch(getApiPath('exams_handler.php'), { method: 'POST', body: formData });
             const result = await response.json();
             if (result.status === 'success') {
@@ -1579,7 +1601,7 @@ saveServiceBtn.addEventListener('click', async () => {
         const exam = examsData.find(e => e.id == selectedExamId);
         if (exam && exam.file_path) {
             window.open(`../${exam.file_path}`, '_blank');
-        } else { alert('This exam does not have a page yet. Please save it first.'); }
+        } else { alert('This exam does not have a page generated yet. Please save it first.'); }
     });
 
     saveExamBtn.addEventListener('click', async () => {
@@ -1594,15 +1616,18 @@ saveServiceBtn.addEventListener('click', async () => {
         
         formData.append('name', document.getElementById('exam-name').value);
         formData.append('description', document.getElementById('exam-description').value);
-        formData.append('booking_url', document.getElementById('exam-booking-url').value);
         formData.append('about_content', document.getElementById('exam-about-content').value);
+        formData.append('infocards_intro', document.getElementById('exam-infocards-intro').value);
+        
         if (document.getElementById('exam-hero-media').files[0]) formData.append('hero_media', document.getElementById('exam-hero-media').files[0]);
+        if (document.getElementById('exam-hero-logo').files[0]) formData.append('hero_logo', document.getElementById('exam-hero-logo').files[0]);
         if (document.getElementById('exam-about-media').files[0]) formData.append('about_media', document.getElementById('exam-about-media').files[0]);
         
         if (mode === 'edit') {
             const exam = examsData.find(e => e.id == selectedExamId);
-            formData.append('existing_hero_path', exam.hero_media_path || '');
-            formData.append('existing_about_path', exam.about_media_path || '');
+            if (!document.getElementById('exam-hero-media').files[0]) formData.append('existing_hero_path', exam.hero_media_path || '');
+            if (!document.getElementById('exam-hero-logo').files[0]) formData.append('existing_hero_logo_path', exam.hero_logo_path || '');
+            if (!document.getElementById('exam-about-media').files[0]) formData.append('existing_about_path', exam.about_media_path || '');
         }
         
         const formats = Array.from(document.querySelectorAll('#exam-format-container .dynamic-exam-item')).map(el => ({ icon: el.querySelector('.format-icon').value, title: el.querySelector('.format-title').value, description: el.querySelector('.format-description').value }));
@@ -1615,9 +1640,12 @@ saveServiceBtn.addEventListener('click', async () => {
         formData.append('infocards', JSON.stringify(infocards));
         formData.append('faqs', JSON.stringify(faqs));
 
-        document.querySelectorAll('#exam-choicecards-container .choice-image').forEach((input, index) => {
-            if (input.files[0]) {
-                formData.append(`choice_card_image_${index}`, input.files[0]);
+        document.querySelectorAll('#exam-choicecards-container .dynamic-exam-item').forEach((item, index) => {
+            const fileInput = item.querySelector('.choice-image');
+            if (fileInput.files[0]) {
+                formData.append(`choice_card_image_${index}`, fileInput.files[0]);
+            } else if (mode === 'edit') {
+                formData.append(`existing_choice_card_image_${index}`, item.dataset.existingImagePath || '');
             }
         });
 
@@ -1631,8 +1659,7 @@ saveServiceBtn.addEventListener('click', async () => {
     
     fetchAndRenderExams();
     updateFabState();
-})();
-    
+})();    
     // --- START: SCRIPT FOR PARTNERS PAGE MANAGEMENT ---
     (function() {
         let selectedPartnerId = null;
