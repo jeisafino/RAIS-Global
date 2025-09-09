@@ -29,6 +29,7 @@ $footerData = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" href="../img/logoulit.png" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css">
     <!-- Custom styles for CMS enhancements -->
     <style>
@@ -243,15 +244,19 @@ $footerData = [
     <div class="modal fade" id="about-page-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">About Page Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="about-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close Preview</button></div></div></div></div>
     <div class="modal fade" id="service-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="service-modal-title">Add New Service</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="service-form" novalidate><h6>Service Information</h6><div class="mb-3"><label for="service-name" class="form-label">Service Name</label><input type="text" class="form-control" id="service-name" name="name" required></div><div class="mb-3"><label for="service-description" class="form-label">Subtitle (in hero)</label><textarea class="form-control" id="service-description" name="description" rows="3" required></textarea></div><div class="mb-3"><label for="service-hero-media" class="form-label">Hero Section Media</label><input type="file" class="form-control" id="service-hero-media" name="hero_media" accept="image/*,video/*"></div><hr class="my-4"><h6>Service Sections (Tabs)</h6><p class="text-muted small">Add detailed sections for this service. Each section will become a tab in the preview.</p><div id="dynamic-sections-container"></div><button type="button" id="add-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-service-btn">Save Service</button></div></div></div></div><template id="service-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Tab Title</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., About" required></div><div class="mb-2"><label class="form-label">Tab Content</label><textarea class="form-control section-description" name="section_description[]" rows="5" required></textarea></div><div><label class="form-label">Tab Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template><div class="modal fade" id="blog-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-preview-title">Blog Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="blog-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>    <div class="modal fade" id="partner-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="partner-modal-title">Add New Partner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="partner-form" novalidate><div class="mb-3"><label for="partner-name" class="form-label">Partner Name</label><input type="text" class="form-control" id="partner-name" required></div><div class="mb-3"><label for="partner-link" class="form-label">Website Link</label><input type="url" class="form-control" id="partner-link" placeholder="https://example.com" required></div><div class="mb-3"><label for="partner-logo" class="form-label">Partner Logo</label><input class="form-control" type="file" id="partner-logo" accept="image/*"><div class="form-text">Upload a logo for the partner.</div></div><div class="text-center"><img src="https://via.placeholder.com/100x100.png?text=Logo" alt="Logo Preview" id="partner-logo-preview" class="mt-2 bg-light p-1"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-partner-btn">Add Partner</button></div></div></div></div>
     <div class="modal fade" id="blog-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="blog-modal-title">Add New Blog</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="blog-form" novalidate><h6>Blog Information</h6><div class="row g-3"><div class="col-md-12"><label for="blog-title" class="form-label">Blog Title</label><input type="text" class="form-control" id="blog-title" name="title" required></div><div class="col-md-6"><label for="blog-author" class="form-label">Author</label><input type="text" class="form-control" id="blog-author" name="author"></div><div class="col-md-6"><label for="blog-publish-date" class="form-label">Publish Date</label><input type="date" class="form-control" id="blog-publish-date" name="publish_date"></div></div><div class="my-3"><label for="blog-summary" class="form-label">Summary (Short Intro)</label><textarea class="form-control" id="blog-summary" name="summary" rows="3"></textarea></div><div class="mb-3"><label for="blog-hero-media" class="form-label">Hero Section Media (Main Image)</label><input type="file" class="form-control" id="blog-hero-media" name="hero_media" accept="image/*,video/*"></div><div class="accordion" id="map-details-accordion"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapDetails" aria-expanded="false" aria-controls="collapseMapDetails">📍 Optional: Add Map Pin Details</button></h2><div id="collapseMapDetails" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#map-details-accordion"><div class="accordion-body"><p class="small text-muted">Enter an address and click "Find" to automatically get the coordinates for the map pin.</p><div class="row g-3"><div class="col-12"><label for="blog-map-title" class="form-label">Map Pin Title</label><input type="text" class="form-control" id="blog-map-title" name="map_title" placeholder="e.g., Event at 9.0 Niner Calamba"></div><div class="col-12"><label for="blog-map-summary" class="form-label">Map Pin Summary</label><textarea class="form-control" id="blog-map-summary" name="map_summary" rows="2" placeholder="A short summary for the popup."></textarea></div><div class="col-12"><label for="blog-map-address" class="form-label">Address</label><div class="input-group"><input type="text" class="form-control" id="blog-map-address" name="map_address" placeholder="e.g., 123 Example St, Santo Tomas, Batangas"><button class="btn btn-outline-secondary" type="button" id="geocode-btn">Find</button></div><div id="geocode-status" class="form-text"></div></div><input type="hidden" id="blog-map-latitude" name="map_latitude"><input type="hidden" id="blog-map-longitude" name="map_longitude"></div></div></div></div></div><hr class="my-4"><h6>Blog Content Sections</h6><p class="text-muted small">Add sections for this blog. Each section can have a title, content, and an optional image.</p><div id="blog-dynamic-sections-container"></div><button type="button" id="add-blog-section-btn" class="btn btn-outline-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Section</button></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" id="save-blog-btn">Save Blog</button></div></div></div></div><template id="blog-section-template"><div class="p-3 border rounded mb-3 dynamic-section"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="section-number mb-0">Section 1</h6><button type="button" class="btn-close remove-section-btn"></button></div><div class="mb-2"><label class="form-label">Section Title (Optional)</label><input type="text" class="form-control section-title" name="section_title[]" placeholder="e.g., Event Highlights"></div><div class="mb-2"><label class="form-label">Section Content</label><textarea class="form-control section-content" name="section_content[]" rows="5" required></textarea></div><div><label class="form-label">Section Media (Optional)</label><input type="file" class="form-control section-media" name="section_media[]" accept="image/*,video/*"></div></div></template>    
+    <div class="modal fade" id="exam-modal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-modal-title">Add New Exam</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="exam-form" novalidate><ul class="nav nav-tabs" id="examTab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#exam-pane-info" type="button">1. Main Info</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-format" type="button">2. Test Format</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-infocards" type="button">3. Info Cards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#exam-pane-faq" type="button">4. FAQs</button></li></ul><div class="tab-content pt-3"><div class="tab-pane fade show active" id="exam-pane-info"><div class="row g-3"><div class="col-md-6"><label for="exam-name" class="form-label">Exam Name</label><input type="text" class="form-control" id="exam-name" required></div><div class="col-md-6"><label for="exam-hero-media" class="form-label">Hero Image (Background)</label><input type="file" class="form-control" id="exam-hero-media" accept="image/*"></div><div class="col-12"><label for="exam-description" class="form-label">Short Description (for Hero & Main Page)</label><textarea class="form-control" id="exam-description" rows="2" required></textarea></div><hr class="my-4"><div class="col-md-8"><label for="exam-about-content" class="form-label">About Section Content</label><textarea class="form-control" id="exam-about-content" rows="6"></textarea></div><div class="col-md-4"><label for="exam-about-media" class="form-label">About Section Image</label><input type="file" class="form-control" id="exam-about-media" accept="image/*"></div></div></div><div class="tab-pane fade" id="exam-pane-format"><h6>Add items that appear in the "Test Format" section.</h6><div id="exam-format-container"></div><button type="button" id="add-exam-format-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Format Item</button></div><div class="tab-pane fade" id="exam-pane-infocards"><h6>Add the cards for the "How does it work?" section.</h6><div id="exam-infocards-container"></div><button type="button" id="add-exam-infocard-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Info Card</button></div><div class="tab-pane fade" id="exam-pane-faq"><h6>Add questions and answers for the FAQ section.</h6><div id="exam-faq-container"></div><button type="button" id="add-exam-faq-btn" class="btn btn-outline-secondary mt-2"><i class="bi bi-plus-circle me-2"></i>Add FAQ</button></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-exam-btn">Save Exam</button></div></div></div></div>
+    <div class="modal fade" id="exam-preview-modal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exam-preview-title">Exam Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="exam-preview-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
     
-<template id="about-text-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="text"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Text Paragraph</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><textarea class="form-control block-content" rows="5" placeholder="Enter paragraph text here..."></textarea></div></template>
+    <template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon</label><div class="input-group"><select class="form-select form-select-sm format-icon"></select><span class="input-group-text icon-preview" style="width: 40px; justify-content: center;"><i class="bi bi-info-circle"></i></span></div></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template>    <template id="exam-infocard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Info Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm infocard-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm infocard-description" rows="3" required></textarea></div></div></template>
+    <template id="exam-faq-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">FAQ Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Question</label><input type="text" class="form-control form-control-sm faq-question" required></div><div><label class="form-label small">Answer</label><textarea class="form-control form-control-sm faq-answer" rows="3" required></textarea></div></div></template>
+    <template id="about-text-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="text"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Text Paragraph</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><textarea class="form-control block-content" rows="5" placeholder="Enter paragraph text here..."></textarea></div></template>
     <template id="about-media-block-template"><div class="p-3 border rounded mb-3 dynamic-about-block" data-type="media"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Media Block</h6><button type="button" class="btn-close remove-about-block-btn"></button></div><div class="input-group"><input type="file" class="form-control block-media-file" accept="image/*,video/*"><button class="btn btn-outline-danger btn-sm clear-block-media-btn" type="button" title="Clear Media"><i class="bi bi-x-lg"></i></button></div><div class="mt-2 border rounded p-2 block-media-preview" style="min-height: 100px;"></div></div></template>
     <template id="about-card-template"><div class="p-3 border rounded mb-3 dynamic-about-card"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0 text-muted">Tabbed Card</h6><button type="button" class="btn-close remove-about-card-btn"></button></div><div class="row"><div class="col-md-6 mb-2"><label class="form-label small">Tab Title</label><input type="text" class="form-control card-tab-title" placeholder="e.g., Mission"></div><div class="col-md-6 mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control card-title" placeholder="e.g., Mission Statement"></div></div><div class="mb-2"><label class="form-label small">Card Content</label><textarea class="form-control card-content" rows="4"></textarea></div></div></template>
-    <template id="exam-format-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Format Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Icon Class (e.g., 'bi bi-headphones')</label><input type="text" class="form-control form-control-sm format-icon"></div><div class="mb-2"><label class="form-label small">Title (e.g., 'Listening')</label><input type="text" class="form-control form-control-sm format-title" required></div><div><label class="form-label small">Description (e.g., '30 minutes...')</label><textarea class="form-control form-control-sm format-description" rows="2"></textarea></div></div></template>
-    <template id="exam-infocard-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Info Card</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Card Title</label><input type="text" class="form-control form-control-sm infocard-title" required></div><div><label class="form-label small">Card Description</label><textarea class="form-control form-control-sm infocard-description" rows="3" required></textarea></div></div></template>
-    <template id="exam-faq-template"><div class="p-3 border rounded mb-3 dynamic-exam-item"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">FAQ Item</h6><button type="button" class="btn-close remove-exam-item-btn"></button></div><div class="mb-2"><label class="form-label small">Question</label><input type="text" class="form-control form-control-sm faq-question" required></div><div><label class="form-label small">Answer</label><textarea class="form-control form-control-sm faq-answer" rows="3" required></textarea></div></div></template>
 
     <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="togglemodeScript.js"></script>
     <script>
@@ -1390,38 +1395,31 @@ saveServiceBtn.addEventListener('click', async () => {
     updateFabState();
 })();
 
-// --- START: SCRIPT FOR EXAMS MANAGEMENT ---
+// --- START: SCRIPT FOR EXAMS MANAGEMENT (DATABASE-DRIVEN) ---
 (function() {
-    function loadExamsData() {
-        const savedData = localStorage.getItem('raisCmsExamsData');
-        return savedData ? JSON.parse(savedData) : [];
-    }
-
-    function saveExamsData(data) {
-        localStorage.setItem('raisCmsExamsData', JSON.stringify(data));
-    }
-
-    let examsData = loadExamsData();
+    let examsData = [];
     let selectedExamId = null;
-    let nextExamId = (examsData.length > 0 ? Math.max(...examsData.map(e => e.id)) : 0) + 1;
-
     const examCardsContainer = document.getElementById('exam-cards-container');
     const addExamBtn = document.getElementById('add-exam-btn');
     const editExamBtn = document.getElementById('edit-exam-btn');
     const deleteExamBtn = document.getElementById('delete-exam-btn');
     const previewExamBtn = document.getElementById('preview-exam-btn');
-
-    const examModalEl = document.getElementById('exam-modal');
-    const examModal = new bootstrap.Modal(examModalEl);
-    const examPreviewModal = new bootstrap.Modal(document.getElementById('exam-preview-modal'));
+    const examModal = new bootstrap.Modal(document.getElementById('exam-modal'));
     const examModalTitle = document.getElementById('exam-modal-title');
     const examForm = document.getElementById('exam-form');
     const saveExamBtn = document.getElementById('save-exam-btn');
+    const getApiPath = (file) => `../api/${file}`;
 
-    // Add an event listener to the confirmation modal to reset its z-index when closed
-    confirmationModalEl.addEventListener('hidden.bs.modal', () => {
-        confirmationModalEl.style.zIndex = '';
-    });
+    async function fetchAndRenderExams() {
+        try {
+            const response = await fetch(getApiPath('exams_handler.php?action=get'));
+            const result = await response.json();
+            if (result.status === 'success') {
+                examsData = result.data;
+                renderExamCards();
+            } else { console.error("Failed to fetch exams:", result.message); }
+        } catch (error) { console.error("Error fetching exams:", error); }
+    }
 
     function renderExamCards() {
         examCardsContainer.innerHTML = '';
@@ -1431,8 +1429,8 @@ saveServiceBtn.addEventListener('click', async () => {
             const card = document.createElement('div');
             card.className = 'card service-card';
             card.dataset.id = exam.id;
-            if (exam.id === selectedExamId) card.classList.add('selected');
-            const mediaUrl = exam.heroMediaDataUrl || 'https://via.placeholder.com/800x600.png?text=Exam+Media';
+            if (exam.id == selectedExamId) card.classList.add('selected');
+            const mediaUrl = exam.hero_media_path ? `../${exam.hero_media_path}` : 'https://via.placeholder.com/800x600.png?text=Exam+Media';
             card.innerHTML = `<img src="${mediaUrl}" class="card-img-top" alt="${exam.name}"><div class="card-body"><h5 class="card-title">${exam.name}</h5></div>`;
             cardCol.appendChild(card);
             examCardsContainer.appendChild(cardCol);
@@ -1447,186 +1445,170 @@ saveServiceBtn.addEventListener('click', async () => {
     }
 
     function selectCard(examId) {
-        selectedExamId = (selectedExamId === examId) ? null : examId;
+        selectedExamId = (selectedExamId == examId) ? null : examId;
         renderExamCards();
         updateFabState();
     }
-
-    examCardsContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.service-card');
-        if (card) selectCard(parseInt(card.dataset.id));
-    });
-
-    function createDynamicElement(containerId, templateId, data) {
+    
+    function createDynamicElement(containerId, templateId, data = {}) {
         const container = document.getElementById(containerId);
-        const template = document.getElementById(templateId);
-        const clone = template.content.cloneNode(true);
-        const itemEl = clone.firstElementChild;
-        if (templateId === 'exam-format-template' && data) {
-            itemEl.querySelector('.format-icon').value = data.icon || '';
+        const template = document.getElementById(templateId).content.cloneNode(true);
+        const itemEl = template.firstElementChild;
+
+        // Append the new element to the container FIRST
+        container.appendChild(itemEl);
+
+        // Define a function to format how the icons look in the dropdown
+        function formatIcon (icon) {
+            if (!icon.id) { return icon.text; } // For the search box placeholder
+            // Returns the icon's HTML and its name
+            var $icon = $(`<span><i class="${icon.id} me-2"></i>${icon.text}</span>`);
+            return $icon;
+        };
+
+        // Populate fields based on template type
+        if (templateId.includes('format')) {
+            const selectEl = itemEl.querySelector('.format-icon');
+            const previewEl = itemEl.querySelector('.icon-preview i');
+
+            // 1. Populate the dropdown with icons
+            bootstrapIcons.forEach(icon => {
+                const option = document.createElement('option');
+                option.value = icon.class;
+                option.textContent = icon.name;
+                selectEl.appendChild(option);
+            });
+            
+            // 2. Set the dropdown's value if editing
+            selectEl.value = data.icon_class || 'bi bi-info-circle';
+
+            // 3. Initialize Select2 with the new template options
+            $(selectEl).select2({
+                dropdownParent: $('#exam-modal'),
+                templateResult: formatIcon,   // This formats the dropdown list
+                templateSelection: formatIcon // This formats the selected item
+            });
+
+            // 4. Add an event listener to update the separate preview box
+            $(selectEl).on('change', () => {
+                previewEl.className = selectEl.value;
+            });
+            
+            // 5. Trigger the change event to set the initial preview
+            $(selectEl).trigger('change');
+
+            // Populate other fields
             itemEl.querySelector('.format-title').value = data.title || '';
             itemEl.querySelector('.format-description').value = data.description || '';
-        } else if (templateId === 'exam-infocard-template' && data) {
+
+        } else if (templateId.includes('infocard')) {
             itemEl.querySelector('.infocard-title').value = data.title || '';
             itemEl.querySelector('.infocard-description').value = data.description || '';
-        } else if (templateId === 'exam-faq-template' && data) {
+        } else if (templateId.includes('faq')) {
             itemEl.querySelector('.faq-question').value = data.question || '';
             itemEl.querySelector('.faq-answer').value = data.answer || '';
         }
-        itemEl.querySelector('.remove-exam-item-btn').addEventListener('click', () => itemEl.remove());
-        container.appendChild(clone);
+
+        itemEl.querySelector('.remove-exam-item-btn').addEventListener('click', () => {
+            $(selectEl).select2('destroy');
+            itemEl.remove();
+        });
     }
-
-    examModalEl.addEventListener('click', e => {
-        if (e.target.matches('.nav-link')) {
-            e.preventDefault();
-            const targetPaneId = e.target.dataset.pane;
-            examModalEl.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            e.target.classList.add('active');
-            examModalEl.querySelectorAll('.exam-pane').forEach(pane => {
-                pane.style.display = (pane.id === targetPaneId) ? 'block' : 'none';
-            });
-        }
-    });
-
+    
     function resetAndPrepareModal(mode = 'add', exam = null) {
         examForm.reset();
         examForm.classList.remove('was-validated');
-        document.getElementById('exam-format-container').innerHTML = '';
-        document.getElementById('exam-infocards-container').innerHTML = '';
-        document.getElementById('exam-faq-container').innerHTML = '';
-        examModalEl.querySelector('.nav-link[data-pane="exam-pane-info"]').click();
+        ['exam-format-container', 'exam-infocards-container', 'exam-faq-container'].forEach(id => document.getElementById(id).innerHTML = '');
+        new bootstrap.Tab(document.querySelector('#examTab button[data-bs-target="#exam-pane-info"]')).show();
         if (mode === 'add') {
             examModalTitle.textContent = 'Add New Exam';
+            saveExamBtn.textContent = 'Add Exam';
             saveExamBtn.dataset.mode = 'add';
         } else if (mode === 'edit' && exam) {
             examModalTitle.textContent = `Edit Exam: ${exam.name}`;
+            saveExamBtn.textContent = 'Update Exam';
             saveExamBtn.dataset.mode = 'edit';
             document.getElementById('exam-name').value = exam.name;
-            document.getElementById('exam-about-content').value = exam.aboutContent || '';
+            document.getElementById('exam-description').value = exam.description;
+            document.getElementById('exam-about-content').value = exam.about_content;
             (exam.formats || []).forEach(d => createDynamicElement('exam-format-container', 'exam-format-template', d));
-            (exam.infoCards || []).forEach(d => createDynamicElement('exam-infocards-container', 'exam-infocard-template', d));
+            (exam.infocards || []).forEach(d => createDynamicElement('exam-infocards-container', 'exam-infocard-template', d));
             (exam.faqs || []).forEach(d => createDynamicElement('exam-faq-container', 'exam-faq-template', d));
         }
     }
 
+    examCardsContainer.addEventListener('click', (e) => { const card = e.target.closest('.service-card'); if (card) selectCard(card.dataset.id); });
     addExamBtn.addEventListener('click', () => { resetAndPrepareModal('add'); examModal.show(); });
-    editExamBtn.addEventListener('click', () => { if (selectedExamId === null) return; const exam = examsData.find(e => e.id === selectedExamId); resetAndPrepareModal('edit', exam); examModal.show(); });
+    editExamBtn.addEventListener('click', () => { if (!selectedExamId) return; const exam = examsData.find(e => e.id == selectedExamId); resetAndPrepareModal('edit', exam); examModal.show(); });
     document.getElementById('add-exam-format-btn').addEventListener('click', () => createDynamicElement('exam-format-container', 'exam-format-template'));
     document.getElementById('add-exam-infocard-btn').addEventListener('click', () => createDynamicElement('exam-infocards-container', 'exam-infocard-template'));
     document.getElementById('add-exam-faq-btn').addEventListener('click', () => createDynamicElement('exam-faq-container', 'exam-faq-template'));
 
     deleteExamBtn.addEventListener('click', () => {
-        if (selectedExamId === null) return;
-        const exam = examsData.find(e => e.id === selectedExamId);
+        if (!selectedExamId) return;
+        const exam = examsData.find(e => e.id == selectedExamId);
         confirmationModalTitle.textContent = "Confirm Deletion";
-        confirmationModalBody.innerHTML = `Are you sure you want to delete the exam: <strong>${exam.name}</strong>?`;
-        
-        // FIX: Change button color for delete
+        confirmationModalBody.innerHTML = `Are you sure you want to delete the exam: <strong>${exam.name}</strong>? This cannot be undone.`;
         confirmActionBtn.className = 'btn btn-danger';
-        
-        confirmActionBtn.onclick = () => {
-            examsData = examsData.filter(e => e.id !== selectedExamId);
-            saveExamsData(examsData);
-            selectedExamId = null;
-            renderExamCards();
-            updateFabState();
+        confirmActionBtn.onclick = async () => {
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', selectedExamId);
+            formData.append('file_path', exam.file_path);
+            const response = await fetch(getApiPath('exams_handler.php'), { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.status === 'success') {
+                selectedExamId = null;
+                fetchAndRenderExams();
+                updateFabState();
+            } else { alert('Error: ' + result.message); }
             confirmationModal.hide();
         };
         confirmationModal.show();
     });
+    
+    previewExamBtn.addEventListener('click', () => {
+        if (!selectedExamId) return;
+        const exam = examsData.find(e => e.id == selectedExamId);
+        if (exam && exam.file_path) {
+            window.open(`../${exam.file_path}`, '_blank');
+        } else { alert('This exam does not have a page yet. Please save it first.'); }
+    });
 
-    saveExamBtn.addEventListener('click', () => {
+    saveExamBtn.addEventListener('click', async () => {
         if (!examForm.checkValidity()) {
             examForm.classList.add('was-validated');
             return;
         }
+        const formData = new FormData();
         const mode = saveExamBtn.dataset.mode;
-        confirmationModalTitle.textContent = "Confirm Save";
-        confirmationModalBody.textContent = `Are you sure you want to ${mode === 'add' ? 'add this new' : 'update this'} exam?`;
+        formData.append('action', mode);
+        if (mode === 'edit') formData.append('id', selectedExamId);
+        formData.append('name', document.getElementById('exam-name').value);
+        formData.append('description', document.getElementById('exam-description').value);
+        formData.append('about_content', document.getElementById('exam-about-content').value);
+        if (document.getElementById('exam-hero-media').files[0]) formData.append('hero_media', document.getElementById('exam-hero-media').files[0]);
+        if (document.getElementById('exam-about-media').files[0]) formData.append('about_media', document.getElementById('exam-about-media').files[0]);
+        if (mode === 'edit') {
+            const exam = examsData.find(e => e.id == selectedExamId);
+            formData.append('existing_hero_path', exam.hero_media_path || '');
+            formData.append('existing_about_path', exam.about_media_path || '');
+        }
+        const formats = Array.from(document.querySelectorAll('#exam-format-container .dynamic-exam-item')).map(el => ({ icon: el.querySelector('.format-icon').value, title: el.querySelector('.format-title').value, description: el.querySelector('.format-description').value }));
+        const infocards = Array.from(document.querySelectorAll('#exam-infocards-container .dynamic-exam-item')).map(el => ({ title: el.querySelector('.infocard-title').value, description: el.querySelector('.infocard-description').value }));
+        const faqs = Array.from(document.querySelectorAll('#exam-faq-container .dynamic-exam-item')).map(el => ({ question: el.querySelector('.faq-question').value, answer: el.querySelector('.faq-answer').value }));
+        formData.append('formats', JSON.stringify(formats));
+        formData.append('infocards', JSON.stringify(infocards));
+        formData.append('faqs', JSON.stringify(faqs));
 
-        // FIX: Change button color for save
-        confirmActionBtn.className = 'btn btn-success';
-
-        confirmActionBtn.onclick = async () => {
-            const examDataToSave = {
-                name: document.getElementById('exam-name').value,
-                aboutContent: document.getElementById('exam-about-content').value,
-                formats: Array.from(document.querySelectorAll('#exam-format-container .dynamic-exam-item')).map(el => ({ icon: el.querySelector('.format-icon').value, title: el.querySelector('.format-title').value, description: el.querySelector('.format-description').value })),
-                infoCards: Array.from(document.querySelectorAll('#exam-infocards-container .dynamic-exam-item')).map(el => ({ title: el.querySelector('.infocard-title').value, description: el.querySelector('.infocard-description').value })),
-                faqs: Array.from(document.querySelectorAll('#exam-faq-container .dynamic-exam-item')).map(el => ({ question: el.querySelector('.faq-question').value, answer: el.querySelector('.faq-answer').value }))
-            };
-            const heroFile = document.getElementById('exam-hero-media').files[0];
-            const aboutFile = document.getElementById('exam-about-media').files[0];
-            if (heroFile) examDataToSave.heroMediaDataUrl = await readFileAsDataURL(heroFile);
-            if (aboutFile) examDataToSave.aboutMediaDataUrl = await readFileAsDataURL(aboutFile);
-            if (mode === 'add') {
-                examDataToSave.id = nextExamId++;
-                examsData.push(examDataToSave);
-            } else {
-                const examIndex = examsData.findIndex(e => e.id === selectedExamId);
-                const originalExam = examsData[examIndex];
-                if (!examDataToSave.heroMediaDataUrl) examDataToSave.heroMediaDataUrl = originalExam.heroMediaDataUrl;
-                if (!examDataToSave.aboutMediaDataUrl) examDataToSave.aboutMediaDataUrl = originalExam.aboutMediaDataUrl;
-                examsData[examIndex] = { ...originalExam, ...examDataToSave };
-            }
-            saveExamsData(examsData);
-            renderExamCards();
-            updateFabState();
+        const response = await fetch(getApiPath('exams_handler.php'), { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.status === 'success') {
             examModal.hide();
-            confirmationModal.hide();
-        };
-
-        // FIX: Manually set z-index to ensure it appears on top of the editor modal
-        confirmationModalEl.style.zIndex = "1060";
-        confirmationModal.show();
+            fetchAndRenderExams();
+        } else { alert('Error: ' + result.message); }
     });
-
-    previewExamBtn.addEventListener('click', () => {
-        if (selectedExamId === null) return;
-        const exam = examsData.find(e => e.id === selectedExamId);
-        document.getElementById('exam-preview-title').textContent = `Preview: ${exam.name}`;
-        const previewBody = document.getElementById('exam-preview-body');
-        let content = '';
-        content += `<div class="text-white text-center d-flex align-items-center justify-content-center" style="height: 40vh; background: url(${exam.heroMediaDataUrl || 'https://via.placeholder.com/1200x400'}) no-repeat center center; background-size: cover; text-shadow: 2px 2px 4px #000;"><h1>${exam.name}</h1></div>`;
-        if (exam.aboutContent) {
-            content += `<div class="container my-5"><div class="row align-items-center g-4"><div class="${exam.aboutMediaDataUrl ? 'col-md-7' : 'col-md-12'}"><h2 class="mb-3">About ${exam.name}</h2><p>${exam.aboutContent.replace(/\n/g, '<br>')}</p></div>`;
-            if (exam.aboutMediaDataUrl) content += `<div class="col-md-5"><img src="${exam.aboutMediaDataUrl}" class="img-fluid rounded shadow"></div>`;
-            content += `</div></div>`;
-        }
-        if (exam.formats && exam.formats.length > 0) {
-            content += `<div class="container my-5"><h2 class="text-center mb-4">Test Format</h2><div class="row text-center g-4">`;
-            exam.formats.forEach(f => {
-                content += `<div class="col-md-3"><div class="card h-100 shadow-sm"><div class="card-body"><i class="${f.icon}" style="font-size: 2rem; color: #1E4620;"></i><h5 class="card-title mt-3">${f.title}</h5><p class="card-text text-muted">${f.description}</p></div></div></div>`;
-            });
-            content += `</div></div>`;
-        }
-        if (exam.infoCards && exam.infoCards.length > 0) {
-            content += `<div style="background-color: #ffffff;"><div class="container py-5"><h2 class="text-center mb-4">How does ${exam.name} work?</h2><div class="row g-4">`;
-            exam.infoCards.forEach(c => {
-                content += `<div class="col-md-6"><div class="card h-100 shadow-sm"><div class="card-body p-4"><h5>${c.title}</h5><p class="text-muted">${c.description}</p></div></div></div>`;
-            });
-            content += `</div></div></div>`;
-        }
-        if (exam.faqs && exam.faqs.length > 0) {
-            content += `<div class="container my-5"><h2 class="text-center mb-4">Frequently Asked Questions</h2><div class="accordion" id="faqAccordionPreview">`;
-            exam.faqs.forEach((faq, index) => {
-                content += `<div class="accordion-item">
-                    <h2 class="accordion-header" id="heading${index}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}">${faq.question}</button>
-                    </h2>
-                    <div id="collapse${index}" class="accordion-collapse collapse" data-bs-parent="#faqAccordionPreview">
-                        <div class="accordion-body">${faq.answer.replace(/\n/g, '<br>')}</div>
-                    </div>
-                </div>`;
-            });
-            content += `</div></div>`;
-        }
-        previewBody.innerHTML = content;
-        examPreviewModal.show();
-    });
-
-    renderExamCards();
+    fetchAndRenderExams();
     updateFabState();
 })();
     
@@ -1716,91 +1698,6 @@ saveServiceBtn.addEventListener('click', async () => {
             }
             savePartnersData(partnersData);
             renderTable(); partnerModal.hide();
-        });
-        renderTable(); updateFabState();
-    })();
-
-    // --- START: SCRIPT FOR FOOTER PAGE MANAGEMENT ---
-    (function() {
-        let selectedItemId = null;
-        let localFooterData = loadFooterData();
-        let nextItemId = (localFooterData.length > 0 ? Math.max(...localFooterData.map(i => i.id)) : 0) + 1;
-        
-        const footerTableBody = document.getElementById('footer-table-body');
-        const addItemBtn = document.getElementById('add-footer-item-btn');
-        const editItemBtn = document.getElementById('edit-footer-item-btn');
-        const deleteItemBtn = document.getElementById('delete-footer-item-btn');
-        const visitLinkBtn = document.getElementById('visit-footer-link-btn');
-        const itemModal = new bootstrap.Modal(document.getElementById('footer-modal'));
-        const itemForm = document.getElementById('footer-form');
-        const itemModalTitle = document.getElementById('footer-modal-title');
-        const saveItemBtn = document.getElementById('save-footer-item-btn');
-        const itemLabelInput = document.getElementById('footer-label');
-
-        function loadFooterData() {
-            const savedData = localStorage.getItem('raisCmsFooterData');
-            return savedData ? JSON.parse(savedData) : footerData;
-        }
-
-        function saveFooterData(data) {
-            localStorage.setItem('raisCmsFooterData', JSON.stringify(data));
-        }
-
-        function renderTable() {
-            footerTableBody.innerHTML = '';
-            localFooterData.forEach(item => {
-                const row = footerTableBody.insertRow(); row.dataset.id = item.id;
-                if (item.id === selectedItemId) row.classList.add('selected');
-                const typeDisplay = item.type === 'static' ? '<span class="badge bg-secondary">Static</span>' : '<span class="badge bg-info">Social</span>';
-                row.innerHTML = `<td>${item.label}</td><td>${item.description}</td><td>${typeDisplay}</td>`;
-            });
-        }
-        function updateFabState() {
-            const selectedItem = localFooterData.find(item => item.id === selectedItemId);
-            if (!selectedItem) { editItemBtn.disabled = true; deleteItemBtn.disabled = true; visitLinkBtn.disabled = true; } 
-            else {
-                editItemBtn.disabled = false;
-                if (selectedItem.type === 'static') { deleteItemBtn.disabled = true; visitLinkBtn.disabled = true; } 
-                else { deleteItemBtn.disabled = false; visitLinkBtn.disabled = false; }
-            }
-        }
-        function selectRow(itemId) { selectedItemId = (selectedItemId === itemId) ? null : itemId; renderTable(); updateFabState(); }
-        function resetAndPrepareModal(mode = 'add', item = null) {
-            itemForm.reset(); itemForm.classList.remove('was-validated'); itemLabelInput.readOnly = false;
-            if (mode === 'add') { itemModalTitle.textContent = 'Add Social Media Link'; saveItemBtn.textContent = 'Add Item'; saveItemBtn.dataset.mode = 'add'; } 
-            else if (mode === 'edit' && item) {
-                itemModalTitle.textContent = `Edit Item: ${item.label}`; saveItemBtn.textContent = 'Update Item'; saveItemBtn.dataset.mode = 'edit';
-                itemLabelInput.value = item.label;
-                document.getElementById('footer-description').value = item.description;
-                if (item.type === 'static') itemLabelInput.readOnly = true;
-            }
-        }
-        footerTableBody.addEventListener('click', e => { const row = e.target.closest('tr'); if (row) selectRow(parseInt(row.dataset.id)); });
-        addItemBtn.addEventListener('click', () => { resetAndPrepareModal('add'); itemModal.show(); });
-        editItemBtn.addEventListener('click', () => { if (selectedItemId === null) return; const item = localFooterData.find(i => i.id === selectedItemId); resetAndPrepareModal('edit', item); itemModal.show(); });
-        visitLinkBtn.addEventListener('click', () => { if (selectedItemId === null) return; const item = localFooterData.find(i => i.id === selectedItemId); if (item && item.type !== 'static') window.open(item.description, '_blank'); });
-        deleteItemBtn.addEventListener('click', () => {
-            if (selectedItemId === null) return;
-            const item = localFooterData.find(i => i.id === selectedItemId);
-            if (item.type === 'static') return;
-            confirmationModalTitle.textContent = "Confirm Deletion";
-            confirmationModalBody.innerHTML = `Are you sure you want to delete the link for <strong>${item.label}</strong>?`;
-            confirmActionBtn.onclick = () => {
-                localFooterData = localFooterData.filter(i => i.id !== selectedItemId);
-                saveFooterData(localFooterData);
-                selectedItemId = null; renderTable(); updateFabState(); confirmationModal.hide();
-            };
-            confirmationModal.show();
-        });
-        saveItemBtn.addEventListener('click', () => {
-            if (!itemForm.checkValidity()) { itemForm.classList.add('was-validated'); return; }
-            const mode = saveItemBtn.dataset.mode;
-            const label = itemLabelInput.value;
-            const description = document.getElementById('footer-description').value;
-            if (mode === 'add') { localFooterData.push({ id: nextItemId++, label, description, type: 'social' }); } 
-            else { const item = localFooterData.find(i => i.id === selectedItemId); item.label = label; item.description = description; }
-            saveFooterData(localFooterData);
-            renderTable(); itemModal.hide();
         });
         renderTable(); updateFabState();
     })();

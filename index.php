@@ -88,22 +88,16 @@ $partners = [
 ];
 
 // Exams Data
-$exams = [
-    [
-        "name" => "IELTS",
-        "description" => "The International English Language Testing System is the world's most popular English language proficiency test for higher education and global migration.",
-        "image" => "img/ielts.png",
-        "alt" => "People taking the IELTS Exam",
-        "url" => "ielts.php"
-    ],
-    [
-        "name" => "OET",
-        "description" => "The Occupational English Test (OET) evaluates the English language and communication skills essential for safe and effective patient care for healthcare professionals.",
-        "image" => "img/OET.jpg",
-        "alt" => "Healthcare professionals in a discussion",
-        "url" => "oet.php"
-    ]
-];
+// Exams Data
+$exams = [];
+$exams_result = $conn->query("SELECT name, description, hero_media_path AS image, file_path AS url FROM exams ORDER BY name ASC");
+if ($exams_result && $exams_result->num_rows > 0) {
+    while ($exam_row = $exams_result->fetch_assoc()) {
+        // Add an 'alt' key for consistency with the original structure
+        $exam_row['alt'] = 'Image for ' . htmlspecialchars($exam_row['name']);
+        $exams[] = $exam_row;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
