@@ -353,6 +353,10 @@ $conn->close();
             border-radius: 20px 0 0 20px;
         }
 
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
+            color: var(--rais-text-dark);
+        }
+        
         .chat-toggle-btn {
             position: fixed;
             bottom: 30px;
@@ -443,9 +447,29 @@ $conn->close();
         .dark-mode .summary-card {
             color: #FFFFFF;
         }
+        .dark-mode .chat-body {
+            background-color: #121212;
+        }
+        .dark-mode .chat-body .text-muted, .dark-mode .chat-body-fullscreen .text-muted {
+            color: #EAEAEA !important;
+        }
+        .dark-mode .form-control {
+            background-color: #2a2a2a;
+            color: #EAEAEA;
+            border-color: #3c3c3c;
+        }
+        .dark-mode .form-control::placeholder {
+            color: #888;
+        }
+        .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i {
+            color: #EAEAEA;
+        }
+        .dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             body {
                 padding-top: 60px;
                 padding-bottom: 50px;
@@ -494,10 +518,11 @@ $conn->close();
                 left: 0;
                 z-index: 1029;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
                 padding: 0;
                 transition: none;
+                overflow-x: auto;
+                overflow-y: hidden;
             }
 
             .sidebar:hover {
@@ -510,21 +535,20 @@ $conn->close();
                 display: none;
             }
 
-            .sidebar .nav {
+             .sidebar .nav {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
-                flex-grow: 1;
                 height: 100%;
+                width: 100%;
+                justify-content: space-around;
             }
 
             .sidebar .nav-link {
                 flex: 1;
-                flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                padding: 0 10px;
+                padding: 0 5px;
                 gap: 0;
                 height: 100%;
             }
@@ -607,13 +631,13 @@ $conn->close();
                     <div class="col-md-6 mb-4">
                         <div class="summary-card">
                             <h2>Total Amount Due</h2>
-                            <div class="amount">$0.00</div>
+                            <div class="amount">$0</div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-4">
                         <div class="summary-card" style="background-color: var(--rais-button-maroon);">
                             <h2>Remaining Balance</h2>
-                            <div class="amount">$0.00</div>
+                            <div class="amount">$0</div>
                         </div>
                     </div>
                 </div>
@@ -660,7 +684,7 @@ $conn->close();
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
@@ -680,7 +704,7 @@ $conn->close();
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
@@ -729,7 +753,7 @@ $conn->close();
             const fullScreenChat = document.getElementById('full-screen-chat');
 
             function toggleChat() {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 992) {
                     const isChatVisible = fullScreenChat.style.display === 'flex';
                     if (isChatVisible) {
                         fullScreenChat.style.display = 'none';
@@ -749,10 +773,13 @@ $conn->close();
             
             // Make toggleChat globally accessible
             window.toggleChat = toggleChat;
-            document.getElementById('backToDashboardBtn').addEventListener('click', toggleChat);
+            if(document.getElementById('backToDashboardBtn')) {
+                document.getElementById('backToDashboardBtn').addEventListener('click', toggleChat);
+            }
         });
     </script>
 
 </body>
 
 </html>
+

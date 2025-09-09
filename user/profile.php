@@ -1,46 +1,4 @@
 <?php
-// sidebar.php - The reusable sidebar component for the dashboard pages.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Get the current page filename to set the active link
-$currentPage = basename($_SERVER['PHP_SELF']);
-?>
-<aside class="sidebar d-flex flex-column">
-    <div class="logo">RAIS</div>
-    <nav class="nav flex-column">
-        <a class="nav-link <?php if ($currentPage == 'dashboard.php') echo 'active'; ?>" href="dashboard.php">
-            <i class="bi bi-house-door-fill"></i><span>Dashboard</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'book-consultation.php' || $currentPage == 'book-flight.php') echo 'active'; ?>" href="book-consultation.php">
-            <i class="bi bi-calendar-check"></i><span>Book Appointment</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'statement-of-account.php') echo 'active'; ?>" href="statement-of-account.php">
-            <i class="bi bi-receipt"></i><span>Statement of Account</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'documents.php') echo 'active'; ?>" href="documents.php">
-            <i class="bi bi-file-earmark-text"></i><span>Documents</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'forms.php') echo 'active'; ?>" href="forms.php">
-            <i class="bi bi-journal-text"></i><span>Forms</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'notifications.php') echo 'active'; ?>" href="notifications.php">
-            <i class="bi bi-bell"></i><span>Notifications</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'settings.php') echo 'active'; ?>" href="settings.php">
-            <i class="bi bi-gear"></i><span>Settings</span>
-        </a>
-        <a class="nav-link <?php if ($currentPage == 'profile.php') echo 'active'; ?>" href="profile.php">
-            <i class="bi bi-person-circle"></i><span>Profile</span>
-        </a>
-    </nav>
-    <div class="mt-auto footer-text">
-        &copy; <?php echo date("Y"); ?> RAIS
-    </div>
-</aside>
-
-<?php
 // profile.php - User's profile page
 
 // Start the session to access logged-in user's data.
@@ -100,9 +58,9 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--rais-light-gray);
-            overflow-y: auto;
+            overflow: hidden;
         }
-        .main-wrapper { display: flex; min-height: 100vh; }
+        .main-wrapper { display: flex; height: 100vh; }
         .sidebar {
             background-color: var(--rais-primary-green);
             width: 70px;
@@ -145,9 +103,18 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             align-items: center;
             gap: 15px;
             white-space: nowrap;
+            transition: background-color 0.3s ease;
         }
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: var(--rais-dark-green); }
-        .sidebar .nav-link i { font-size: 1.2rem; min-width: 20px; text-align: center; }
+        .sidebar .nav-link i {
+            font-size: 1.2rem;
+            min-width: 20px;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+        .sidebar .nav-link:hover i {
+            transform: scale(1.1);
+        }
         .sidebar .nav-link span { opacity: 0; transition: opacity 0.1s ease-in-out 0.2s; }
         .sidebar:hover .nav-link span { opacity: 1; }
         .sidebar .footer-text {
@@ -163,7 +130,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .sidebar:hover .footer-text {
             opacity: 1;
         }
-        .content-area { flex-grow: 1; overflow-y: auto; margin-left: 70px; }
+        .content-area { flex-grow: 1; height: 100vh; overflow-y: auto; margin-left: 70px; }
         .header {
             background-color: var(--rais-bg-light);
             height: 60px;
@@ -233,45 +200,190 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             display: none; /* Hide the edit form by default */
         }
 
+        .floating-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            background-color: var(--rais-button-maroon); color: white;
+            border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-decoration: none; transition: background-color 0.2s;
+            z-index: 100;
+        }
+        .floating-btn:hover { background-color: var(--rais-dark-green); }
+
+        .chat-container {
+            position: fixed; bottom: 100px; right: 30px; width: 350px;
+            max-height: 500px; background-color: white; border-radius: 12px;
+            box-shadow: var(--rais-shadow); display: flex; flex-direction: column;
+            z-index: 99; transform: translateY(100%); opacity: 0; visibility: hidden;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .chat-container.show { transform: translateY(0); opacity: 1; visibility: visible; }
+        .chat-header {
+            background-color: var(--rais-primary-green); color: white; padding: 1rem;
+            border-top-left-radius: 12px; border-top-right-radius: 12px; cursor: pointer;
+        }
+        .chat-body {
+            padding: 1rem; flex-grow: 1; overflow-y: auto;
+            background-color: var(--rais-bg-light); display: flex;
+            flex-direction: column-reverse; height: 350px;
+        }
+        .chat-footer { padding: 1rem; border-top: 1px solid var(--rais-light-gray); }
+        
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
+            color: var(--rais-text-dark);
+        }
+
+        .chat-toggle-btn {
+            position: fixed; bottom: 30px; right: 100px;
+            background-color: var(--rais-button-maroon); color: white;
+            border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer; z-index: 100;
+        }
+        #full-screen-chat {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: var(--rais-bg-light); z-index: 2000;
+            display: none; flex-direction: column;
+        }
+        .chat-header-fullscreen {
+            display: flex; align-items: center; padding: 1rem;
+            background-color: var(--rais-primary-green); color: white; flex-shrink: 0;
+        }
+        .back-btn {
+            background: none; border: none; color: white;
+            font-size: 1.5rem; cursor: pointer; margin-right: 1rem;
+        }
+        .chat-title-fullscreen { font-weight: 600; font-size: 1.2rem; }
+        .chat-body-fullscreen {
+            flex-grow: 1; overflow-y: auto; padding: 1rem;
+            display: flex; flex-direction: column-reverse;
+        }
+        .chat-footer-fullscreen {
+            padding: 1rem; border-top: 1px solid var(--rais-light-gray);
+            background-color: white; flex-shrink: 0;
+        }
+
         /* Dark Mode Styles */
         .dark-mode-logo { display: none; }
         .dark-mode .light-mode-logo { display: none; }
         .dark-mode .dark-mode-logo { display: block; }
         body.dark-mode { background-color: #121212; color: #EAEAEA; }
         .dark-mode .sidebar { background-color: #1a1a1a; border-right: 1px solid #2c2c2c; }
-        .dark-mode .header, .dark-mode .content-card, .dark-mode .modal-content { background-color: #1e1e1e; color: #EAEAEA; border-color: #2c2c2c; }
+        .dark-mode .header, .dark-mode .content-card, .dark-mode .modal-content, .dark-mode .chat-container, .dark-mode #full-screen-chat, .dark-mode .chat-footer-fullscreen { background-color: #1e1e1e; color: #EAEAEA; border-color: #2c2c2c; }
         .dark-mode .header { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
-        .dark-mode .header-title, .dark-mode h1, .dark-mode h5, .dark-mode .user-status .me-3, .dark-mode p { color: #EAEAEA !important; }
+        .dark-mode .header-title, .dark-mode h1, .dark-mode h5, .dark-mode .user-status .me-3, .dark-mode p, .dark-mode .chat-title-fullscreen { color: #EAEAEA !important; }
         .dark-mode .form-control { background-color: #2a2a2a; color: #EAEAEA; border-color: #3c3c3c; }
         .dark-mode .form-control:focus { background-color: #2a2a2a; color: #EAEAEA; border-color: var(--rais-primary-green); box-shadow: 0 0 0 0.25rem rgba(0, 77, 64, 0.5); }
         .dark-mode a { color: #4db6ac; }
         .dark-mode a:hover { color: #81c784; }
         .dark-mode hr { border-top-color: #3c3c3c; }
+        .dark-mode .chat-body {
+            background-color: #121212;
+        }
+        .dark-mode .chat-body .text-muted, .dark-mode .chat-body-fullscreen .text-muted {
+            color: #EAEAEA !important;
+        }
+        .dark-mode .form-control::placeholder {
+            color: #888;
+        }
+        .dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i {
+            color: #EAEAEA;
+        }
+        .dark-mode .sidebar .nav-link {
+            color: white;
+        }
+        .dark-mode .sidebar .nav-link:hover {
+            color: white;
+        }
+        .dark-mode .sidebar .nav-link:hover i {
+            transform: none;
+        }
+        .dark-mode .floating-btn {
+            color: white;
+        }
+        .dark-mode .floating-btn:hover {
+            background-color: var(--rais-button-maroon);
+            color: white;
+        }
+        .dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
-            body { padding-top: 60px; padding-bottom: 50px; }
+        @media (max-width: 992px) {
+            body { padding-top: 60px; padding-bottom: 50px; overflow: auto; }
             .content-area { margin-left: 0; }
             .header { position: fixed; top: 0; left: 0; right: 0; z-index: 1030; }
             .header-title { display: none; }
             .main-content { padding-top: 15px; }
             .sidebar {
                 width: 100%; height: 50px; position: fixed; top: auto; bottom: 0; left: 0;
-                z-index: 1029; flex-direction: row; justify-content: space-around;
+                z-index: 1029; flex-direction: row; 
                 align-items: center; padding: 0; transition: none;
+                overflow-x: auto; overflow-y: hidden;
             }
             .sidebar:hover { width: 100%; }
             .sidebar .logo, .sidebar .footer-text { display: none; }
-            .sidebar .nav { display: flex; flex-direction: row; justify-content: space-around; align-items: center; flex-grow: 1; height: 100%; }
-            .sidebar .nav-link { flex: 1; justify-content: center; padding: 0 10px; gap: 0; height: 100%; }
-            .sidebar .nav-link i { font-size: 1.5rem; margin-bottom: 0; }
-            .sidebar .nav-link span, .sidebar:hover .nav-link span { display: none; }
+            .sidebar .nav {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 100%;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .sidebar .nav-link {
+                flex: 1;
+                justify-content: center;
+                align-items: center;
+                padding: 0 5px;
+                gap: 0;
+                height: 100%;
+            }
+
+            .sidebar .nav-link:hover {
+                background-color: var(--rais-dark-green);
+            }
+
+            .sidebar .nav-link i {
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .sidebar .nav-link span,
+            .sidebar:hover .nav-link span {
+                display: none;
+            }
+            .floating-btn { bottom: 80px; right: 15px; }
+            .chat-toggle-btn { bottom: 80px; right: 85px; }
+            .chat-container { display: none !important; }
         }
     </style>
 </head>
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
-        <?php require_once 'sidebar.php' ?>
+        <aside class="sidebar d-flex flex-column">
+            <div class="logo">RAIS</div>
+              <nav class="nav flex-column">
+                  <a class="nav-link" href="dashboard.php"><i class="bi bi-house-door-fill"></i><span>Dashboard</span></a>
+                  <a class="nav-link" href="book-consultation.php"><i class="bi bi-calendar-check"></i><span>Book Consultation</span></a>
+                  <a class="nav-link" href="statement-of-account.php"><i class="bi bi-receipt"></i><span>Statement of Account</span></a>
+                  <a class="nav-link" href="documents.php"><i class="bi bi-file-earmark-text"></i><span>Documents</span></a>
+                  <a class="nav-link" href="forms.php"><i class="bi bi-journal-text"></i><span>Forms</span></a>
+                  <a class="nav-link" href="notifications.php"><i class="bi bi-bell"></i><span>Notifications</span></a>
+                  <a class="nav-link" href="settings.php"><i class="bi bi-gear"></i><span>Settings</span></a>
+                  <a class="nav-link active" href="profile.php"><i class="bi bi-person-circle"></i><span>Profile</span></a>
+              </nav>
+            <div class="mt-auto footer-text">
+                &copy; <?php echo date("Y"); ?> RAIS
+            </div>
+        </aside>
 
         <div class="content-area">
             <header class="header">
@@ -290,6 +402,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             <main class="main-content">
                 <h1>Profile</h1>
                 <div class="content-card">
+                    <!-- Profile View Section -->
                     <div id="profile-view" class="profile-view text-center">
                         <div id="profileViewImageContainer">
                             <?php if (!empty($userProfile['profileImage'])): ?>
@@ -304,7 +417,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                             <p><strong>Email:</strong> <?php echo htmlspecialchars($userProfile['email']); ?></p>
                             <p><strong>Contact:</strong> <?php echo htmlspecialchars($userProfile['phone']); ?></p>
                             <p><strong>Location:</strong> <?php echo htmlspecialchars($userProfile['address']); ?></p>
-                            <p><strong>Birthday:</strong> <?php echo htmlspecialchars(date("F j, Y", strtotime($userProfile['birthday']))); ?></p>
+                            <p><strong>Birthday:</strong> <?php echo !empty($userProfile['birthday']) ? htmlspecialchars(date("F j, Y", strtotime($userProfile['birthday']))) : 'Not set'; ?></p>
                             <?php if (!empty($userProfile['facebook'])): ?>
                                 <p><strong>Facebook:</strong> <a href="<?php echo htmlspecialchars($userProfile['facebook']); ?>" target="_blank"><?php echo htmlspecialchars($userProfile['facebook']); ?></a></p>
                             <?php endif; ?>
@@ -318,6 +431,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                         <button id="editProfileBtn" class="btn btn-primary mt-4" style="background-color: var(--rais-button-maroon); border: none;">Edit Profile</button>
                     </div>
 
+                    <!-- Profile Edit Form (Initially Hidden) -->
                     <form id="profile-edit-form" action="update-profile.php" method="POST" enctype="multipart/form-data">
                         <div class="mb-3 text-center">
                             <img id="profileImagePreview" src="<?php echo !empty($userProfile['profileImage']) ? '../' . htmlspecialchars($userProfile['profileImage']) . '?v=' . time() : 'https://placehold.co/100x100'; ?>" alt="Profile Preview" class="profile-image-preview mb-2">
@@ -367,6 +481,57 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         </div>
     </div>
     
+    <!-- Floating Action Button -->
+    <a href="book-flight.php" class="floating-btn text-decoration-none">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+    <!-- Collapsible Chatbox -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header d-flex justify-content-between align-items-center" onclick="toggleChat()">
+            <h5 class="chat-modal-title mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</h5>
+            <i class="bi bi-x-lg text-white"></i>
+        </div>
+        <div class="chat-body">
+            <div class="text-center text-muted">RAIS Support how may i assist you?</div>
+        </div>
+        <div class="chat-footer">
+            <div class="input-group">
+                <input type="text" class="form-control message-input" placeholder="Type a message..."
+                    aria-label="Message input">
+                <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Full Screen Chat for Mobile -->
+    <div id="full-screen-chat">
+        <div class="chat-header-fullscreen">
+            <button class="back-btn" id="backToDashboardBtn"><i class="bi bi-arrow-left"></i></button>
+            <span class="chat-title-fullscreen"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</span>
+        </div>
+        <div class="chat-body-fullscreen">
+            <div class="text-center text-muted">RAIS Support, how may I help you?</div>
+        </div>
+        <div class="chat-footer-fullscreen">
+            <div class="input-group">
+                <input type="text" class="form-control message-input" placeholder="Type a message..."
+                    aria-label="Message input">
+                <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Toggle Button -->
+    <button class="chat-toggle-btn" onclick="toggleChat()">
+        <i class="bi bi-chat-dots"></i>
+    </button>
+    
+    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -385,6 +550,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
       </div>
     </div>
 
+    <!-- Added Bootstrap JS Bundle for modal functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -416,7 +582,37 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                     reader.readAsDataURL(file);
                 }
             });
+
+            const mainWrapper = document.querySelector('.main-wrapper');
+            const floatingBtn = document.querySelector('.floating-btn');
+            const chatToggleBtn = document.querySelector('.chat-toggle-btn');
+            const popupChatContainer = document.getElementById('chatContainer');
+            const fullScreenChat = document.getElementById('full-screen-chat');
+
+            window.toggleChat = function() {
+                if (window.innerWidth <= 992) {
+                    const isChatVisible = fullScreenChat.style.display === 'flex';
+                    if (isChatVisible) {
+                        fullScreenChat.style.display = 'none';
+                        mainWrapper.style.display = 'flex';
+                        if(floatingBtn) floatingBtn.style.display = 'flex';
+                        if(chatToggleBtn) chatToggleBtn.style.display = 'flex';
+                    } else {
+                        fullScreenChat.style.display = 'flex';
+                        mainWrapper.style.display = 'none';
+                        if(floatingBtn) floatingBtn.style.display = 'none';
+                        if(chatToggleBtn) chatToggleBtn.style.display = 'none';
+                    }
+                } else {
+                    popupChatContainer.classList.toggle('show');
+                }
+            }
+            
+            if(document.getElementById('backToDashboardBtn')) {
+                document.getElementById('backToDashboardBtn').addEventListener('click', toggleChat);
+            }
         });
     </script>
 </body>
 </html>
+

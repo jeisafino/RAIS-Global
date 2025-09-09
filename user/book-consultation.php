@@ -17,7 +17,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $userId = $_SESSION['id'];
 
 // --- FETCH USER DATA & SETTINGS FROM DATABASE ---
-$stmt = $conn->prepare("SELECT firstName, lastName, email, dark_mode FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT firstName, lastName, email, facebook, dark_mode FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -27,7 +27,7 @@ $conn->close();
 
 // If no user is found, handle it gracefully.
 if (!$userProfile) {
-    $userProfile = ['firstName' => 'Guest', 'lastName' => '', 'email' => '', 'dark_mode' => false];
+    $userProfile = ['firstName' => 'Guest', 'lastName' => '', 'email' => '', 'facebook' => '', 'dark_mode' => false];
 }
 
 $darkModeEnabled = (bool)$userProfile['dark_mode'];
@@ -378,7 +378,13 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .btn-submit {
             background-color: var(--rais-button-maroon);
             color: white;
-            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            background-color: var(--rais-primary-green);
+            border-color: var(--rais-primary-green);
+            color: white;
         }
 
         #confirmation-view {
@@ -464,6 +470,10 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 
         .chat-footer .form-control {
             border-radius: 20px 0 0 20px;
+        }
+        
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
+            color: var(--rais-text-dark);
         }
 
         .chat-toggle-btn {
@@ -610,41 +620,35 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
         .dark-mode .text-muted, .dark-mode .info-item {
             color: #B0B0B0 !important;
         }
+        .dark-mode .chat-body {
+            background-color: #121212;
+        }
+        .dark-mode .form-control::placeholder {
+            color: #888;
+        }
+        .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i {
+            color: #EAEAEA;
+        }
+        .dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .booking-wrapper {
-                flex-direction: column;
-            }
-
-            .booking-info {
-                border-right: none;
-                border-bottom: 1px solid var(--rais-light-gray);
-            }
-            .dark-mode .booking-info {
-                border-bottom-color: #2c2c2c;
-            }
-        }
-
-        @media (max-width: 768px) {
             body {
                 padding-top: 60px;
                 padding-bottom: 50px;
                 overflow: auto;
             }
-
             .main-wrapper {
                 height: auto;
+                flex-direction: column;
             }
             
             .content-area {
                 height: auto;
                 overflow-y: visible;
                 margin-left: 0;
-            }
-
-            .main-wrapper {
-                flex-direction: column;
             }
 
             .header {
@@ -673,10 +677,10 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 left: 0;
                 z-index: 1029;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
                 padding: 0;
                 transition: none;
+                overflow: hidden;
             }
 
             .sidebar:hover {
@@ -691,18 +695,18 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             .sidebar .nav {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-around;
                 align-items: center;
-                flex-grow: 1;
                 height: 100%;
+                width: 100%;
+                justify-content: space-around;
             }
 
             .sidebar .nav-link {
-                flex: 1;
                 justify-content: center;
-                padding: 0 10px;
+                padding: 0 5px;
                 gap: 0;
                 height: 100%;
+                flex: 1;
             }
 
             .sidebar .nav-link i {
@@ -715,6 +719,18 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 display: none;
             }
 
+            .booking-wrapper {
+                flex-direction: column;
+            }
+
+            .booking-info {
+                border-right: none;
+                border-bottom: 1px solid var(--rais-light-gray);
+            }
+            .dark-mode .booking-info {
+                border-bottom-color: #2c2c2c;
+            }
+
             .day {
                 width: 36px;
                 height: 36px;
@@ -723,12 +739,12 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 
             .floating-btn {
                 bottom: 80px;
-                right: 15px;
+                right: 85px;
             }
 
             .chat-toggle-btn {
                 bottom: 80px;
-                right: 85px;
+                right: 15px;
             }
 
             .chat-container {
@@ -741,7 +757,24 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 <body class="<?php echo $darkModeEnabled ? 'dark-mode' : ''; ?>">
     <div class="main-wrapper">
         <!-- Sidebar -->
-               <?php require_once 'sidebar.php' ?>
+        <aside class="sidebar d-flex flex-column">
+            <div class="logo">RAIS</div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="dashboard.php"><i class="bi bi-house-door-fill"></i><span>Dashboard</span></a>
+                <a class="nav-link active" href="book-consultation.php"><i
+                        class="bi bi-calendar-check"></i><span>Book Consultation</span></a>
+                <a class="nav-link" href="statement-of-account.php"><i class="bi bi-receipt"></i><span>Statement of
+                        Account</span></a>
+                <a class="nav-link" href="documents.php"><i class="bi bi-file-earmark-text"></i><span>Documents</span></a>
+                <a class="nav-link" href="forms.php"><i class="bi bi-journal-text"></i><span>Forms</span></a>
+                <a class="nav-link" href="notifications.php"><i class="bi bi-bell"></i><span>Notifications</span></a>
+                <a class="nav-link" href="settings.php"><i class="bi bi-gear"></i><span>Settings</span></a>
+                <a class="nav-link" href="profile.php"><i class="bi bi-person-circle"></i><span>Profile</span></a>
+            </nav>
+            <div class="mt-auto footer-text">
+                &copy; <?php echo date("Y"); ?> RAIS
+            </div>
+        </aside>
 
         <!-- Main Content Area -->
         <div class="content-area">
@@ -805,25 +838,31 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                             </div>
 
                             <div id="details-entry-view" style="display: none;">
-                                <button id="back-to-calendar" class="btn btn-sm btn-link mb-3 ps-0">&lt; Back</button>
+                                <div>
+                                    <button id="back-to-calendar" class="btn btn-sm btn-submit mb-3">&lt; Back</button>
+                                </div>
                                 <h4>Enter Your Details</h4>
                                 <p><strong>Selected:</strong> <span id="details-date-display"></span> at <span
                                         id="details-time-display"></span></p>
                                 <form id="booking-form">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name *</label>
-                                        <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($userProfile['firstName'] . ' ' . $userProfile['lastName']) ?>" required>
+                                        <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($userProfile['firstName'] . ' ' . $userProfile['lastName']) ?>" required readonly>
                                     </div>
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email *</label>
-                                        <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($userProfile['email']) ?>" required>
+                                        <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($userProfile['email']) ?>" required readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="facebookLink" class="form-label">Facebook Profile Link *</label>
+                                        <input type="url" id="facebookLink" name="facebookLink" class="form-control" value="<?= htmlspecialchars($userProfile['facebook'] ?? '') ?>" placeholder="https://www.facebook.com/yourprofile" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="notes" class="form-label">Additional Notes</label>
                                         <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
                                     </div>
                                     <p class="small text-muted">By proceeding, you agree to our Terms of Use and Privacy Notice.</p>
-                                    <button type="submit" class="btn btn-submit">Schedule Event</button>
+                                    <button type="submit" class="btn btn-submit w-100">Schedule Event</button>
                                 </form>
                             </div>
                         </div>
@@ -840,7 +879,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                             <p><strong>With:</strong> Roman & Associates</p>
                             <p><strong>Date:</strong> <span id="confirm-date"></span></p>
                             <p><strong>Time:</strong> <span id="confirm-time"></span></p>
-                            <p>A confirmation email with the Zoom link has been sent to <strong id="confirm-email"></strong>.</p>
+                            <p>The Zoom meeting link will be sent to your Messenger. You will see the status of your booking in <a href="notifications.php">Notifications</a> once it's approved.</p>
                         </div>
                     </div>
                     <br>
@@ -872,7 +911,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
@@ -892,7 +931,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
                 <input type="text" class="form-control message-input" placeholder="Type a message..."
                     aria-label="Message input">
                 <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
-                    <i class="bi bi-send-fill text-dark"></i>
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </div>
         </div>
@@ -941,7 +980,7 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
             const fullScreenChat = document.getElementById('full-screen-chat');
 
             function toggleChat() {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 992) {
                     const isChatVisible = fullScreenChat.style.display === 'flex';
                     if (isChatVisible) {
                         fullScreenChat.style.display = 'none';
@@ -1114,14 +1153,44 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 
             bookingForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                const email = document.getElementById('email').value;
+                
+                const notes = document.getElementById('notes').value;
+                const facebookLink = document.getElementById('facebookLink').value;
 
-                document.getElementById('confirm-date').textContent = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(selectedDate);
-                document.getElementById('confirm-time').textContent = selectedTime;
-                document.getElementById('confirm-email').textContent = email;
+                // Format date to YYYY-MM-DD for backend
+                const year = selectedDate.getFullYear();
+                const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                const day = String(selectedDate.getDate()).padStart(2, '0');
+                const formattedDate = `${year}-${month}-${day}`;
 
-                bookingView.style.display = 'none';
-                confirmationView.style.display = 'block';
+                const bookingData = {
+                    date: formattedDate,
+                    time: selectedTime,
+                    notes: notes,
+                    facebookLink: facebookLink
+                };
+
+                fetch('process-consultation.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('confirm-date').textContent = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(selectedDate);
+                        document.getElementById('confirm-time').textContent = selectedTime;
+                        
+                        bookingView.style.display = 'none';
+                        confirmationView.style.display = 'block';
+                    } else {
+                        alert('Booking failed: ' + (data.message || 'Please try again.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An unexpected error occurred. Please try again.');
+                });
             });
 
             document.getElementById('book-another').addEventListener('click', () => {
@@ -1148,3 +1217,4 @@ $darkModeEnabled = (bool)$userProfile['dark_mode'];
 </body>
 
 </html>
+
