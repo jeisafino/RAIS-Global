@@ -1,21 +1,18 @@
 <?php
 // Add this PHP block at the very top of your index.php file
+// Forcefully disable caching on this page
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 require_once 'db_connect.php'; // Adjust path to your db_connect.php
 
-// Default hero media
-$hero_media_path = "vids/niagarapoh.mp4"; // Your original fallback video
-$hero_media_type = 'video'; // Default type
-
-// Fetch the active hero media from the database
-$result = $conn->query("SELECT file_path FROM hero_media WHERE is_active = 1 LIMIT 1");
+// Fetch ALL hero media from the database for the carousel
+$hero_media_items = [];
+$result = $conn->query("SELECT file_path FROM hero_media ORDER BY upload_date DESC");
 if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $hero_media_path = $row['file_path'];
-
-    // Determine if it's a video or image based on file extension
-    $extension = strtolower(pathinfo($hero_media_path, PATHINFO_EXTENSION));
-    if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-        $hero_media_type = 'image';
+    while ($row = $result->fetch_assoc()) {
+        $hero_media_items[] = $row;
     }
 }
 
@@ -70,22 +67,6 @@ if ($map_result && $map_result->num_rows > 0) {
         ];
     }
 }
-
-// Partners Data
-$partners = [
-    [
-        "name" => "9.0 Niner IELTS Review and Tutorial",
-        "logo" => "img/niner.png",
-        "backgroundImage" => "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto-format&fit=crop",
-        "url" => "https://www.nineronlinereview.com/"
-    ],
-    [
-        "name" => "British Council IELTS",
-        "logo" => "img/partner2.png",
-        "backgroundImage" => "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=2069&auto-format&fit=crop",
-        "url" => "https://takeielts.britishcouncil.org/"
-    ]
-];
 
 // Exams Data
 $exams = [];
@@ -709,77 +690,93 @@ if ($partners_result && $partners_result->num_rows > 0) {
 <body>
     <main>
         <!-- Main page content -->
-        <section class="hero position-relative text-white" style="min-height: 100vh; overflow: hidden;">
-            
-            <?php if ($hero_media_type === 'video'): ?>
-                <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
-                    style="object-fit: cover; top: 0; left: 0; z-index: -1;">
-                    <source src="<?php echo htmlspecialchars($hero_media_path); ?>" type="video/mp4" />
-                    Your browser does not support HTML5 video.
-                </video>
-            <?php else: // It's an image ?>
-                <div class="position-absolute w-100 h-100" 
-                     style="background-image: url('<?php echo htmlspecialchars($hero_media_path); ?>'); 
-                            background-size: cover; 
-                            background-position: center; 
-                            top: 0; left: 0; z-index: -1;">
+       <section class="hero position-relative text-white" style="min-height: 100vh; overflow: hidden;">
+    
+    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" style="top: 0; left: 0; z-index: -1;">
+        <div class="carousel-inner h-100">
+            <?php if (!empty($hero_media_items)): ?>
+                <?php foreach ($hero_media_items as $index => $item): ?>
+                    <?php
+                        $hero_media_path = $item['file_path'];
+                        $extension = strtolower(pathinfo($hero_media_path, PATHINFO_EXTENSION));
+                        $media_type = (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) ? 'image' : 'video';
+                        $cache_bust = '?v=' . time(); 
+                    ?>
+                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?> h-100" data-media-type="<?= $media_type ?>">
+                        <?php if ($media_type === 'video'): ?>
+                            <video muted playsinline class="w-100 h-100" style="object-fit: cover;">
+                                <source src="<?= htmlspecialchars($hero_media_path) . $cache_bust ?>" type="video/mp4" />
+                            </video>
+                        <?php else: ?>
+                            <div class="w-100 h-100" style="background-image: url('<?= htmlspecialchars($hero_media_path) . $cache_bust ?>'); background-size: cover; background-position: center;">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="carousel-item active h-100">
+                     <video muted playsinline class="w-100 h-100" style="object-fit: cover;">
+                        <source src="vids/niagarapoh.mp4" type="video/mp4" />
+                    </video>
                 </div>
             <?php endif; ?>
-            
-            <header class="d-none d-lg-flex justify-content-between align-items-center py-4 px-5 position-absolute header-desktop">
-                <a href="index.php">
+        </div>
+    </div>
+    
+    <header class="d-none d-lg-flex justify-content-between align-items-center py-4 px-5 position-absolute header-desktop">
+        <a href="index.php">
+            <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
+        </a>
+        <div class="nav-container-desktop">
+            <ul class="navbar-nav flex-row">
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#blogs">Blogs</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#partners">Partner</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#exams">Exams</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#footerWrapper">Contacts</a></li>
+            </ul>
+        </div>
+        <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper">
+            <i class="bi bi-person fs-3 text-success"></i>
+        </a>
+    </header>
+    
+    <header class="d-lg-none position-absolute header-mobile">
+        <nav class="navbar navbar-dark py-3 px-4">
+            <div class="container-fluid justify-content-between">
+                <a class="navbar-brand" href="index.php">
                     <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
                 </a>
-                <div class="nav-container-desktop">
-                    <ul class="navbar-nav flex-row">
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#blogs">Blogs</a></li>
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#partners">Partner</a></li>
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#exams">Exams</a></li>
-                        <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#footerWrapper">Contacts</a></li>
+                <div class="d-flex align-items-center">
+                    <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper me-2" style="width: 40px; height: 40px;">
+                        <i class="bi bi-person fs-4 text-success"></i>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="bi bi-list" style="font-size: 2.5rem;"></i>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mt-3">
+                        <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link fs-5" href="#services">Services</a></li>
+                        <li class="nav-item"><a class="nav-link fs-5" href="#blogs">Blogs</a></li>
+                        <li class="nav-item"><a class="nav-link fs-5" href="#partners">Partner</a></li>
+                        <li class="nav-item"><a class="nav-link fs-5" href="#exams">Exams</a></li>
+                        <li class="nav-item"><a class="nav-link fs-5" href="#footerWrapper">Contacts</a></li>
                     </ul>
                 </div>
-                <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper">
-                    <i class="bi bi-person fs-3 text-success"></i>
-                </a>
-            </header>
-            
-            <header class="d-lg-none position-absolute header-mobile">
-                <nav class="navbar navbar-dark py-3 px-4">
-                    <div class="container-fluid justify-content-between">
-                        <a class="navbar-brand" href="index.php">
-                            <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
-                        </a>
-                        <div class="d-flex align-items-center">
-                            <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper me-2" style="width: 40px; height: 40px;">
-                                <i class="bi bi-person fs-4 text-success"></i>
-                            </a>
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <i class="bi bi-list" style="font-size: 2.5rem;"></i>
-                            </button>
-                        </div>
-                        <div class="collapse navbar-collapse" id="navbarContent">
-                            <ul class="navbar-nav mt-3">
-                                <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
-                                <li class="nav-item"><a class="nav-link fs-5" href="#services">Services</a></li>
-                                <li class="nav-item"><a class="nav-link fs-5" href="#blogs">Blogs</a></li>
-                                <li class="nav-item"><a class="nav-link fs-5" href="#partners">Partner</a></li>
-                                <li class="nav-item"><a class="nav-link fs-5" href="#exams">Exams</a></li>
-                                <li class="nav-item"><a class="nav-link fs-5" href="#footerWrapper">Contacts</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-            
-            <div class="d-flex flex-column justify-content-center align-items-center text-center px-3"
-                style="min-height: 100vh;">
-                <h1 class="display-1 fw-bold" style="font-family:'Poppins', 'sans-serif';">TARA CANADA!</h1>
-                <p class="fs-3 fst-italic mt-2 mb-4">The Best Pathway to your future</p>
-                <a href="register.php" class="btn btn-lg text-white fw-bold rounded-pill px-4 py-2 btn-green">Get Started</a>
             </div>
-        </section>
+        </nav>
+    </header>
+    
+    <div class="d-flex flex-column justify-content-center align-items-center text-center px-3"
+        style="min-height: 100vh;">
+        <h1 class="display-1 fw-bold" style="font-family:'Poppins', 'sans-serif';">TARA CANADA!</h1>
+        <p class="fs-3 fst-italic mt-2 mb-4">The Best Pathway to your future</p>
+        <a href="register.php" class="btn btn-lg text-white fw-bold rounded-pill px-4 py-2 btn-green">Get Started</a>
+    </div>
+</section>
 
         <!-- Other sections of your main page -->
         <section id="about" class="pt-5 position-relative" style="padding-bottom: 11rem; background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
@@ -962,6 +959,63 @@ if ($partners_result && $partners_result->num_rows > 0) {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carouselElement = document.getElementById('heroCarousel');
+        if (carouselElement) {
+            // Initialize the carousel manually with autoplay disabled
+            const heroCarousel = new bootstrap.Carousel(carouselElement, {
+                interval: false, // Disable the default fixed interval
+                ride: false,
+                pause: false
+            });
+
+            let imageTimer; // To keep track of the timer for images
+
+            // This function handles the logic for the currently active slide
+            const handleSlide = () => {
+                const activeItem = carouselElement.querySelector('.carousel-item.active');
+                if (!activeItem) return;
+
+                const mediaType = activeItem.dataset.mediaType;
+
+                if (mediaType === 'image') {
+                    // If it's an image, set a 5-second timer to go to the next slide
+                    imageTimer = setTimeout(() => {
+                        heroCarousel.next();
+                    }, 5000); // 5000 milliseconds = 5 seconds
+                } 
+                else if (mediaType === 'video') {
+                    const video = activeItem.querySelector('video');
+                    if (video) {
+                        video.currentTime = 0; // Rewind the video
+                        video.play(); // Play the video
+
+                        // Add an event listener that fires only ONCE when the video ends
+                        video.addEventListener('ended', function onVideoEnd() {
+                            heroCarousel.next();
+                            // Clean up the listener to prevent it from firing again
+                            video.removeEventListener('ended', onVideoEnd);
+                        });
+                    }
+                }
+            };
+
+            // When a new slide is about to be shown, clear any pending image timer
+            carouselElement.addEventListener('slide.bs.carousel', () => {
+                clearTimeout(imageTimer);
+                const activeVideo = carouselElement.querySelector('.carousel-item.active video');
+                if(activeVideo) activeVideo.pause(); // Pause the outgoing video
+            });
+
+            // After a slide has been shown, run our logic
+            carouselElement.addEventListener('slid.bs.carousel', handleSlide);
+
+            // Start the logic for the very first slide on page load
+            handleSlide();
+        }
+    });
+    </script>
+    <script>
         // Pass PHP data to JavaScript
         const locations = <?php echo json_encode($locations); ?>;
         const partners = <?php echo json_encode($partners); ?>;
@@ -969,6 +1023,21 @@ if ($partners_result && $partners_result->num_rows > 0) {
 
         // --- Main Page Scripts ---
         document.addEventListener("DOMContentLoaded", function () {
+
+            // --- HELPER FUNCTIONS ---
+    const getApiPath = (file) => `../api/${file}`;
+    const showToast = (message, type = 'success') => { console.log(`${type}: ${message}`); };
+    const handleApiResponse = async (response, showError = true) => {
+        const result = await response.json();
+        if (result.status === 'success') {
+            if (result.message) showToast(result.message);
+            return result.data !== undefined ? result.data : true;
+        } else {
+            if (showError) alert('Error: ' + (result.message || 'An unknown error occurred.'));
+            return null;
+        }
+    };
+    
             // --- Back to Top Button ---
             const backToTopBtn = document.querySelector('.back-to-top');
             if (backToTopBtn) {

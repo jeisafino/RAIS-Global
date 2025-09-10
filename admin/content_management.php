@@ -234,7 +234,7 @@ $footerData = [];
     </div>
 
     <!-- ALL MODALS AND TEMPLATES -->
-<div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" name="mediaName" required></div><div class="mb-3"><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" name="uploaderName" required></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" name="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
+    <div class="modal fade" id="uploadMediaModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="uploadMediaModalLabel">Add New Hero Media</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="upload-form" novalidate><div class="mb-3"><label for="mediaName" class="form-label">Media Name</label><input type="text" class="form-control" id="mediaName" name="mediaName" required></div><div class="mb-3" hidden><label for="uploaderName" class="form-label">Uploader</label><input type="text" class="form-control" id="uploaderName" name="uploaderName"></div><div class="mb-3"><label for="mediaFile" class="form-label">Upload Photo or Video</label><input class="form-control" type="file" id="mediaFile" name="mediaFile" accept="image/*,video/*"><div class="form-text">Please select a landscape photo for best results.</div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="save-media-btn">Save Media</button></div></div></div></div>
     <div class="modal fade" id="landscapeWarningModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Image Orientation Warning</h5> <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>The chosen photo is not a landscape photo. If you wish to continue, the photo may be stretched or cropped.</p></div><div class="modal-footer"> <button type="button" class="btn btn-secondary" id="repick-photo-btn">Repick Photo</button> <button type="button" class="btn btn-primary" id="continue-anyway-btn">Continue Anyway</button></div></div></div></div>
     <div class="modal fade" id="landing-confirmation-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-confirmation-title">Confirm Action</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-confirmation-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirm-landing-action-btn">Confirm</button></div></div></div></div>
     <div class="modal fade" id="landing-preview-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="landing-preview-title">Media Preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="landing-preview-body" class="text-center"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div></div></div></div>
@@ -339,282 +339,207 @@ $footerData = [];
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="togglemodeScript.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     
     async function loadBootstrapIcons() {
-        try {
-            const response = await fetch('bootstrap-icons.json');
-            const json = await response.json();
-            return Object.keys(json).map(key => {
-                const name = key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                const className = `bi bi-${key}`;
-                return { name: name, class: className };
-            });
-        } catch (error) {
-            console.error("Could not load bootstrap-icons.json:", error);
-            return [{ name: 'Default', class: 'bi bi-info-circle' }];
+            try {
+                const response = await fetch('bootstrap-icons.json');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const json = await response.json();
+                return Object.keys(json).map(key => {
+                    const name = key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    const className = `bi bi-${key}`;
+                    return { name: name, class: className };
+                });
+            } catch (error) {
+                console.error("Could not load bootstrap-icons.json:", error);
+                return [{ name: 'Default', class: 'bi bi-info-circle' }];
+            }
         }
-    }
-    
-    // --- DATA INJECTION FROM PHP (used only for initial non-localStorage data) ---
-    let initialBlogsData = <?php echo json_encode($blogsData, JSON_PRETTY_PRINT); ?>;
-    let initialPartnersData = <?php echo json_encode($partnersData, JSON_PRETTY_PRINT); ?>;
-    let footerData = <?php echo json_encode($footerData, JSON_PRETTY_PRINT); ?>;
+        
+    // --- 1. ESSENTIAL HELPER FUNCTIONS (FOR DATABASE SECTIONS) ---
+    const getApiPath = (file) => `../api/${file}`;
+    const showToast = (message, type = 'success') => { console.log(`${type}: ${message}`); };
+    const handleApiResponse = async (response, showError = true) => {
+        const result = await response.json();
+        if (result.status === 'success') {
+            if (result.message) showToast(result.message);
+            return result.data !== undefined ? result.data : true;
+        } else {
+            if (showError) alert('Error: ' + (result.message || 'An unknown error occurred.'));
+            return null;
+        }
+    };
 
-    // --- MAIN NAVIGATION LOGIC ---
+    // --- 2. MAIN NAVIGATION LOGIC (SINGLE VERSION) ---
     const navLinks = document.querySelectorAll('.content-nav .nav-link');
     const contentSections = document.querySelectorAll('.content-section');
     const dropdownButton = document.getElementById('contentNavDropdown');
-    function setActiveNav(targetId) { const activeLink = document.querySelector(`.content-nav .nav-link[data-target="${targetId}"]`); if (!activeLink) return; if (dropdownButton) { dropdownButton.textContent = activeLink.textContent; } navLinks.forEach(link => { link.classList.toggle('active', link.getAttribute('data-target') === targetId); }); contentSections.forEach(section => { section.classList.toggle('active', section.id === targetId); }); }
-    navLinks.forEach(link => { link.addEventListener('click', function(e) { e.preventDefault(); const targetId = this.getAttribute('data-target'); setActiveNav(targetId); }); });
-    (function handleDeepLink() { const hash = window.location.hash; const targetId = hash ? hash.substring(1) : null; const initialActiveLink = document.querySelector('.content-nav .nav-link.active'); if (targetId) { setActiveNav(targetId); } else if (initialActiveLink) { setActiveNav(initialActiveLink.getAttribute('data-target')); } })();
-
     const confirmationModalEl = document.getElementById('landing-confirmation-modal');
     const confirmationModal = new bootstrap.Modal(confirmationModalEl);
     const confirmationModalBody = document.getElementById('landing-confirmation-body');
     const confirmActionBtn = document.getElementById('confirm-landing-action-btn');
     const confirmationModalTitle = document.getElementById('landing-confirmation-title');
-
-    const readFileAsDataURL = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
-
-    // --- START: SCRIPT FOR LANDING PAGE MANAGEMENT (DATABASE-DRIVEN) ---
-(function() {
-    let landingMediaData = [];
-    let selectedMediaId = null;
-
-    const mediaTableBody = document.getElementById('media-table-body');
-    const addLandingBtn = document.getElementById('add-landing-btn');
-    const editLandingBtn = document.getElementById('edit-landing-btn');
-    const deleteLandingBtn = document.getElementById('delete-landing-btn');
-    const previewLandingBtn = document.getElementById('preview-landing-btn');
-    const uploadModal = new bootstrap.Modal(document.getElementById('uploadMediaModal'));
-    const previewModal = new bootstrap.Modal(document.getElementById('landing-preview-modal'));
-    const uploadForm = document.getElementById('upload-form');
-    const saveMediaBtn = document.getElementById('save-media-btn');
     
-    // Helper function to build the correct API URL
-    const getApiPath = (file) => `../api/${file}`;
+    function setActiveNav(targetId) { 
+        const activeLink = document.querySelector(`.content-nav .nav-link[data-target="${targetId}"]`); 
+        if (!activeLink) return; 
+        if (dropdownButton) { dropdownButton.textContent = activeLink.textContent; } 
+        navLinks.forEach(link => { link.classList.toggle('active', link.getAttribute('data-target') === targetId); }); 
+        contentSections.forEach(section => { section.classList.toggle('active', section.id === targetId); }); 
+        updateFabVisibility(); // Added to ensure FABs update on nav click
+    }
+    navLinks.forEach(link => { link.addEventListener('click', function(e) { e.preventDefault(); const targetId = this.getAttribute('data-target'); setActiveNav(targetId); }); });
+    (function handleDeepLink() { const hash = window.location.hash; const targetId = hash ? hash.substring(1) : null; const initialActiveLink = document.querySelector('.content-nav .nav-link.active'); if (targetId) { setActiveNav(targetId); } else if (initialActiveLink) { setActiveNav(initialActiveLink.getAttribute('data-target')); } })();
 
-    // --- Data Fetching and Rendering ---
-    async function fetchAndRenderTable() {
-        try {
-            // CORRECTED FETCH PATH
+
+    // --- 3. LANDING PAGE SCRIPT (DATABASE-DRIVEN) ---
+    (function() {
+        // The complete, final, working script for the Landing Page section is here.
+        let landingMediaData = [];
+        let selectedMediaId = null;
+
+        const mediaTableBody = document.getElementById('media-table-body');
+        const addLandingBtn = document.getElementById('add-landing-btn');
+        const editLandingBtn = document.getElementById('edit-landing-btn');
+        const deleteLandingBtn = document.getElementById('delete-landing-btn');
+        const previewLandingBtn = document.getElementById('preview-landing-btn');
+        
+        const uploadModal = new bootstrap.Modal(document.getElementById('uploadMediaModal'));
+        const previewModal = new bootstrap.Modal(document.getElementById('landing-preview-modal'));
+        const uploadForm = document.getElementById('upload-form');
+        const saveMediaBtn = document.getElementById('save-media-btn');
+
+        async function fetchAndRenderTable() {
             const response = await fetch(getApiPath('hero_media_handler.php'));
-            const result = await response.json();
-            if (result.status === 'success') {
-                landingMediaData = result.data;
+            const data = await handleApiResponse(response);
+            if (data) {
+                landingMediaData = data;
                 renderTable();
-            } else {
-                console.error('Error fetching media:', result.message);
             }
-        } catch (error) {
-            console.error('Error fetching media:', error);
         }
-    }
 
-    function renderTable() {
-        mediaTableBody.innerHTML = '';
-        landingMediaData.forEach(media => {
-            const row = mediaTableBody.insertRow();
-            row.dataset.id = media.id;
-            row.className = media.is_active == 1 ? 'table-success' : ''; // Highlight active row
-            if (media.id === selectedMediaId) row.classList.add('selected');
-
-            const fileName = media.file_path.split('/').pop();
-
-            row.innerHTML = `
-                <td>${media.media_name} ${media.is_active == 1 ? '<span class="badge bg-success ms-2">Active</span>' : ''}</td>
-                <td>${media.uploader}</td>
-                <td>${media.date}</td>
-                <td>${fileName}</td>
-                <td>
-                    <button class="btn btn-sm ${media.is_active == 1 ? 'btn-secondary' : 'btn-outline-success'} activate-btn" data-id="${media.id}" ${media.is_active == 1 ? 'disabled' : ''}>
-                        <i class="bi bi-check-circle-fill"></i> Set Active
-                    </button>
-                </td>
-            `;
-        });
-    }
-
-    function updateFabState() {
-        const isSelected = selectedMediaId !== null;
-        editLandingBtn.disabled = !isSelected;
-        deleteLandingBtn.disabled = !isSelected;
-        previewLandingBtn.disabled = !isSelected;
-    }
-    
-    // --- Event Handlers ---
-    mediaTableBody.addEventListener('click', e => {
-        const row = e.target.closest('tr');
-        if (e.target.closest('.activate-btn')) {
-            const mediaId = e.target.closest('.activate-btn').dataset.id;
-            setActiveMedia(mediaId);
-        } else if (row) {
-            const mediaId = parseInt(row.dataset.id);
-            selectedMediaId = (selectedMediaId === mediaId) ? null : mediaId;
-            renderTable();
+        function renderTable() {
+            mediaTableBody.innerHTML = '';
+            landingMediaData.forEach(media => {
+                const row = mediaTableBody.insertRow();
+                row.dataset.id = media.id;
+                if (parseInt(media.id) === selectedMediaId) {
+                    row.classList.add('table-primary');
+                }
+                const fileName = media.file_path ? media.file_path.split('/').pop() : 'N/A';
+                row.innerHTML = `
+                    <td>${media.media_name}</td>
+                    <td>${media.uploader}</td>
+                    <td>${media.date}</td>
+                    <td>${fileName}</td>
+                `;
+            });
             updateFabState();
         }
-    });
 
-    addLandingBtn.addEventListener('click', () => {
-        resetAndPrepareModal('add');
-        uploadModal.show();
-    });
-
-    editLandingBtn.addEventListener('click', () => {
-        if (selectedMediaId === null) return;
-        const media = landingMediaData.find(m => m.id === selectedMediaId);
-        resetAndPrepareModal('edit', media);
-        uploadModal.show();
-    });
-
-    deleteLandingBtn.addEventListener('click', () => {
-        if (selectedMediaId === null) return;
-        const media = landingMediaData.find(m => m.id === selectedMediaId);
-        confirmationModalTitle.textContent = "Confirm Deletion";
-        confirmationModalBody.innerHTML = `Are you sure you want to delete the media: <strong>${media.media_name}</strong>? This will also remove the file from the server.`;
-        confirmActionBtn.className = 'btn btn-danger';
-        confirmActionBtn.onclick = () => deleteMedia(selectedMediaId);
-        confirmationModal.show();
-    });
-
-    previewLandingBtn.addEventListener('click', () => {
-        if (selectedMediaId === null) return;
-        const media = landingMediaData.find(m => m.id === selectedMediaId);
-        document.getElementById('landing-preview-title').textContent = `Preview: ${media.media_name}`;
-        const previewBody = document.getElementById('landing-preview-body');
+        function updateFabState() {
+            const isSelected = selectedMediaId !== null;
+            editLandingBtn.disabled = !isSelected;
+            deleteLandingBtn.disabled = !isSelected;
+            previewLandingBtn.disabled = !isSelected;
+        }
         
-        const previewPath = `../${media.file_path}`;
+        mediaTableBody.addEventListener('click', e => {
+            const row = e.target.closest('tr');
+            if (row) {
+                const mediaId = parseInt(row.dataset.id);
+                selectedMediaId = (selectedMediaId === mediaId) ? null : mediaId;
+                renderTable();
+                updateFabState();
+            }
+        });
 
-        const isVideo = media.file_path.match(/\.(mp4|webm|ogg)$/i);
-        if (isVideo) {
-            previewBody.innerHTML = `<video src="${previewPath}" class="img-fluid rounded" controls autoplay muted loop></video>`;
-        } else {
-            previewBody.innerHTML = `<img src="${previewPath}" class="img-fluid rounded" alt="Preview">`;
-        }
-        previewModal.show();
-    });
+        addLandingBtn.addEventListener('click', () => resetAndPrepareModal('add'));
+        
+        editLandingBtn.addEventListener('click', () => {
+            if (selectedMediaId === null) return;
+            const media = landingMediaData.find(m => m.id == selectedMediaId);
+            resetAndPrepareModal('edit', media);
+        });
+        
+        deleteLandingBtn.addEventListener('click', () => {
+             if (selectedMediaId === null) return;
+            const media = landingMediaData.find(m => m.id == selectedMediaId);
+            confirmationModalTitle.textContent = "Confirm Deletion";
+            confirmationModalBody.innerHTML = `Are you sure you want to delete the media: <strong>${media.media_name}</strong>?`;
+            confirmActionBtn.className = 'btn btn-danger';
+            confirmActionBtn.onclick = async () => {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', selectedMediaId);
+                const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
+                const result = await handleApiResponse(response);
+                if (result) {
+                    selectedMediaId = null;
+                    fetchAndRenderTable();
+                }
+                confirmationModal.hide();
+            };
+            confirmationModal.show();
+        });
 
-    saveMediaBtn.addEventListener('click', async () => {
-        if (!uploadForm.checkValidity()) {
-            uploadForm.reportValidity();
-            return;
-        }
+        previewLandingBtn.addEventListener('click', () => {
+            if (selectedMediaId === null) return;
+            const media = landingMediaData.find(m => m.id == selectedMediaId);
+            document.getElementById('landing-preview-title').textContent = `Preview: ${media.media_name}`;
+            const previewBody = document.getElementById('landing-preview-body');
+            const previewPath = `../${media.file_path}`;
+            const isVideo = media.file_path.match(/\.(mp4|webm|ogg)$/i);
+            previewBody.innerHTML = isVideo ? `<video src="${previewPath}" class="img-fluid rounded" controls autoplay muted loop></video>` : `<img src="${previewPath}" class="img-fluid rounded" alt="Preview">`;
+            previewModal.show();
+        });
 
-        const formData = new FormData(uploadForm);
-        const mode = saveMediaBtn.dataset.mode;
-        formData.append('action', mode);
-
-        if (mode === 'edit') {
-            formData.append('mediaId', selectedMediaId);
-        }
-
-        try {
-            // CORRECTED FETCH PATH
-            const response = await fetch(getApiPath('hero_media_handler.php'), {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
+        saveMediaBtn.addEventListener('click', async () => {
+            if (!uploadForm.checkValidity()) {
+                uploadForm.reportValidity();
+                return;
+            }
+            const formData = new FormData(uploadForm);
+            const mode = saveMediaBtn.dataset.mode;
+            formData.append('action', mode);
+            if (mode === 'update') {
+                formData.append('mediaId', selectedMediaId);
+            }
+            
+            const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
+            const result = await handleApiResponse(response); 
+            if (result) {
                 uploadModal.hide();
                 fetchAndRenderTable();
-            } else {
-                alert('Error: ' + result.message);
             }
-        } catch (error) {
-            alert('An error occurred: ' + error.message);
+        });
+
+        function resetAndPrepareModal(mode = 'add', media = null) {
+            uploadForm.reset();
+            uploadForm.classList.remove('was-validated');
+            const modalTitle = document.getElementById('uploadMediaModalLabel');
+            const mediaFileInput = document.getElementById('mediaFile');
+            
+            if (mode === 'add') {
+                modalTitle.textContent = 'Add New Hero Media';
+                saveMediaBtn.textContent = 'Save Media';
+                saveMediaBtn.dataset.mode = 'add';
+                mediaFileInput.required = true;
+                uploadModal.show();
+            } else if (mode === 'edit' && media) {
+                modalTitle.textContent = `Edit Media: ${media.media_name}`;
+                saveMediaBtn.textContent = 'Update Media';
+                saveMediaBtn.dataset.mode = 'update';
+                document.getElementById('mediaName').value = media.media_name;
+                mediaFileInput.required = false;
+                uploadModal.show();
+            }
         }
-    });
+        
+        fetchAndRenderTable();
+    })();
 
-    // --- Helper and Action Functions ---
-    async function deleteMedia(mediaId) {
-        const formData = new FormData();
-        formData.append('action', 'delete');
-        formData.append('id', mediaId);
-
-        // CORRECTED FETCH PATH
-        const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
-        const result = await response.json();
-
-        if (result.status === 'success') {
-            selectedMediaId = null;
-            fetchAndRenderTable();
-            updateFabState();
-            confirmationModal.hide();
-        } else {
-            alert('Error deleting media: ' + result.message);
-        }
-    }
-
-    async function setActiveMedia(mediaId) {
-        const formData = new FormData();
-        formData.append('action', 'set_active');
-        formData.append('id', mediaId);
-
-        // CORRECTED FETCH PATH
-        const response = await fetch(getApiPath('hero_media_handler.php'), { method: 'POST', body: formData });
-        const result = await response.json();
-        if (result.status === 'success') {
-            fetchAndRenderTable();
-        } else {
-             alert('Error setting active media: ' + result.message);
-        }
-    }
-
-    function resetAndPrepareModal(mode = 'add', blog = null) {
-    blogForm.reset();
-    dynamicSectionsContainer.innerHTML = '';
-    blogForm.classList.remove('was-validated');
-    
-    // This part remains the same
-    const existingPreviews = blogForm.querySelectorAll('.media-preview-container');
-    existingPreviews.forEach(p => p.remove());
-    const existingHiddenInputs = blogForm.querySelectorAll('input[type="hidden"], input[name^="cleared_section_paths"]');
-    existingHiddenInputs.forEach(input => input.remove());
-
-    // Close the accordion by default
-    const mapCollapse = document.getElementById('collapseMapDetails');
-    if (mapCollapse.classList.contains('show')) {
-        new bootstrap.Collapse(mapCollapse, { toggle: false }).hide();
-    }
-
-    if (mode === 'add') {
-        blogModalTitle.textContent = 'Add New Blog';
-        saveBlogBtn.textContent = 'Add Blog';
-        saveBlogBtn.dataset.mode = 'add';
-    } else if (mode === 'edit' && blog) {
-        blogModalTitle.textContent = `Edit Blog: ${blog.title}`;
-        saveBlogBtn.textContent = 'Update Blog';
-        saveBlogBtn.dataset.mode = 'edit';
-        document.getElementById('blog-title').value = blog.title;
-        document.getElementById('blog-author').value = blog.author;
-        document.getElementById('blog-publish-date').value = blog.publish_date;
-        document.getElementById('blog-summary').value = blog.summary;
-
-        // *** START: NEW CODE TO POPULATE MAP FIELDS ***
-        document.getElementById('blog-map-title').value = blog.map_title || '';
-        document.getElementById('blog-map-summary').value = blog.map_summary || '';
-        document.getElementById('blog-map-latitude').value = blog.map_latitude || '';
-        document.getElementById('blog-map-longitude').value = blog.map_longitude || '';
-        // *** END: NEW CODE TO POPULATE MAP FIELDS ***
-
-        if (blog.hero_media_path) {
-            const heroPreview = document.createElement('div');
-            heroPreview.className = 'mt-2 border rounded p-2 media-preview-container';
-            heroPreview.innerHTML = `<p class="small text-muted mb-1">Current Hero Media:</p><img src="../${blog.hero_media_path}" class="img-fluid rounded">`;
-            document.getElementById('blog-hero-media').after(heroPreview);
-        }
-        (blog.sections || []).forEach(sec => dynamicSectionsContainer.appendChild(createSectionElement(sec)));
-        updateSectionNumbers();
-    }
-}
-
-    // Initial Load
-    fetchAndRenderTable();
-})();
-    
     // --- START: SCRIPT FOR ABOUT PAGE MANAGEMENT ---
 (function() {
     // State variables to track user actions reliably
@@ -2033,21 +1958,19 @@ saveServiceBtn.addEventListener('click', async () => {
         fetchAndRenderFooter();
         updateFabState();
     })();
-    
-    // --- GLOBAL FAB VISIBILITY MANAGER ---
-    (function() {
-        function updateFabVisibility() {
-            document.querySelectorAll('.fab-container').forEach(container => { container.style.display = 'none'; });
-            const activeSection = document.querySelector('.content-section.active');
-            if (activeSection) {
-                const activeFabContainer = activeSection.querySelector('.fab-container');
-                if (activeFabContainer) activeFabContainer.style.display = 'flex';
-            }
+
+
+    // --- 5. GLOBAL FAB VISIBILITY MANAGER ---
+    function updateFabVisibility() {
+        document.querySelectorAll('.fab-container').forEach(container => { container.style.display = 'none'; });
+        const activeSection = document.querySelector('.content-section.active');
+        if (activeSection) {
+            const activeFabContainer = activeSection.querySelector('.fab-container');
+            if (activeFabContainer) activeFabContainer.style.display = 'flex';
         }
-        navLinks.forEach(link => { link.addEventListener('click', () => setTimeout(updateFabVisibility, 50)); });
-        updateFabVisibility();
-    })();
+    }
+    updateFabVisibility(); // Call it once on load
 });
-    </script>
+</script>
 </body>
 </html>
