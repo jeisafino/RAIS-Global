@@ -1,77 +1,8 @@
 <?php
-session_start();
 // Page title
 $page_title = "Login - RAIS Create";
-
-// Include the database connection file
-require_once 'config.php';
-
-// Check if the form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Prepare a select statement
-    $sql = "SELECT id, password, role FROM users WHERE email = ?";
-    
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("s", $email);
-        
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows == 1) {
-                $user = $result->fetch_assoc();
-                
-                // Verify password
-                if (password_verify($password, $user['password'])) {
-                    // Password is correct, so start a new session
-                    session_regenerate_id(true); // Security measure
-                
-                    // Store data in session variables
-                    $_SESSION["loggedin"] = true;
-                    $_SESSION["user_id"] = $user['id'];
-                    $_SESSION["role"] = $user['role'];
-                
-                    // *** Update the user's status to 'Active' ***
-                    $update_sql = "UPDATE users SET status = 'Active', last_login = NOW() WHERE id = ?";
-                    if ($update_stmt = $conn->prepare($update_sql)) {
-                        $update_stmt->bind_param("i", $user['id']);
-                        if (!$update_stmt->execute()) {
-                            die("Error updating status: " . $update_stmt->error);
-                        }
-                        $update_stmt->close();
-                    }
-                  
-                    // Redirect user based on their role
-                    if ($user['role'] === 'Super Admin' || $user['role'] === 'Admin') {
-                        header("location: admin/admin.php");
-                    } else {
-                        header("location: client_dashboard.php");
-                    }
-                    exit;
-                }
-
-
-                } else {
-                    // Password is not valid
-                    $_SESSION['login_error'] = "The password you entered was not valid.";
-                }
-            } else {
-                // Email doesn't exist
-                $_SESSION['login_error'] = "No account found with that email address.";
-            }
-        } else {
-            $_SESSION['login_error'] = "Oops! Something went wrong. Please try again later.";
-        }
-        $stmt->close();
-    }
-    
-    // Redirect back to login page on error
-    header("location: login.php");
-    exit;
-
-$conn->close();
+// Start the session to access session variables
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">

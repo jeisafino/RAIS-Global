@@ -1,98 +1,60 @@
 <?php
-session_start();
-// Add this PHP block at the very top of your index.php file
-// Forcefully disable caching on this page
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Pragma: no-cache");
-header("Expires: 0");
-
-require_once 'db_connect.php'; // Adjust path to your db_connect.php
-
-// Fetch ALL hero media from the database for the carousel
-$hero_media_items = [];
-$result = $conn->query("SELECT file_path FROM hero_media ORDER BY upload_date DESC");
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $hero_media_items[] = $row;
-    }
-}
-
-// Data for the page
+// Data for the page - this can be fetched from a database in a real application
 $page_title = "RAIS HOME";
 
-//About Section
-// Fetch About Section Data
-$about_main_result = $conn->query("SELECT * FROM about_main WHERE id = 1");
-$about_main = $about_main_result->fetch_assoc();
-
-$about_blocks_result = $conn->query("SELECT * FROM about_content_blocks ORDER BY sort_order ASC");
-$about_blocks = [];
-while ($row = $about_blocks_result->fetch_assoc()) {
-    $about_blocks[] = $row;
-}
-
-$about_cards_result = $conn->query("SELECT * FROM about_cards ORDER BY sort_order ASC");
-$about_cards = [];
-while ($row = $about_cards_result->fetch_assoc()) {
-    $about_cards[] = $row;
-}
-
 // Services Offered Data
-// Services Offered Data
-$services = []; // Start with an empty array for our services
-$services_result = $conn->query("SELECT name, file_path, hero_media_path FROM services ORDER BY name ASC");
-
-// Check if the query was successful and returned results
-if ($services_result && $services_result->num_rows > 0) {
-    // Loop through the results (the correct MySQLi way) and build the array
-    while ($service_row = $services_result->fetch_assoc()) {
-        $services[] = [
-            'title' => $service_row['name'],
-            'url'   => $service_row['file_path'],
-            'img'   => $service_row['hero_media_path']
-        ];
-    }
-}
+$services = [
+    ["title" => "Caregiver Permit", "url" => "Service Offered/caregiver.php", "img" => "img/Fcaregiver.jpg"],
+    ["title" => "Work Permit", "url" => "Service Offered/work.php", "img" => "img/Fwork.jpg"],
+    ["title" => "Visit (Tourist Visa) Permit", "url" => "Service Offered/visitpermit.php", "img" => "img/Fvisit.jpg"],
+    ["title" => "Permanent Residency (PR)", "url" => "Service Offered/PR.php", "img" => "img/Fpr.jpg"],
+    ["title" => "Family Sponsorship", "url" => "Service Offered/fam.php", "img" => "img/Ffam.jpg"],
+    ["title" => "Labour Market Impact Assessment (LMIA)", "url" => "Service Offered/lmia.php", "img" => "img/Flmia.jpg"],
+    ["title" => "Study Permit", "url" => "Service Offered/study.php", "img" => "img/Fstudy.jpg"]
+];
 
 // Blogs/Map Data
-$locations = [];
-$map_query = "SELECT map_title, map_summary, map_latitude, map_longitude, file_path FROM blogs WHERE map_latitude IS NOT NULL AND map_longitude IS NOT NULL";
-$map_result = $conn->query($map_query);
-if ($map_result && $map_result->num_rows > 0) {
-    while ($row = $map_result->fetch_assoc()) {
-        $locations[] = [
-            "title" => $row['map_title'],
-            "summary" => $row['map_summary'],
-            "coordinates" => [(float)$row['map_latitude'], (float)$row['map_longitude']],
-            "url" => $row['file_path']
-        ];
-    }
-}
-
-// Exams Data
-$exams = [];
-$exams_result = $conn->query("SELECT name, description, hero_media_path AS image, file_path AS url FROM exams ORDER BY name ASC");
-if ($exams_result && $exams_result->num_rows > 0) {
-    while ($exam_row = $exams_result->fetch_assoc()) {
-        // Add an 'alt' key for consistency with the original structure
-        $exam_row['alt'] = 'Image for ' . htmlspecialchars($exam_row['name']);
-        $exams[] = $exam_row;
-    }
-}
+$locations = [
+    ["title" => "Student Life at La Salle Lipa", "summary" => "Experience education and values at La Salle.", "coordinates" => [13.9412, 121.1621], "url" => "blog/la-salle.php"],
+    ["title" => "Tech & Training at STI Lipa", "summary" => "A look into STI Lipa’s modern curriculum.", "coordinates" => [13.9416, 121.1628], "url" => "blog/sti-lipa.php"],
+    ["title" => "IELTS Prep at 9.0 Niner Calamba", "summary" => "Reviewing English with proven techniques.", "coordinates" => [14.2133, 121.1658], "url" => "blog/calamba.php"],
+    ["title" => "Learning English in Tacloban", "summary" => "ELA helps students master the language.", "coordinates" => [11.2410, 125.0016], "url" => "blog/tacloban.php"]
+];
 
 // Partners Data
-$partners = [];
-$partners_result = $conn->query("SELECT name, website_link, logo_path, background_image_path FROM partners ORDER BY name ASC");
-if ($partners_result && $partners_result->num_rows > 0) {
-    while ($row = $partners_result->fetch_assoc()) {
-        $partners[] = [
-            "name" => $row['name'],
-            "logo" => $row['logo_path'], // The path from the database, e.g., 'uploads/partner/...'
-            "backgroundImage" => $row['background_image_path'],
-            "url" => $row['website_link']
-        ];
-    }
-}
+$partners = [
+    [
+        "name" => "9.0 Niner IELTS Review and Tutorial",
+        "logo" => "img/niner.png",
+        "backgroundImage" => "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto-format&fit=crop",
+        "url" => "https://www.nineronlinereview.com/"
+    ],
+    [
+        "name" => "British Council IELTS",
+        "logo" => "img/partner2.png",
+        "backgroundImage" => "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=2069&auto-format&fit=crop",
+        "url" => "https://takeielts.britishcouncil.org/"
+    ]
+];
+
+// Exams Data
+$exams = [
+    [
+        "name" => "IELTS",
+        "description" => "The International English Language Testing System is the world's most popular English language proficiency test for higher education and global migration.",
+        "image" => "img/ielts.png",
+        "alt" => "People taking the IELTS Exam",
+        "url" => "ielts.php"
+    ],
+    [
+        "name" => "OET",
+        "description" => "The Occupational English Test (OET) evaluates the English language and communication skills essential for safe and effective patient care for healthcare professionals.",
+        "image" => "img/OET.jpg",
+        "alt" => "Healthcare professionals in a discussion",
+        "url" => "oet.php"
+    ]
+];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,6 +69,72 @@ if ($partners_result && $partners_result->num_rows > 0) {
     <link rel="icon" href="img/logoulit.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        /* --- Splash Screen Styles --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 1.5s ease-out;
+            z-index: 10000;
+            background-color: #000;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none; /* Make it unclickable after fading */
+        }
+
+        #animation-video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        #skip-animation-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #058305ff, #b4ee72ff);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10001;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        #skip-animation-btn:hover {
+            transform: scale(1.1);
+            animation: none;
+            filter: brightness(1.2);
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        
         /* --- Main Page Styles --- */
         html {
             min-height: 100%;
@@ -122,9 +150,28 @@ if ($partners_result && $partners_result->num_rows > 0) {
             flex-direction: column;
             min-height: 100vh;
         }
-
-        main {
+        
+        /* Initially hide the main content */
+        #main-content {
+            display: none;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #main-content > main {
+            flex-grow: 1;
+        }
+
+        /* When splash is hidden, restore normal body scrolling */
+        body.splash-hidden {
+            overflow: auto;
+            overflow-x: hidden;
+        }
+
+        /* During splash, hide the scrollbar */
+        body.splash-visible {
+            overflow: hidden;
         }
 
         /* Custom Scrollbar */
@@ -688,268 +735,295 @@ if ($partners_result && $partners_result->num_rows > 0) {
     </style>
 </head>
 
-<body>
-    <main>
-        <!-- Main page content -->
-       <section class="hero position-relative text-white" style="min-height: 100vh; overflow: hidden;">
-    
-    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" style="top: 0; left: 0; z-index: -1;">
-        <div class="carousel-inner h-100">
-            <?php if (!empty($hero_media_items)): ?>
-                <?php foreach ($hero_media_items as $index => $item): ?>
-                    <?php
-                        $hero_media_path = $item['file_path'];
-                        $extension = strtolower(pathinfo($hero_media_path, PATHINFO_EXTENSION));
-                        $media_type = (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) ? 'image' : 'video';
-                        $cache_bust = '?v=' . time(); 
-                    ?>
-                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?> h-100" data-media-type="<?= $media_type ?>">
-                        <?php if ($media_type === 'video'): ?>
-                            <video muted playsinline class="w-100 h-100" style="object-fit: cover;">
-                                <source src="<?= htmlspecialchars($hero_media_path) . $cache_bust ?>" type="video/mp4" />
-                            </video>
-                        <?php else: ?>
-                            <div class="w-100 h-100" style="background-image: url('<?= htmlspecialchars($hero_media_path) . $cache_bust ?>'); background-size: cover; background-position: center;">
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="carousel-item active h-100">
-                     <video muted playsinline class="w-100 h-100" style="object-fit: cover;">
-                        <source src="vids/niagarapoh.mp4" type="video/mp4" />
-                    </video>
-                </div>
-            <?php endif; ?>
-        </div>
+<body class="splash-visible">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <video id="animation-video" autoplay muted playsinline>
+            <source src="vids/intro4.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button id="skip-animation-btn" title="Skip Animation">
+            <i class="bi bi-skip-forward-fill"></i>
+        </button>
     </div>
-    
-    <header class="d-none d-lg-flex justify-content-between align-items-center py-4 px-5 position-absolute header-desktop">
-        <a href="index.php">
-            <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
-        </a>
-        <div class="nav-container-desktop">
-            <ul class="navbar-nav flex-row">
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#services">Services</a></li>
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#blogs">Blogs</a></li>
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#partners">Partner</a></li>
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#exams">Exams</a></li>
-                <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#footerWrapper">Contacts</a></li>
-            </ul>
-        </div>
-        <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper">
-            <i class="bi bi-person fs-3 text-success"></i>
-        </a>
-    </header>
-    
-    <header class="d-lg-none position-absolute header-mobile">
-        <nav class="navbar navbar-dark py-3 px-4">
-            <div class="container-fluid justify-content-between">
-                <a class="navbar-brand" href="index.php">
-                    <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
-                </a>
-                <div class="d-flex align-items-center">
-                    <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper me-2" style="width: 40px; height: 40px;">
-                        <i class="bi bi-person fs-4 text-success"></i>
+
+    <!-- Main Content Wrapper -->
+    <div id="main-content">
+        <main>
+            <!-- Main page content -->
+            <section class="hero position-relative text-white" style="min-height: 100vh; overflow: hidden;">
+                <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
+                    style="object-fit: cover; top: 0; left: 0; z-index: -1;">
+                    <source src="vids/niagarapoh.mp4" type="video/mp4" />
+                    Your browser does not support HTML5 video.
+                </video>
+                
+                <!-- DESKTOP HEADER -->
+                <header class="d-none d-lg-flex justify-content-between align-items-center py-4 px-5 position-absolute header-desktop">
+                    <a href="index.php">
+                        <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
                     </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="bi bi-list" style="font-size: 2.5rem;"></i>
-                    </button>
-                </div>
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav mt-3">
-                        <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link fs-5" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link fs-5" href="#blogs">Blogs</a></li>
-                        <li class="nav-item"><a class="nav-link fs-5" href="#partners">Partner</a></li>
-                        <li class="nav-item"><a class="nav-link fs-5" href="#exams">Exams</a></li>
-                        <li class="nav-item"><a class="nav-link fs-5" href="#footerWrapper">Contacts</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    
-    <div class="d-flex flex-column justify-content-center align-items-center text-center px-3"
-        style="min-height: 100vh;">
-        <h1 class="display-1 fw-bold" style="font-family:'Poppins', 'sans-serif';">TARA CANADA!</h1>
-        <p class="fs-3 fst-italic mt-2 mb-4">The Best Pathway to your future</p>
-        <a href="register.php" class="btn btn-lg text-white fw-bold rounded-pill px-4 py-2 btn-green">Get Started</a>
-    </div>
-</section>
-
-        <!-- Other sections of your main page -->
-        <section id="about" class="pt-5 position-relative" style="padding-bottom: 11rem; background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);"></div>
-    <div class="container position-relative">
-        <div class="card overflow-hidden" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 42, 67, 0.1); border-left: 6px solid #0C470C;">
-            <div class="card-body p-4 p-lg-5">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-6 video-container">
-                        <?php if (!empty($about_main['media_path'])): ?>
-                            <?php if ($about_main['media_type'] === 'video'): ?>
-                                <video src="<?php echo htmlspecialchars($about_main['media_path']); ?>" loop autoplay controls muted class="w-100 rounded"></video>
-                            <?php else: ?>
-                                <img src="<?php echo htmlspecialchars($about_main['media_path']); ?>" alt="About Us Media" class="w-100 rounded">
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 300px;">
-                                <p class="text-muted">Media not available</p>
-                            </div>
-                        <?php endif; ?>
+                    <div class="nav-container-desktop">
+                        <ul class="navbar-nav flex-row">
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#about">About</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#services">Services</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#blogs">Blogs</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#partners">Partner</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#exams">Exams</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fs-5 mx-3" href="#footerWrapper">Contacts</a></li>
+                        </ul>
                     </div>
-                    <div class="col-lg-6">
-                        <h2 style="color: #023621; font-weight: 700;"><?php echo htmlspecialchars($about_main['title']); ?></h2>
-                        <p class="fs-5 my-4" style="line-height: 1.7;"><?php echo nl2br(htmlspecialchars($about_main['description'])); ?></p>
-                        <?php if (!empty($about_blocks) || !empty($about_cards)): ?>
-                            <button id="learnMoreBtn" class="btn btn-lg text-white fw-bold btn-green">Learn More</button>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
+                    <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper">
+                        <i class="bi bi-person fs-3 text-success"></i>
+                    </a>
+                </header>
 
-            <?php if (!empty($about_blocks) || !empty($about_cards)): ?>
-            <div class="expanded-about-wrapper" id="expandedAboutWrapper">
-                <div class="card-body p-4 p-lg-5">
-                    <?php foreach ($about_blocks as $block): ?>
-                        <?php if ($block['type'] === 'text'): ?>
-                            <p><?php echo nl2br(htmlspecialchars($block['content'])); ?></p>
-                        <?php elseif ($block['type'] === 'media' && !empty($block['media_path'])): ?>
-                            <div class="my-4 text-center">
-                                <?php if ($block['media_type'] === 'video'): ?>
-                                    <video src="<?php echo htmlspecialchars($block['media_path']); ?>" controls loop muted class="w-100 rounded"></video>
-                                <?php else: ?>
-                                    <img src="<?php echo htmlspecialchars($block['media_path']); ?>" alt="Content Media" class="w-100 rounded">
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </div>
-
-                <?php if (!empty($about_cards)): ?>
-                <nav class="expanded-nav">
-                    <?php foreach ($about_cards as $index => $card): ?>
-                        <a href="#" data-target="content-<?php echo $index; ?>" class="<?php echo $index === 0 ? 'active' : ''; ?>"><?php echo htmlspecialchars($card['tab_title']); ?></a>
-                    <?php endforeach; ?>
-                </nav>
-                <div class="card-body p-4 p-lg-5 expanded-content">
-                    <div class="content-box">
-                        <?php foreach ($about_cards as $index => $card): ?>
-                            <section id="content-<?php echo $index; ?>" class="content-section <?php echo $index === 0 ? 'active' : ''; ?>">
-                                <h3><?php echo htmlspecialchars($card['card_title']); ?></h3>
-                                <p><?php echo nl2br(htmlspecialchars($card['content'])); ?></p>
-                            </section>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</section>
-
-        <section id="services" class="service-section">
-            <div class="container full-height-center">
-                <div class="row justify-content-center align-items-center text-center text-md-start w-100">
-                    <div class="col-12 col-md-4 text-section mb-md-0">
-                        <h1><strong>Service Offered</strong></h1>
-                        <p>High-quality solutions with expert support and convenience.</p>
-                    </div>
-                    <div class="col-12 col-md-8">
-                        <div class="card-stack">
-                            <?php foreach ($services as $index => $service) : ?>
-                                <a href="<?php echo htmlspecialchars($service['url']); ?>" class="card-link" style="--i:<?php echo $index; ?>;">
-                                    <?php echo htmlspecialchars($service['title']); ?>
-                                    <img src="<?php echo htmlspecialchars($service['img']); ?>" alt="<?php echo htmlspecialchars($service['title']); ?>" />
+                <!-- MOBILE HEADER -->
+                <header class="d-lg-none position-absolute header-mobile">
+                    <nav class="navbar navbar-dark py-3 px-4">
+                        <div class="container-fluid justify-content-between">
+                            <a class="navbar-brand" href="index.php">
+                                <img src="img/logo.png" alt="RAIS Logo" class="logo-img">
+                            </a>
+                            <div class="d-flex align-items-center">
+                                <a href="login.php" class="d-flex align-items-center justify-content-center bg-white rounded-circle text-decoration-none login-icon-wrapper me-2" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person fs-4 text-success"></i>
                                 </a>
-                            <?php endforeach; ?>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <i class="bi bi-list" style="font-size: 2.5rem;"></i>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse" id="navbarContent">
+                                <ul class="navbar-nav mt-3">
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#about">About</a></li>
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#services">Services</a></li>
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#blogs">Blogs</a></li>
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#partners">Partner</a></li>
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#exams">Exams</a></li>
+                                    <li class="nav-item"><a class="nav-link fs-5" href="#footerWrapper">Contacts</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    </nav>
+                </header>
 
-        <section id="blogs" class="py-5 position-relative"
-            style="background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
-            <div
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
-            </div>
-            <div class="container position-relative">
-                <h2 class="section-title">Blogs and Events</h2>
-                <div id="map"></div>
-                <div class="text-center mt-4">
-                    <a href="blogs.php" class="btn btn-lg text-white fw-bold btn-green">See More Blogs</a>
+                <div class="d-flex flex-column justify-content-center align-items-center text-center px-3"
+                    style="min-height: 100vh;">
+                    <h1 class="display-1 fw-bold" style="font-family:'Poppins', 'sans-serif';">TARA CANADA!</h1>
+                    <p class="fs-3 fst-italic mt-2 mb-4">The Best Pathway to your future</p>
+                    <a href="register.php" class="btn btn-lg text-white fw-bold rounded-pill px-4 py-2 btn-green">Get Started</a>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="partners">
-            <div class="row g-0 partner-container-main">
-                <div class="col-lg-5 partner-info d-flex flex-column justify-content-center">
-                    <h2 class="text-white mb-4 h1">Our Partners</h2>
-                    <p>Our Partners provide expert immigration assistance to help individuals and families relocate smoothly.</p>
-                    <div class="arrow-buttons mt-4">
-                        <button id="prev-partner"></button>
-                        <button id="next-partner"></button>
-                    </div>
+            <!-- Other sections of your main page -->
+            <section id="about" class="pt-5 position-relative"
+                style="padding-bottom: 11rem; background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
+                <div
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
                 </div>
-                <div id="partner-image-wrapper" class="col-lg-7 partner-image-wrapper">
-                    <div id="partner-image-content" class="partner-image-content"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="exams" class="py-5 position-relative"
-            style="background-image: url('img/lake.jpg'); background-size: cover; background-attachment: fixed; background-position: center;">
-            <div
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
-            </div>
-            <div class="container position-relative">
-                <h2 class="section-title">Browse Exams</h2>
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-5">
-                        <div class="exam-text-content">
-                            <h2 id="exam-title" class="mb-3"></h2>
-                            <p id="exam-description"></p>
-                            <div class="mt-4">
-                                <a id="exam-learn-more-btn" href="#" class="btn btn-lg text-white fw-bold btn-green">Learn More</a>
+                <div class="container position-relative">
+                    <div class="card overflow-hidden"
+                        style="border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 42, 67, 0.1); border-left: 6px solid #0C470C;">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-6 video-container">
+                                    <video src="vids/about_vid.mov" loop autoplay controls muted
+                                        poster="https://placehold.co/600x400/e2e8f0/e2e8f0?text=Video"></video>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h2 style="color: #023621; font-weight: 700;">About Roman & Associates Immigration Services LTD</h2>
+                                    <p class="fs-5 my-4" style="line-height: 1.7;">We are a licensed Canadian immigration firm based in
+                                        Vancouver Island BC, providing expert advice on visas, permits, and sponsorships to help people
+                                        achieve a brighter future in Canada.</p>
+                                    <button id="learnMoreBtn" class="btn btn-lg text-white fw-bold btn-green">Learn More</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expanded-about-wrapper" id="expandedAboutWrapper">
+                            <div class="card-body p-4 p-lg-5">
+                                <p>Canadian Immigration Consultants are able to help and support with the processing and documentation
+                                    needed to work, study or immigrate to Canada. This process may seem overwhelming and confusing. We at
+                                    Roman & Associates Immigration Services Ltd are here to provide support and services for your
+                                    immigration needs and make it simple.</p>
+                                <p>We are registered Canadian Immigration consultants with active good standing with ICCRC. Book an
+                                    appointment now to see how your life can change.</p>
+                                <p>We offer Immigration Services to clients across British Columbia including cities: Nanaimo, Ladysmith,
+                                    Duncan, Parksville, Vancouver, Victoria, Richmond, Surrey, and the rest of Canada except Quebec.</p>
+                                <p>We also serve across China, Japan, Philippines, Korea, Hong Kong, Saudi Arabia, UAE, Singapore, and the
+                                    rest of the world.</p>
+                            </div>
+                            <nav class="expanded-nav">
+                                <a href="#" data-target="mission" class="active">Mission</a>
+                                <a href="#" data-target="vision">Vision</a>
+                                <a href="#" data-target="objectives">Objectives</a>
+                                <a href="#" data-target="background">Background</a>
+                            </nav>
+                            <div class="card-body p-4 p-lg-5 expanded-content">
+                                <div class="content-box">
+                                    <section id="mission" class="content-section active">
+                                        <h3>Mission Statement</h3>
+                                        <p>To provide honest, transparent, and expert Canadian immigration consulting services, empowering
+                                            individuals and families worldwide to achieve better opportunities and a brighter future in Canada.
+                                        </p>
+                                    </section>
+                                    <section id="vision" class="content-section">
+                                        <h3>Vision Statement</h3>
+                                        <p>To be a trusted global leader in Canadian immigration consultancy—known for our integrity,
+                                            personalized service, and commitment to helping clients successfully build a new life in Canada.</p>
+                                    </section>
+                                    <section id="objectives" class="content-section">
+                                        <h3>Company Objectives</h3>
+                                        <ul class="objectives-list">
+                                            <li><strong>Deliver Expert Guidance:</strong> Continuously provide up-to-date, professional
+                                                immigration advice on Canadian visas including study permits, work permits, visit visas, and
+                                                family sponsorships.</li>
+                                            <li><strong>Uphold Integrity and Transparency:</strong> Maintain 100% honesty in all client
+                                                interactions, fostering long-term trust and confidence in our services.</li>
+                                            <li><strong>Stay Informed and Compliant:</strong> Attend regular industry seminars, training, and
+                                                regulatory updates to ensure compliance with the latest Canadian immigration laws and policies.
+                                            </li>
+                                            <li><strong>Expand Global Reach:</strong> Serve clients not only across Canada (except Quebec) but
+                                                also in Asia, the Middle East, and beyond, helping more individuals access life-changing
+                                                opportunities.</li>
+                                            <li><strong>Enhance Client Support:</strong> Offer personalized, compassionate support that
+                                                motivates and encourages clients throughout their immigration journey.</li>
+                                            <li><strong>Ensure Affordable Excellence:</strong> Provide high-quality services at reasonable fees,
+                                                reflecting the care, diligence, and dedication poured into every application.</li>
+                                            <li><strong>Promote Responsible Immigration:</strong> Actively contribute to Canada’s values by
+                                                supporting qualified, deserving applicants and helping them integrate successfully into Canadian
+                                                society.</li>
+                                        </ul>
+                                    </section>
+                                    <section id="background" class="content-section">
+                                        <h3>Company Background</h3>
+                                        <p>Roman Canadian Immigration Services is a licensed Canadian immigration consultancy firm founded on
+                                            December 1, 2016, and proudly based on Vancouver Island, British Columbia, Canada. We specialize in
+                                            providing professional, transparent, and client-focused immigration services for individuals and
+                                            families aiming to visit, study, work, or settle in Canada.</p>
+                                        <p>Our firm is led by a Regulated Canadian Immigration Consultant (RCIC) and operates in full
+                                            compliance with the Immigration Consultants of Canada Regulatory Council (ICCRC)—ensuring that all
+                                            our services meet the highest standards of ethical and legal practice.</p>
+                                        <p> With nearly a decade of experience in the immigration industry, we have successfully guided
+                                            clients from various parts of the world—including the Philippines, Japan, China, Korea, Saudi
+                                            Arabia, UAE, Singapore, and Hong Kong—through the complex immigration process. We also serve clients
+                                            across British Columbia and other Canadian provinces, excluding Quebec.</p>
+                                        <p>At Roman Canadian Immigration Services, we pride ourselves on our integrity, transparency, and
+                                            dedication. We believe that each client deserves personalized attention, honest advice, and
+                                            unwavering support throughout their immigration journey. Our commitment to lifelong learning and
+                                            adaptation allows us to stay updated with the latest policies and pathways introduced by the
+                                            Canadian government.</p>
+                                        <p>Over the years, we have helped hundreds of clients realize their dream of starting a new life in
+                                            Canada. Whether it's pursuing higher education, reuniting with loved ones, or securing a better job
+                                            opportunity, we’re here to support our clients every step of the way.</p>
+                                    </section>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-7">
-                        <div id="examCarousel" class="carousel slide exam-carousel" data-bs-ride="carousel"
-                            data-bs-interval="10000">
-                            <div class="carousel-indicators">
-                                <?php foreach ($exams as $index => $exam) : ?>
-                                    <button type="button" data-bs-target="#examCarousel" data-bs-slide-to="<?php echo $index; ?>" class="<?php echo $index === 0 ? 'active' : ''; ?>"
-                                        aria-current="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-label="Slide <?php echo $index + 1; ?>"></button>
+                </div>
+            </section>
+
+            <section id="services" class="service-section">
+                <div class="container full-height-center">
+                    <div class="row justify-content-center align-items-center text-center text-md-start w-100">
+                        <div class="col-12 col-md-4 text-section mb-md-0">
+                            <h1><strong>Service Offered</strong></h1>
+                            <p>High-quality solutions with expert support and convenience.</p>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="card-stack">
+                                <?php foreach ($services as $index => $service) : ?>
+                                    <a href="<?php echo htmlspecialchars($service['url']); ?>" class="card-link" style="--i:<?php echo $index; ?>;">
+                                        <?php echo htmlspecialchars($service['title']); ?>
+                                        <img src="<?php echo htmlspecialchars($service['img']); ?>" alt="<?php echo htmlspecialchars($service['title']); ?>" />
+                                    </a>
                                 <?php endforeach; ?>
                             </div>
-                            <div class="carousel-inner">
-                                <?php foreach ($exams as $index => $exam) : ?>
-                                    <div class="carousel-item exam-carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                                        <img src="<?php echo htmlspecialchars($exam['image']); ?>" class="d-block w-100" alt="<?php echo htmlspecialchars($exam['alt']); ?>">
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#examCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#examCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
 
-    <?php include 'footer.php'; ?>
+            <section id="blogs" class="py-5 position-relative"
+                style="background-image: url('img/logoulit.png'); background-size: cover; background-attachment: fixed; background-position: center; color: #333;">
+                <div
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
+                </div>
+                <div class="container position-relative">
+                    <h2 class="section-title">Blogs and Events</h2>
+                    <div id="map"></div>
+                    <div class="text-center mt-4">
+                        <a href="blogs.php" class="btn btn-lg text-white fw-bold btn-green">See More Blogs</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="partners">
+                <div class="row g-0 partner-container-main">
+                    <div class="col-lg-5 partner-info d-flex flex-column justify-content-center">
+                        <h2 class="text-white mb-4 h1">Our Partners</h2>
+                        <p>Our Partners provide expert immigration assistance to help individuals and families relocate smoothly.</p>
+                        <div class="arrow-buttons mt-4">
+                            <button id="prev-partner"></button>
+                            <button id="next-partner"></button>
+                        </div>
+                    </div>
+                    <div id="partner-image-wrapper" class="col-lg-7 partner-image-wrapper">
+                        <div id="partner-image-content" class="partner-image-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="exams" class="py-5 position-relative"
+                style="background-image: url('img/lake.jpg'); background-size: cover; background-attachment: fixed; background-position: center;">
+                <div
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(247, 249, 249, 0.9);">
+                </div>
+                <div class="container position-relative">
+                    <h2 class="section-title">Browse Exams</h2>
+                    <div class="row align-items-center g-5">
+                        <div class="col-lg-5">
+                            <div class="exam-text-content">
+                                <h2 id="exam-title" class="mb-3"></h2>
+                                <p id="exam-description"></p>
+                                <div class="mt-4">
+                                    <a id="exam-learn-more-btn" href="#" class="btn btn-lg text-white fw-bold btn-green">Learn More</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div id="examCarousel" class="carousel slide exam-carousel" data-bs-ride="carousel"
+                                data-bs-interval="10000">
+                                <div class="carousel-indicators">
+                                    <?php foreach ($exams as $index => $exam) : ?>
+                                        <button type="button" data-bs-target="#examCarousel" data-bs-slide-to="<?php echo $index; ?>" class="<?php echo $index === 0 ? 'active' : ''; ?>"
+                                            aria-current="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-label="Slide <?php echo $index + 1; ?>"></button>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="carousel-inner">
+                                    <?php foreach ($exams as $index => $exam) : ?>
+                                        <div class="carousel-item exam-carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                                            <img src="<?php echo htmlspecialchars($exam['image']); ?>" class="d-block w-100" alt="<?php echo htmlspecialchars($exam['alt']); ?>">
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#examCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#examCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <?php include 'footer.php'; ?>
+    </div>
 
     <button class="back-to-top position-fixed bottom-0 end-0 mb-4 me-4 btn btn-success rounded-circle d-none"
         onclick="scrollToTop()" style="width: 50px; height: 50px; z-index: 999;">
@@ -960,85 +1034,63 @@ if ($partners_result && $partners_result->num_rows > 0) {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const carouselElement = document.getElementById('heroCarousel');
-        if (carouselElement) {
-            // Initialize the carousel manually with autoplay disabled
-            const heroCarousel = new bootstrap.Carousel(carouselElement, {
-                interval: false, // Disable the default fixed interval
-                ride: false,
-                pause: false
-            });
-
-            let imageTimer; // To keep track of the timer for images
-
-            // This function handles the logic for the currently active slide
-            const handleSlide = () => {
-                const activeItem = carouselElement.querySelector('.carousel-item.active');
-                if (!activeItem) return;
-
-                const mediaType = activeItem.dataset.mediaType;
-
-                if (mediaType === 'image') {
-                    // If it's an image, set a 5-second timer to go to the next slide
-                    imageTimer = setTimeout(() => {
-                        heroCarousel.next();
-                    }, 5000); // 5000 milliseconds = 5 seconds
-                } 
-                else if (mediaType === 'video') {
-                    const video = activeItem.querySelector('video');
-                    if (video) {
-                        video.currentTime = 0; // Rewind the video
-                        video.play(); // Play the video
-
-                        // Add an event listener that fires only ONCE when the video ends
-                        video.addEventListener('ended', function onVideoEnd() {
-                            heroCarousel.next();
-                            // Clean up the listener to prevent it from firing again
-                            video.removeEventListener('ended', onVideoEnd);
-                        });
-                    }
-                }
-            };
-
-            // When a new slide is about to be shown, clear any pending image timer
-            carouselElement.addEventListener('slide.bs.carousel', () => {
-                clearTimeout(imageTimer);
-                const activeVideo = carouselElement.querySelector('.carousel-item.active video');
-                if(activeVideo) activeVideo.pause(); // Pause the outgoing video
-            });
-
-            // After a slide has been shown, run our logic
-            carouselElement.addEventListener('slid.bs.carousel', handleSlide);
-
-            // Start the logic for the very first slide on page load
-            handleSlide();
-        }
-    });
-    </script>
-    <script>
         // Pass PHP data to JavaScript
         const locations = <?php echo json_encode($locations); ?>;
         const partners = <?php echo json_encode($partners); ?>;
         const exams = <?php echo json_encode($exams); ?>;
 
-        // --- Main Page Scripts ---
         document.addEventListener("DOMContentLoaded", function () {
+            const splashScreen = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+            const animationVideo = document.getElementById('animation-video');
+            const skipButton = document.getElementById('skip-animation-btn');
+            
+            let animationSkipped = false;
 
-            // --- HELPER FUNCTIONS ---
-    const getApiPath = (file) => `../api/${file}`;
-    const showToast = (message, type = 'success') => { console.log(`${type}: ${message}`); };
-    const handleApiResponse = async (response, showError = true) => {
-        const result = await response.json();
-        if (result.status === 'success') {
-            if (result.message) showToast(result.message);
-            return result.data !== undefined ? result.data : true;
-        } else {
-            if (showError) alert('Error: ' + (result.message || 'An unknown error occurred.'));
-            return null;
-        }
-    };
-    
+            function showMainContent() {
+                if (splashScreen) {
+                    splashScreen.style.display = 'none';
+                }
+                if(mainContent) {
+                    mainContent.style.display = 'flex';
+                }
+                document.body.classList.remove('splash-visible');
+                document.body.classList.add('splash-hidden');
+            }
+            
+            // This function is now the single point for ending the animation
+            const endAnimation = () => {
+                // Prevent this from running multiple times (e.g., if skipped then video ends)
+                if (animationSkipped) return;
+                animationSkipped = true;
+
+                if (splashScreen) {
+                    splashScreen.classList.add('fade-out');
+                }
+                // Wait for the fade-out to finish
+                setTimeout(showMainContent, 1500); 
+            };
+
+            function playAnimation() {
+                if (animationVideo) {
+                    animationVideo.addEventListener('ended', endAnimation);
+                    animationVideo.onerror = () => {
+                        console.error("Video could not be loaded or played.");
+                        endAnimation(); // Also end if there's an error
+                    };
+                } else {
+                     endAnimation(); // End immediately if no video
+                }
+            }
+
+            // Add click listener for the skip button
+            if (skipButton) {
+                skipButton.addEventListener('click', endAnimation);
+            }
+            
+            // Always play the animation on page load
+            playAnimation();
+
             // --- Back to Top Button ---
             const backToTopBtn = document.querySelector('.back-to-top');
             if (backToTopBtn) {
@@ -1050,174 +1102,130 @@ if ($partners_result && $partners_result->num_rows > 0) {
                     }
                 });
             }
-        });
+             // --- Learn More Toggle ---
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+            if(learnMoreBtn) {
+                learnMoreBtn.addEventListener('click', function () { document.getElementById('expandedAboutWrapper').classList.toggle('is-open'); });
+            }
 
+            // --- Expanded Nav Tabs ---
+            const navLinks = document.querySelectorAll('.expanded-nav a');
+            const contentSections = document.querySelectorAll('.content-section');
+            navLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); navLinks.forEach(l => l.classList.remove('active')); e.currentTarget.classList.add('active'); contentSections.forEach(s => s.classList.remove('active')); const targetId = e.currentTarget.getAttribute('data-target'); document.getElementById(targetId).classList.add('active'); }); });
+
+            // --- Services Card Stack Animation ---
+            const serviceCards = document.querySelectorAll('#services .card-link');
+            let cardIndex = 0;
+
+            function updateCards() {
+                serviceCards.forEach((card, i) => {
+                    const pos = (i - cardIndex + serviceCards.length) % serviceCards.length;
+                    card.style.setProperty('--i', pos);
+                });
+            }
+
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+
+            if (!isMobile() && serviceCards.length > 0) {
+                updateCards();
+                setInterval(() => {
+                    cardIndex = (cardIndex + 1) % serviceCards.length;
+                    updateCards();
+                }, 2500);
+            }
+
+            // --- Leaflet Map for Blogs ---
+            if (typeof L !== 'undefined' && document.getElementById('map')) {
+                const map = L.map("map", {
+                    maxBounds: [
+                        [4.0, 116.0],
+                        [21.5, 127.5]
+                    ],
+                    maxBoundsViscosity: 1.0
+                }).setView([12.8797, 121.7740], 6);
+
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: "© OpenStreetMap contributors",
+                    minZoom: 6,
+                    maxZoom: 18
+                }).addTo(map);
+
+                locations.forEach(location => {
+                    const marker = L.marker(location.coordinates).addTo(map);
+                    marker.bindPopup(`<h5>${location.title}</h5><p>${location.summary}</p><a href="${location.url}" target="_blank">Read Blog →</a>`);
+                    marker.on('click', () => {
+                        map.setView(location.coordinates, 13);
+                    });
+                });
+            }
+
+            // --- Partners Section Slider ---
+            let currentPartnerIndex = 0;
+            const partnerImageWrapper = document.getElementById('partner-image-wrapper');
+            const partnerImageContent = document.getElementById('partner-image-content');
+            const prevPartnerBtn = document.getElementById('prev-partner');
+            const nextPartnerBtn = document.getElementById('next-partner');
+
+            function showPartner(index) {
+                if (partners && partners.length > 0 && partnerImageWrapper && partnerImageContent) {
+                    const partner = partners[index];
+                    partnerImageWrapper.style.backgroundImage = `url('${partner.backgroundImage}')`;
+                    partnerImageContent.innerHTML = `<img src="${partner.logo}" alt="${partner.name} logo"><p class="mb-2">Official Test Centre</p><p class="h5 mb-3 fw-bold">${partner.name}</p><a href="${partner.url}" target="_blank">Visit Page</a>`;
+                }
+            }
+
+            function slidePartner(direction) {
+                if (!partnerImageContent) return;
+                partnerImageContent.style.opacity = 0;
+                setTimeout(() => {
+                    if (direction === 'next') {
+                        currentPartnerIndex = (currentPartnerIndex + 1) % partners.length;
+                    } else {
+                        currentPartnerIndex = (currentPartnerIndex - 1 + partners.length) % partners.length;
+                    }
+                    showPartner(currentPartnerIndex);
+                    partnerImageContent.style.opacity = 1;
+                }, 400);
+            }
+
+            if (prevPartnerBtn && nextPartnerBtn) {
+                prevPartnerBtn.addEventListener('click', () => slidePartner('prev'));
+                nextPartnerBtn.addEventListener('click', () => slidePartner('next'));
+            }
+            showPartner(currentPartnerIndex);
+
+            // --- Exams Carousel Content Update ---
+            const examCarousel = document.getElementById('examCarousel');
+            const examTitle = document.getElementById('exam-title');
+            const examDescription = document.getElementById('exam-description');
+            const examLearnMoreBtn = document.getElementById('exam-learn-more-btn');
+
+            function updateExamContent(index) {
+                if (exams && exams.length > index && examTitle && examDescription && examLearnMoreBtn) {
+                    const exam = exams[index];
+                    examTitle.textContent = exam.name;
+                    examDescription.textContent = exam.description;
+                    examLearnMoreBtn.href = exam.url;
+                }
+            }
+
+            if (examCarousel) {
+                examCarousel.addEventListener('slide.bs.carousel', event => {
+                    updateExamContent(event.to);
+                });
+                updateExamContent(0);
+            }
+        });
+        
         function scrollToTop() {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         }
-        
-        document.getElementById('learnMoreBtn').addEventListener('click', function () { document.getElementById('expandedAboutWrapper').classList.toggle('is-open'); });
-        const navLinks = document.querySelectorAll('.expanded-nav a');
-        const contentSections = document.querySelectorAll('.content-section');
-        navLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); navLinks.forEach(l => l.classList.remove('active')); e.currentTarget.classList.add('active'); contentSections.forEach(s => s.classList.remove('active')); const targetId = e.currentTarget.getAttribute('data-target'); document.getElementById(targetId).classList.add('active'); }); });
-
-        // --- Services Card Stack Animation ---
-        const serviceCards = document.querySelectorAll('#services .card-link');
-        let cardIndex = 0;
-
-        function updateCards() {
-            serviceCards.forEach((card, i) => {
-                const pos = (i - cardIndex + serviceCards.length) % serviceCards.length;
-                card.style.setProperty('--i', pos);
-            });
-        }
-
-        function isMobile() {
-            return window.innerWidth <= 768;
-        }
-
-        if (!isMobile() && serviceCards.length > 0) {
-            updateCards();
-            setInterval(() => {
-                cardIndex = (cardIndex + 1) % serviceCards.length;
-                updateCards();
-            }, 2500);
-        }
-
-
-        // --- Leaflet Map for Blogs ---
-        if (typeof L !== 'undefined' && document.getElementById('map')) {
-            const map = L.map("map", {
-                maxBounds: [
-                    [4.0, 116.0],
-                    [21.5, 127.5]
-                ],
-                maxBoundsViscosity: 1.0
-            }).setView([12.8797, 121.7740], 6);
-
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "© OpenStreetMap contributors",
-                minZoom: 6,
-                maxZoom: 18
-            }).addTo(map);
-
-            locations.forEach(location => {
-                const marker = L.marker(location.coordinates).addTo(map);
-                marker.bindPopup(`<h5>${location.title}</h5><p>${location.summary}</p><a href="${location.url}" target="_blank">Read Blog →</a>`);
-                marker.on('click', () => {
-                    map.flyTo(location.coordinates, 13, {
-                      animate: true,
-                      duration: 1.5 // Animation duration in seconds
-                    });
-                });
-            });
-        }
-
-        // --- Partners Section Slider ---
-        let currentPartnerIndex = 0;
-        const partnerImageWrapper = document.getElementById('partner-image-wrapper');
-        const partnerImageContent = document.getElementById('partner-image-content');
-        const prevPartnerBtn = document.getElementById('prev-partner');
-        const nextPartnerBtn = document.getElementById('next-partner');
-
-        function showPartner(index) {
-            if (partners && partners.length > 0) {
-                const partner = partners[index];
-                partnerImageWrapper.style.backgroundImage = `url('${partner.backgroundImage}')`;
-                partnerImageContent.innerHTML = `<img src="${partner.logo}" alt="${partner.name} logo"><p class="mb-2">Official Test Centre</p><p class="h5 mb-3 fw-bold">${partner.name}</p><a href="${partner.url}" target="_blank">Visit Page</a>`;
-            }
-        }
-
-        function slidePartner(direction) {
-            if (!partnerImageContent) return;
-            partnerImageContent.style.opacity = 0;
-            setTimeout(() => {
-                if (direction === 'next') {
-                    currentPartnerIndex = (currentPartnerIndex + 1) % partners.length;
-                } else {
-                    currentPartnerIndex = (currentPartnerIndex - 1 + partners.length) % partners.length;
-                }
-                showPartner(currentPartnerIndex);
-                partnerImageContent.style.opacity = 1;
-            }, 400);
-        }
-
-        if (prevPartnerBtn && nextPartnerBtn) {
-            prevPartnerBtn.addEventListener('click', () => slidePartner('prev'));
-            nextPartnerBtn.addEventListener('click', () => slidePartner('next'));
-        }
-
-        // Initialize first partner
-        if (partnerImageWrapper && partnerImageContent) {
-            showPartner(currentPartnerIndex);
-        }
-
-
-        // --- Exams Carousel Content Update ---
-        const examCarousel = document.getElementById('examCarousel');
-        const examTitle = document.getElementById('exam-title');
-        const examDescription = document.getElementById('exam-description');
-        const examLearnMoreBtn = document.getElementById('exam-learn-more-btn');
-
-        function updateExamContent(index) {
-            if (exams && exams.length > index && examTitle && examDescription && examLearnMoreBtn) {
-                const exam = exams[index];
-                examTitle.textContent = exam.name;
-                examDescription.textContent = exam.description;
-                examLearnMoreBtn.href = exam.url;
-            }
-        }
-
-        if (examCarousel) {
-            examCarousel.addEventListener('slide.bs.carousel', event => {
-                updateExamContent(event.to);
-            });
-            // Initialize first exam content
-            updateExamContent(0);
-        }
-        
-        // --- SCRIPT TO FETCH AND LOAD FOOTER ---
-        document.addEventListener("DOMContentLoaded", function () {
-            const placeholder = document.getElementById("footer-placeholder");
-            if (placeholder) {
-                fetch('footer.php')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status} - Could not find footer.php`);
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        placeholder.innerHTML = data;
-                    })
-                    .catch(error => {
-                        console.error("Footer loading failed:", error);
-                        placeholder.innerHTML = `<p style="text-align:center; color:red; padding: 20px;"><b>Error:</b> Footer could not be loaded. Please check the console for details.</p>`;
-                    });
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const learnMoreBtn = document.getElementById('learnMoreBtn');
-            const expandedAboutWrapper = document.getElementById('expandedAboutWrapper');
-
-            // The button only exists if there is expandable content
-            if (learnMoreBtn && expandedAboutWrapper) {
-                // Fired when the section starts to open
-                expandedAboutWrapper.addEventListener('show.bs.collapse', function () {
-                    learnMoreBtn.textContent = 'See Less';
-                });
-
-                // Fired when the section starts to close
-                expandedAboutWrapper.addEventListener('hide.bs.collapse', function () {
-                    learnMoreBtn.textContent = 'Learn More';
-                });
-            }
-        });
     </script>
 </body>
 </html>
+

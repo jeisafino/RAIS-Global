@@ -1,7 +1,26 @@
 <?php
+session_start();
+require_once '../config.php';
+
+// Security Check: Ensure user is logged in and is an Admin
+if (!isset($_SESSION['loggedin']) || strpos($_SESSION['role'], 'Admin') === false) {
+    // For AJAX requests, it's better to send a JSON error response
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Unauthorized access.']);
+        exit;
+    }
+    // For direct page access, redirect to login
+    header("Location: ../login.php");
+    exit;
+}
+
 // Page-specific data
 $page_title = "RAIS Admin - Chat Management";
 $active_page = "chat_management"; // For highlighting the active link in the sidebar
+
+// NOTE: Static data is removed. Data will be fetched via JavaScript.
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -10,10 +29,11 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
         rel="stylesheet">
     <link rel="icon" href="../img/logoulit.png" />
@@ -38,8 +58,7 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
                             <input type="text" class="form-control" placeholder="Search conversations..." id="searchConversationsInput">
                         </div>
                         <div id="conversationList">
-                            <!-- Conversation list is rendered by JavaScript -->
-                            <div class="text-center p-3">Loading conversations...</div>
+                             <div class="text-center p-3 text-muted">Loading conversations...</div>
                         </div>
                     </div>
 
@@ -49,8 +68,9 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
                             <span id="activeChatUserName">Select a conversation</span>
                         </div>
                         <div class="chat-messages" id="chatMessages">
-                             <!-- Messages are rendered by JavaScript -->
-                             <div class="text-center text-muted p-5">Please select a conversation to view messages.</div>
+                             <div class="h-100 d-flex justify-content-center align-items-center text-muted">
+                                Please select a conversation to view messages.
+                            </div>
                         </div>
                         <div class="chat-input-area">
                             <div class="input-group">
@@ -83,16 +103,17 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     
     <script src="togglemodeScript.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            // --- STATE MANAGEMENT ---
+        document.addEventListener('DOMContentLoaded', function () {
             let conversations = {};
             let activeUserId = null;
-            let pollingInterval = null;
+            let chatInterval;
 
             // --- DOM Element Selectors ---
             const chatContainer = document.querySelector('.chat-container-admin');
@@ -105,71 +126,88 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
             const searchInput = document.getElementById('searchConversationsInput');
             const deleteChatModal = document.getElementById('deleteChatModal');
 
-            // --- API FUNCTIONS ---
-            async function loadConversations() {
+            // --- ASYNC FUNCTIONS ---
+            async function fetchConversations() {
                 try {
-                    // CORRECTED PATH: ../api/
-                    const response = await fetch('../api/get_conversations.php');
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    
+                    const response = await fetch('admin_chat_handler.php?action=getConversations');
                     const data = await response.json();
-                    conversations = data;
-                    
-                    const userIds = Object.keys(conversations);
-                    if (!activeUserId && userIds.length > 0) {
-                        activeUserId = userIds[0];
+                    if (data.status === 'success') {
+                        const newConversations = {};
+                        data.conversations.forEach(convo => {
+                            newConversations[convo.id] = convo;
+                        });
+                        conversations = newConversations;
+                        renderConversationList(conversations);
+                    } else {
+                        conversationListContainer.innerHTML = `<div class="text-center p-3 text-danger">${data.message}</div>`;
                     }
-                    
-                    renderConversationList();
                 } catch (error) {
-                    console.error('Failed to load conversations:', error);
-                    conversationListContainer.innerHTML = '<div class="text-danger p-3">Could not load conversations.</div>';
+                    console.error("Error fetching conversations:", error);
+                    conversationListContainer.innerHTML = '<div class="text-center p-3 text-danger">Failed to load conversations.</div>';
                 }
             }
 
-            function renderConversationList(filteredConversations = conversations) {
-                conversationListContainer.innerHTML = '';
-                const userIds = Object.keys(filteredConversations);
+            async function fetchMessages(userId) {
+                const formData = new FormData();
+                formData.append('action', 'getMessages');
+                formData.append('userId', userId);
 
-                if (userIds.length === 0) {
-                    conversationListContainer.innerHTML = '<div class="text-muted p-3">No conversations found.</div>';
+                try {
+                    const response = await fetch('admin_chat_handler.php', { method: 'POST', body: formData });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        renderChatMessages(data.messages);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching messages for user ${userId}:`, error);
+                }
+            }
+
+            // --- RENDER FUNCTIONS ---
+            function renderConversationList(convosToRender) {
+                conversationListContainer.innerHTML = '';
+                 if (Object.keys(convosToRender).length === 0) {
+                    conversationListContainer.innerHTML = '<div class="text-center p-3 text-muted">No active conversations.</div>';
                     return;
                 }
-
-                for (const userId in filteredConversations) {
-                    const convo = filteredConversations[userId];
+                for (const userId in convosToRender) {
+                    const convo = convosToRender[userId];
                     const conversationItem = document.createElement('div');
                     conversationItem.classList.add('conversation-item');
-                    if (userId == activeUserId) { // Use == for loose comparison as one might be a string
+                    if (userId == activeUserId) {
                         conversationItem.classList.add('active');
                     }
                     conversationItem.setAttribute('data-user-id', userId);
                     
+                    const profileImage = convo.profileImage ? `../${convo.profileImage}` : `https://placehold.co/40x40/004d40/FFFFFF?text=${convo.firstName.charAt(0)}${convo.lastName.charAt(0)}`;
+
                     conversationItem.innerHTML = `
-                        <img src="${convo.avatar}" alt="User Avatar" onerror="this.src='https://placehold.co/40x40/D9D9D9/525252?text=??'">
+                        <img src="${profileImage}" alt="User Avatar" onerror="this.onerror=null;this.src='https://placehold.co/40x40/D9D9D9/525252?text=??';">
                         <div class="details">
-                            <div class="name">${convo.name}</div>
+                            <div class="name">${convo.firstName} ${convo.lastName}</div>
                         </div>
                         <button class="btn btn-sm btn-outline-danger delete-convo-btn ms-auto" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#deleteChatModal" 
                                 data-user-id="${userId}" 
-                                data-user-name="${convo.name}">
+                                data-user-name="${convo.firstName} ${convo.lastName}">
                             <i class="bi bi-trash"></i>
                         </button>
                     `;
                     
                     conversationItem.addEventListener('click', (e) => {
                         if (e.target.closest('.delete-convo-btn')) return; 
+                        
                         switchActiveChat(userId);
+                        chatContainer.classList.add('view-active');
                     });
                     conversationListContainer.appendChild(conversationItem);
                 }
             }
 
-            async function renderChatMessages() {
-                if (!activeUserId) {
-                    chatMessagesContainer.innerHTML = '<div class="text-center text-muted p-5">Please select a conversation to view messages.</div>';
+            function renderChatMessages(messages = []) {
+                chatMessagesContainer.innerHTML = '';
+                if (!activeUserId || !conversations[activeUserId]) {
                     activeChatUserName.textContent = 'Select a conversation';
                     adminMessageInput.placeholder = 'No conversation selected...';
                     adminMessageInput.disabled = true;
@@ -177,147 +215,128 @@ $active_page = "chat_management"; // For highlighting the active link in the sid
                     return;
                 }
 
+                const activeConvo = conversations[activeUserId];
+                activeChatUserName.textContent = `${activeConvo.firstName} ${activeConvo.lastName}`;
+                adminMessageInput.placeholder = `Reply to ${activeConvo.firstName}...`;
                 adminMessageInput.disabled = false;
                 sendAdminMessageBtn.disabled = false;
-                activeChatUserName.textContent = conversations[activeUserId]?.name || 'Loading...';
-                adminMessageInput.placeholder = `Reply to ${conversations[activeUserId]?.name}...`;
-
-                try {
-                    // CORRECTED PATH: ../api/
-                    const response = await fetch(`../api/get_messages.php?user_id=${activeUserId}`);
-                    if (!response.ok) throw new Error('Failed to fetch messages');
-                    
-                    const messages = await response.json();
-                    chatMessagesContainer.innerHTML = '';
-
-                    if (messages.length === 0) {
-                        chatMessagesContainer.innerHTML = '<div class="text-center text-muted p-5">No messages yet. Start the conversation!</div>';
-                    } else {
-                        messages.forEach(message => {
-                            const messageBubble = document.createElement('div');
-                            messageBubble.classList.add('chat-message-bubble', message.sender);
-                            messageBubble.innerHTML = `
-                                <div class="sender-name">${message.sender === 'user' ? conversations[activeUserId].name : 'Admin'}</div>
-                                <div class="chat-message-content">${message.text}</div>
-                                <span class="timestamp">${message.timestamp}</span>
-                            `;
-                            chatMessagesContainer.appendChild(messageBubble);
-                        });
-                    }
-                    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-                } catch (error) {
-                    console.error('Error fetching messages:', error);
-                    chatMessagesContainer.innerHTML = '<div class="text-danger p-3">Could not load messages.</div>';
+                
+                if (messages.length === 0) {
+                     chatMessagesContainer.innerHTML = '<div class="h-100 d-flex justify-content-center align-items-center text-muted">No messages in this conversation yet.</div>';
+                     return;
                 }
+
+                messages.forEach(message => {
+                    const messageBubble = document.createElement('div');
+                    const senderType = message.sender_id == 0 ? 'admin' : 'user';
+                    const senderName = senderType === 'user' ? `${activeConvo.firstName} ${activeConvo.lastName}` : 'Admin';
+                    const formattedTime = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    messageBubble.classList.add('chat-message-bubble', senderType);
+                    messageBubble.innerHTML = `
+                        <div class="sender-name">${senderName}</div>
+                        <div class="chat-message-content">${message.message}</div>
+                        <span class="timestamp">${formattedTime}</span>
+                    `;
+                    chatMessagesContainer.appendChild(messageBubble);
+                });
+                chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
             }
 
+            // --- ACTION FUNCTIONS ---
             function switchActiveChat(userId) {
                 activeUserId = userId;
-                renderConversationList();
-                renderChatMessages();
-                chatContainer.classList.add('view-active');
+                renderConversationList(conversations); // Re-render to highlight the active one
+                fetchMessages(userId);
+
+                clearInterval(chatInterval);
+                chatInterval = setInterval(() => fetchMessages(activeUserId), 3000);
             }
 
             async function sendAdminMessage() {
                 const messageText = adminMessageInput.value.trim();
-                if (!messageText || !activeUserId) return;
-
-                const messageData = {
-                    sender_id: 0,
-                    receiver_id: parseInt(activeUserId),
-                    message: messageText
-                };
-
-                try {
-                    // CORRECTED PATH: ../api/
-                    const response = await fetch('../api/send_message.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(messageData)
-                    });
-
-                    if (!response.ok) throw new Error('Failed to send message');
+                if (messageText && activeUserId) {
+                    const formData = new FormData();
+                    formData.append('action', 'sendMessage');
+                    formData.append('receiver_id', activeUserId);
+                    formData.append('message', messageText);
 
                     adminMessageInput.value = '';
-                    await renderChatMessages();
-                } catch (error) {
-                    console.error('Error sending message:', error);
+
+                    try {
+                        const response = await fetch('admin_chat_handler.php', { method: 'POST', body: formData });
+                        const data = await response.json();
+                        if(data.status === 'success') {
+                            fetchMessages(activeUserId);
+                        }
+                    } catch (error) {
+                        console.error("Error sending message:", error);
+                    }
                 }
             }
-
-            function startPolling() {
-                if (pollingInterval) clearInterval(pollingInterval);
-                pollingInterval = setInterval(async () => {
-                    await loadConversations();
-                    if (activeUserId) {
-                        await renderChatMessages();
-                    }
-                }, 5000);
-            }
-
+            
             // --- EVENT LISTENERS ---
             sendAdminMessageBtn.addEventListener('click', sendAdminMessage);
             adminMessageInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendAdminMessage());
-            backToConversationsBtn.addEventListener('click', () => chatContainer.classList.remove('view-active'));
+            backToConversationsBtn.addEventListener('click', () => {
+                chatContainer.classList.remove('view-active');
+                activeUserId = null;
+                renderChatMessages(); // Clear the chat window
+                clearInterval(chatInterval);
+            });
 
             searchInput.addEventListener('keyup', function() {
                 const searchTerm = this.value.toLowerCase();
                 const filtered = Object.keys(conversations).reduce((acc, userId) => {
-                    if (conversations[userId].name.toLowerCase().includes(searchTerm)) {
-                        acc[userId] = conversations[userId];
+                    const convo = conversations[userId];
+                    const fullName = `${convo.firstName} ${convo.lastName}`.toLowerCase();
+                    if (fullName.includes(searchTerm)) {
+                        acc[userId] = convo;
                     }
                     return acc;
                 }, {});
                 renderConversationList(filtered);
             });
 
-            // (Modal logic remains unchanged)
+            // --- MODAL LOGIC ---
+            if (deleteChatModal) {
+                deleteChatModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const userId = button.getAttribute('data-user-id');
+                    const userName = button.getAttribute('data-user-name');
+                    
+                    deleteChatModal.querySelector('#deleteChatModalBody').textContent = `Are you sure you want to delete the entire conversation with ${userName}? This cannot be undone.`;
+                    deleteChatModal.querySelector('#confirmDeleteChatButton').setAttribute('data-user-id-to-delete', userId);
+                });
 
-            // --- INITIALIZATION ---
-            await loadConversations();
-            if (activeUserId) {
-                await renderChatMessages();
+                const confirmBtn = document.getElementById('confirmDeleteChatButton');
+                confirmBtn.addEventListener('click', async function() {
+                    const userIdToDelete = this.getAttribute('data-user-id-to-delete');
+                    const formData = new FormData();
+                    formData.append('action', 'deleteConversation');
+                    formData.append('userId', userIdToDelete);
+
+                    try {
+                        const response = await fetch('admin_chat_handler.php', { method: 'POST', body: formData });
+                        const data = await response.json();
+                        if(data.status === 'success') {
+                            if (activeUserId == userIdToDelete) {
+                                activeUserId = null;
+                                renderChatMessages(); // Clear chat area
+                            }
+                            fetchConversations(); // Refresh list
+                            bootstrap.Modal.getInstance(deleteChatModal).hide();
+                        }
+                    } catch (error) {
+                         console.error("Error deleting conversation:", error);
+                    }
+                });
             }
-            startPolling();
+
+            // --- INITIAL LOAD ---
+            fetchConversations();
+            setInterval(fetchConversations, 10000); // Poll for new conversations every 10 seconds
         });
-
-        document.getElementById('confirmDeleteChatButton').addEventListener('click', async function() {
-    const userIdToArchive = this.getAttribute('data-user-id-to-delete');
-    if (!userIdToArchive) return;
-
-    try {
-        // Step 1: Call the new backend API to archive it in the database
-        const response = await fetch('../api/archive_conversation.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userIdToArchive })
-        });
-
-        const result = await response.json();
-
-        if (result.status !== 'success') {
-            throw new Error(result.message || 'Failed to archive on server.');
-        }
-
-        // Step 2: On success, immediately remove it from the UI for a fast response
-        delete conversations[userIdToArchive];
-        
-        if (activeUserId == userIdToArchive) {
-            const remainingIds = Object.keys(conversations);
-            activeUserId = remainingIds.length > 0 ? remainingIds[0] : null;
-            renderChatMessages(); // Update the message panel
-        }
-        
-        renderConversationList(); // Redraw the conversation list
-
-        bootstrap.Modal.getInstance(deleteChatModal).hide();
-
-    } catch (error) {
-        console.error('Error archiving conversation:', error);
-        deleteChatModal.querySelector('#deleteChatModalBody').textContent = `Error: ${error.message}`;
-    }
-});
-
     </script>
 </body>
 

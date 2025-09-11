@@ -37,8 +37,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $userId = $_SESSION['id'];
 
 // --- FETCH USER DATA & PROGRESS STATUS FROM DATABASE ---
-// Fetch the new, more specific progress tracking columns, including `has_seen_tour`.
-$stmt = $conn->prepare("SELECT firstName, lastName, phone, birthday, profileImage, facebook, instagram, gmail, dark_mode, profile_picture_uploaded, birthday_added, social_links_added, has_seen_tour FROM users WHERE id = ?");
+// Fetch the user's primary email and other specific progress tracking columns.
+$stmt = $conn->prepare("SELECT firstName, lastName, email, phone, birthday, profileImage, facebook, instagram, gmail, dark_mode, profile_picture_uploaded, birthday_added, social_links_added, has_seen_tour FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -55,7 +55,7 @@ if (!$dbUserData) {
     $dbUserProfile = [
         'firstName' => 'User', 'lastName' => 'Not Found', 'phone' => '', 
         'birthday' => '', 'profileImage' => null, 'facebook' => '', 
-        'instagram' => '', 'gmail' => ''
+        'instagram' => '', 'gmail' => '', 'email' => ''
     ];
     $darkModeEnabled = false;
     $profilePictureUploaded = false;
@@ -76,6 +76,7 @@ if (!$dbUserData) {
 $userProfile = [
     'firstName' => $dbUserProfile['firstName'],
     'lastName' => $dbUserProfile['lastName'],
+    'email' => $dbUserProfile['email'],
     'contact' => $dbUserProfile['phone'],
     'birthday' => $dbUserProfile['birthday'],
     'profileImage' => $dbUserProfile['profileImage'] ? '../' . $dbUserProfile['profileImage'] . '?v=' . time() : null,
@@ -181,7 +182,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             align-items: center;
             gap: 15px;
             white-space: nowrap;
-            transition: background-color 0.3s ease;
+            transition: background-color: 0.3s ease;
         }
         .sidebar .nav-link.active,
         .sidebar .nav-link:hover { background-color: var(--rais-dark-green); }
@@ -201,7 +202,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             align-items: center;
             gap: 15px;
             white-space: nowrap;
-            transition: background-color 0.3s ease;
+            transition: background-color: 0.3s ease;
             margin-top: auto;
         }
         .profile-section:hover { background-color: var(--rais-dark-green); }
@@ -278,7 +279,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             justify-content: center;
             cursor: pointer;
             margin-right: 10px;
-            transition: background-color 0.2s, color 0.2s;
+            transition: background-color: 0.2s, color 0.2s;
         }
         .tour-help-btn i { transition: transform 0.2s ease-in-out; }
         .tour-help-btn:hover { background-color: var(--rais-light-gray); color: var(--rais-primary-green); }
@@ -363,7 +364,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             width: 60px; height: 60px; line-height: 60px;
             border-radius: 50%; background-color: var(--rais-progress-bg);
             font-weight: 600; font-size: 1.2rem; color: var(--rais-text-dark);
-            margin-bottom: 10px; transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+            margin-bottom: 10px; transition: background-color: 0.3s ease-in-out, color 0.3s ease-in-out;
         }
         .step-circle.active { background-color: var(--rais-primary-green); color: white; }
         .step-label { font-size: 0.8rem; color: var(--rais-text-light); white-space: nowrap; }
@@ -385,10 +386,12 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             border-radius: 50%; width: 60px; height: 60px;
             display: flex; align-items: center; justify-content: center;
             font-size: 2rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            text-decoration: none; transition: background-color 0.2s;
+            text-decoration: none; transition: background-color: 0.2s;
             z-index: 1030;
         }
         .floating-btn:hover { background-color: var(--rais-dark-green); }
+        
+        /* Chat Styles */
         .chat-container {
             position: fixed; bottom: 100px; right: 30px; width: 350px;
             max-height: 500px; background-color: white; border-radius: 12px;
@@ -403,13 +406,12 @@ $step4_active = $socialLinksAdded ? 'active' : '';
         }
         .chat-body {
             padding: 1rem; flex-grow: 1; overflow-y: auto;
-            background-color: var(--rais-bg-light); display: flex;
-            flex-direction: column-reverse; height: 350px;
+            background-color: var(--rais-bg-light); 
+            display: flex; flex-direction: column; 
+            height: 350px;
         }
         .chat-footer { padding: 1rem; border-top: 1px solid var(--rais-light-gray); }
-        .chat-footer .btn i, .chat-footer-fullscreen .btn i {
-            color: var(--rais-text-dark);
-        }
+        .chat-footer .btn i, .chat-footer-fullscreen .btn i { color: var(--rais-text-dark); }
         #full-screen-chat {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background-color: var(--rais-bg-light); z-index: 2000;
@@ -426,19 +428,40 @@ $step4_active = $socialLinksAdded ? 'active' : '';
         .chat-title-fullscreen { font-weight: 600; font-size: 1.2rem; }
         .chat-body-fullscreen {
             flex-grow: 1; overflow-y: auto; padding: 1rem;
-            display: flex; flex-direction: column-reverse;
+            display: flex; flex-direction: column;
         }
         .chat-footer-fullscreen {
             padding: 1rem; border-top: 1px solid var(--rais-light-gray);
             background-color: white; flex-shrink: 0;
         }
+        .chat-message-bubble {
+            padding: 0.5rem 1rem; border-radius: 1rem; margin-bottom: 0.5rem;
+            max-width: 80%; word-wrap: break-word;
+        }
+        .chat-message-bubble .sender-name {
+            font-weight: 600; font-size: 0.8rem; margin-bottom: 0.25rem;
+        }
+        .chat-message-bubble .timestamp {
+            font-size: 0.7rem; color: #888; display: block;
+            text-align: right; margin-top: 0.25rem;
+        }
+        .dark-mode .chat-message-bubble .timestamp { color: #bbb; }
+        .chat-message-bubble.user {
+            background-color: var(--rais-primary-green); color: white;
+            align-self: flex-end; border-bottom-right-radius: 0.25rem;
+        }
+        .chat-message-bubble.admin {
+            background-color: var(--rais-light-gray); color: var(--rais-text-dark);
+            align-self: flex-start; border-bottom-left-radius: 0.25rem;
+        }
+        .dark-mode .chat-message-bubble.admin { background-color: #333; color: #EAEAEA; }
         .chat-toggle-btn {
             position: fixed; bottom: 30px; right: 100px;
             background-color: var(--rais-button-maroon); color: white;
             border-radius: 50%; width: 60px; height: 60px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer; transition: background-color 0.2s;
+            cursor: pointer; transition: background-color: 0.2s;
             z-index: 1030;
         }
         .tour-overlay {
@@ -480,7 +503,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             background-color: var(--rais-light-gray); color: var(--rais-text-dark);
             display: flex; justify-content: center; align-items: center;
             font-weight: 600; font-size: 0.9rem; z-index: 1;
-            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+            transition: background-color: 0.3s ease-in-out, color 0.3s ease-in-out;
         }
         .welcome-tour-modal .modal-header .step-indicator.active { background-color: var(--rais-primary-green); color: white; }
         .welcome-tour-modal .modal-header h5 {
@@ -546,7 +569,7 @@ $step4_active = $socialLinksAdded ? 'active' : '';
         .dark-mode .welcome-tour-modal .modal-header .step-indicator { background-color: #333; color: #EAEAEA; }
         .dark-mode .welcome-tour-modal .modal-header .step-indicator.active { background-color: var(--rais-primary-green); color: white; }
         .dark-mode .chat-body { background-color: #121212; }
-        .dark-mode .chat-body .text-muted, .dark-mode .chat-body-fullscreen .text-muted { color: #EAEAEA !important; }
+        .dark-mode .message-bubble.admin { background-color: #2a2a2a; color: #EAEAEA; }
         .dark-mode .form-control { background-color: #2a2a2a; color: #EAEAEA; border-color: #3c3c3c; }
         .dark-mode .form-control::placeholder { color: #888; }
         .dark-mode .chat-footer .btn i, .dark-mode .chat-footer-fullscreen .btn i { color: #EAEAEA; }
@@ -766,12 +789,12 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             <i class="bi bi-x-lg text-white"></i>
         </div>
         <div class="chat-body">
-            <div class="text-center text-muted">RAIS Support, how may I help you?</div>
+             <!-- Messages will be loaded here -->
         </div>
         <div class="chat-footer">
             <div class="input-group">
                 <input type="text" class="form-control message-input" placeholder="Type a message..." aria-label="Message input">
-                <button class="btn btn-outline-secondary" type="button" id="send-button-popup">
+                <button class="btn btn-outline-secondary send-button" type="button">
                     <i class="bi bi-send-fill"></i>
                 </button>
             </div>
@@ -785,12 +808,12 @@ $step4_active = $socialLinksAdded ? 'active' : '';
             <span class="chat-title-fullscreen"><i class="bi bi-chat-dots-fill me-2"></i>Live Chat</span>
         </div>
         <div class="chat-body-fullscreen">
-            <div class="text-center text-muted">RAIS Support, how may I help you?</div>
+            <!-- Messages will be loaded here -->
         </div>
         <div class="chat-footer-fullscreen">
             <div class="input-group">
                 <input type="text" class="form-control message-input" placeholder="Type a message..." aria-label="Message input">
-                <button class="btn btn-outline-secondary" type="button" id="send-button-fullscreen">
+                <button class="btn btn-outline-secondary send-button" type="button">
                     <i class="bi bi-send-fill"></i>
                 </button>
             </div>
@@ -858,18 +881,24 @@ $step4_active = $socialLinksAdded ? 'active' : '';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
 
     <script>
         // Pass initial data from PHP to JavaScript
         const initialProfileData = <?php echo json_encode($userProfile); ?>;
         const hasSeenTour = <?php echo json_encode($hasSeenTour); ?>;
-
+        const currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
+        
         // --- CHAT LOGIC ---
         const mainWrapper = document.querySelector('.main-wrapper');
         const floatingBtn = document.querySelector('.floating-btn');
         const chatToggleBtn = document.querySelector('.chat-toggle-btn');
         const popupChatContainer = document.getElementById('chatContainer');
         const fullScreenChat = document.getElementById('full-screen-chat');
+        const chatBodyPopup = document.querySelector('#chatContainer .chat-body');
+        const chatBodyFullscreen = document.querySelector('#full-screen-chat .chat-body-fullscreen');
+        
+        let messagePollingInterval;
 
         function toggleChat() {
             if (window.innerWidth <= 992) {
@@ -879,20 +908,121 @@ $step4_active = $socialLinksAdded ? 'active' : '';
                     mainWrapper.style.display = 'flex';
                     floatingBtn.style.display = 'flex';
                     chatToggleBtn.style.display = 'flex';
+                    clearInterval(messagePollingInterval);
+                    messagePollingInterval = null;
                 } else {
                     fullScreenChat.style.display = 'flex';
                     mainWrapper.style.display = 'none';
                     floatingBtn.style.display = 'none';
                     chatToggleBtn.style.display = 'none';
+                    fetchMessages();
+                    messagePollingInterval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
                 }
             } else {
                 popupChatContainer.classList.toggle('show');
+                if (popupChatContainer.classList.contains('show')) {
+                    fetchMessages();
+                    messagePollingInterval = setInterval(fetchMessages, 5000);
+                } else {
+                    clearInterval(messagePollingInterval);
+                    messagePollingInterval = null;
+                }
+            }
+        }
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch('chat_handler.php?action=getMessages');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderMessages(data.messages);
+                } else {
+                    console.error('Failed to fetch messages:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
+
+        function renderMessages(messages) {
+            const messageHtml = messages.map(msg => {
+                const isUser = msg.sender_id == currentUserId;
+                const senderName = isUser ? "You" : "RAIS Support";
+                const bubbleClass = isUser ? 'user' : 'admin';
+                const formattedTimestamp = new Date(msg.timestamp.replace(' ', 'T') + 'Z').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <div class="chat-message-bubble ${bubbleClass}">
+                        <div class="sender-name">${senderName}</div>
+                        <div class="chat-message-content">${msg.message}</div>
+                        <span class="timestamp">${formattedTimestamp}</span>
+                    </div>
+                `;
+            }).join('');
+
+            const welcomeMessage = '<div class="text-center text-muted small mb-2">This is the start of your conversation.</div>';
+            
+            chatBodyPopup.innerHTML = welcomeMessage + messageHtml;
+            chatBodyFullscreen.innerHTML = welcomeMessage + messageHtml;
+
+            chatBodyPopup.scrollTop = chatBodyPopup.scrollHeight;
+            chatBodyFullscreen.scrollTop = chatBodyFullscreen.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const popupInput = document.querySelector('#chatContainer .message-input');
+            const fullscreenInput = document.querySelector('#full-screen-chat .message-input');
+            
+            let message = popupInput.value.trim();
+            if (!message) {
+                 message = fullscreenInput.value.trim();
+            }
+
+            if (!message) return;
+
+            const formData = new FormData();
+            formData.append('action', 'sendMessage');
+            formData.append('message', message);
+
+            popupInput.value = '';
+            fullscreenInput.value = '';
+
+            try {
+                const response = await fetch('chat_handler.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    fetchMessages(); 
+                } else {
+                    console.error('Failed to send message:', data.message);
+                    alert('Failed to send message: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('An error occurred while sending your message.');
             }
         }
         
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('backToDashboardBtn').addEventListener('click', toggleChat);
             
+            document.querySelectorAll('.send-button').forEach(button => {
+                button.addEventListener('click', sendMessage);
+            });
+
+            document.querySelectorAll('.message-input').forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            });
+
             loadProfileData();
 
             // --- WELCOME TOUR LOGIC ---
@@ -1070,21 +1200,41 @@ $step4_active = $socialLinksAdded ? 'active' : '';
         function loadProfileData() {
             const profileData = initialProfileData;
 
-            document.getElementById('dashboardProfileName').textContent = `${profileData.firstName || 'FIRST NAME'}, ${profileData.lastName || 'LAST NAME'}`;
+            document.getElementById('dashboardProfileName').textContent = `${profileData.lastName || 'FIRST NAME'}, ${profileData.firstName || 'LAST NAME'}`;
             document.getElementById('dashboardContactNumber').textContent = profileData.contact || '(+63) 987 654 3210';
             document.getElementById('dashboardBirthday').textContent = `Birthday: ${profileData.birthday ? new Date(profileData.birthday).toLocaleDateString() : 'MM/DD/YYYY'}`;
 
             const socialLinksContainer = document.getElementById('dashboardSocialLinks');
-            socialLinksContainer.innerHTML = '';
+            let socialHTML = '';
             if (profileData.social.facebook) {
-                socialLinksContainer.innerHTML += `<a href="${profileData.social.facebook}" target="_blank" title="Facebook"><i class="bi bi-facebook fs-5"></i></a>`;
+                socialHTML += `<a href="${profileData.social.facebook}" target="_blank" title="Facebook"><i class="bi bi-facebook fs-5"></i></a>`;
             }
             if (profileData.social.instagram) {
-                socialLinksContainer.innerHTML += `<a href="${profileData.social.instagram}" target="_blank" title="Instagram"><i class="bi bi-instagram fs-5"></i></a>`;
+                socialHTML += `<a href="${profileData.social.instagram}" target="_blank" title="Instagram"><i class="bi bi-instagram fs-5"></i></a>`;
             }
-            if (profileData.social.gmail) {
-                socialLinksContainer.innerHTML += `<a href="mailto:${profileData.social.gmail}" title="Gmail"><i class="bi bi-envelope-fill fs-5"></i></a>`;
+            if (profileData.email) {
+                socialHTML += `
+                    <span class="d-inline-flex align-items-center">
+                        <a href="#" title="Email" id="emailLink" class="me-2"><i class="bi bi-envelope-fill fs-5"></i></a>
+                        <span id="emailAddress" class="text-muted" style="display: none; font-size: 0.9rem;">${profileData.email}</span>
+                    </span>
+                `;
             }
+            socialLinksContainer.innerHTML = socialHTML;
+
+            // Add the event listener for the new email icon toggle
+            const emailLink = document.getElementById('emailLink');
+            if (emailLink) {
+                emailLink.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent the default mailto: action
+                    const emailAddressSpan = document.getElementById('emailAddress');
+                    if (emailAddressSpan) {
+                        const isVisible = emailAddressSpan.style.display !== 'none';
+                        emailAddressSpan.style.display = isVisible ? 'none' : 'inline';
+                    }
+                });
+            }
+
 
             const dashboardProfileImageContainer = document.getElementById('dashboardProfileImageContainer');
             if (profileData.profileImage) {
@@ -1096,3 +1246,4 @@ $step4_active = $socialLinksAdded ? 'active' : '';
     </script>
 </body>
 </html>
+

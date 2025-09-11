@@ -4,11 +4,12 @@
 session_start();
 include_once '../config.php';
 
-// Check if user is logged in and is an admin.
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: ../login.php");
+// Security Check: Ensure user is logged in and is an Admin
+if (!isset($_SESSION['loggedin']) || strpos($_SESSION['role'], 'Admin') === false) {
+    header("Location: ../login.php");
     exit;
 }
+
 
 // Page-specific data
 $page_title = "RAIS Admin - Booking Management";
@@ -88,7 +89,7 @@ $conn->close();
         body.dark-mode .modal-content { background-color: #1e1e1e; color: #EAEAEA; }
         body.dark-mode .list-group-item { background-color: #2a2a2a; border-color: #3c3c3c; color: #EAEAEA; }
         body.dark-mode .table { color: #EAEAEA; }
-        body.dark-mode .table-hover > tbody > tr:hover > * { color: #ffffff !important; background-color: #2a2a2a; }
+        body.dark-mode .table-hover > tbody > tr:hover > td { color: #ffffff !important; background-color: #2a2a2a; }
         body.dark-mode .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
         body.dark-mode .nav-tabs-custom .nav-link { color: #aaa; }
         body.dark-mode .nav-tabs-custom .nav-link.active { color: #4db6ac; border-bottom-color: #4db6ac; }

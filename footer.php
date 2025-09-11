@@ -1,484 +1,426 @@
 <?php
-// This is the updated, dynamic footer file.
-
-// Establish database connection
-// Use __DIR__ to ensure the path is correct regardless of where this file is included from.
-require_once __DIR__ . '/db_connect.php';
-
-// Fetch all footer items from the database
-$static_items = [];
-$social_items = [];
-$result = $conn->query("SELECT * FROM footer_items ORDER BY display_order ASC");
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        if ($row['type'] === 'static') {
-            // Use label as key for easy access
-            $static_items[$row['label']] = htmlspecialchars($row['value']);
-        } else {
-            $social_items[] = $row;
-        }
-    }
-}
+// Page title
+$page_title = "Application Form";
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
-<style>
-    /* --- Footer Styles --- */
-    .footer-wrapper {
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo htmlspecialchars($page_title); ?></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="icon" href="img/logoulit.png">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    html {
+      min-height: 100%;
+    }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('img/logoulit.png');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      color: #333;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    .body-wrapper {
+        background-color: rgba(247, 249, 249, 0.9);
+        padding: 2rem;
+        flex-grow: 1;
         position: relative;
-        width: 100%;
-        overflow: hidden;
-        transition: height 0.5s ease-in-out;
-        font-family: 'Poppins', sans-serif;
     }
 
-    #mainFooter,
-    .footer-top {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        transition: transform 0.5s ease-in-out;
-        box-sizing: border-box;
+    .header-bg {
+      background-color: #8b233a;
     }
 
-    #mainFooter {
-        transform: translateY(0);
-        z-index: 2;
+    .header-bg span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
     }
 
-    .footer-top {
-        transform: translateY(100%);
-        z-index: 1;
+    .form-section {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      background-color: #f8fafc;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
 
-    .footer-top.show {
-        transform: translateY(0);
-        z-index: 2;
+    .form-section .form-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #8b233a;
+      margin-bottom: 0.75rem;
     }
 
-    #mainFooter.hide {
-        transform: translateY(-100%);
-        z-index: 1;
+    .form-control,
+    .form-select {
+      border-radius: 0.375rem;
+      border: 1px solid #d1d5db;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
     }
 
-    #mainFooter {
-        background-color: #0C470C;
-        color: white;
-        padding: 30px 20px 15px;
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px #a9aaff;
     }
 
-    .footer-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 40px;
-        align-items: flex-start;
-        padding: 40px;
-        max-width: 1200px;
-        margin: 0 auto;
+    .btn-custom {
+      background-color: #8b233a;
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.75rem 2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-size: 1.1rem;
+      font-weight: 600;
     }
 
-    .footer-left,
-    .footer-right {
-        flex: 1;
-        min-width: 300px;
-        padding: 0 20px;
-        text-align: center;
+    .btn-custom:hover {
+      background-color: #a62b42;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    
+    .btn-outline-secondary {
+        border-radius: 2rem;
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
 
-    .footer-left {
-        border-right: 1px solid rgba(255, 255, 255, 0.4);
+    .btn-back {
+      position: absolute;
+      top: 2.5rem;
+      left: 2.5rem;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: #0C470C;
+      color: white;
+      border-radius: 50%;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
     }
 
-    .footer-right {
-        padding-left: 40px;
+    .btn-back:hover {
+      background-color: #023621;
+      transform: scale(1.1);
     }
 
-    .footer-top {
-        background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 50px 40px;
+    .btn-back i {
+      font-size: 1.2rem;
     }
 
-    .footer-top::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(3px);
+      ::-webkit-scrollbar {
+      width: 12px;
     }
 
-    .footer-links-container {
-        position: relative;
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        max-width: 1200px;
-        margin: 0 auto;
-        gap: 20px;
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
 
-    .footer-column h4 {
-        font-size: 1.2rem;
-        margin-bottom: 15px;
-        color: #fff;
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #3BA43B, #0C470C);
+      border-radius: 10px;
     }
 
-    .footer-column ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #45b945, #0a3a0a);
     }
 
-    .footer-column ul li {
-        margin-bottom: 10px;
+    .required-indicator {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    
+    .intro-text-container {
+        margin-bottom: 2.5rem;
     }
 
-    .footer-column a {
-        color: #ffffff;
-        text-decoration: none;
-        opacity: 0.9;
+    .intro-text {
+        font-size: 1.4rem;
+        line-height: 1.8;
+        color: #3d4757;
+    }
+    
+    .required-note {
+        font-style: italic;
+        color: #6c757d;
+        font-size: 1rem;
     }
 
-    .footer-column a:hover {
-        opacity: 1;
-        text-decoration: underline;
+    .form-check {
+      margin-bottom: 0.75rem;
     }
 
-    .footer-toggle,
-    .top-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 5;
+    .form-check-label {
+        font-size: 1.1rem;
+        padding-left: 0.5rem;
     }
 
-    .separator-btn {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-size: 18px;
+    .form-check-input {
+        width: 1.25em;
+        height: 1.25em;
     }
 
-    .separator-btn:hover {
-        background-color: #339933;
-        transform: scale(1.08);
+    @media (max-width: 767.98px) {
+      .header-bg span {
+        font-size: 1.5rem;
+      }
+      .header-bg {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
     }
+  </style>
+</head>
 
-    .subscribe-btn {
-        background-color: #3BA43B;
-        color: white;
-        border: none;
-        padding: 8px 20px;
-        font-size: 14px;
-        border-radius: 25px;
-        margin-top: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        transition: background 0.3s ease;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
+<body>
+<div class="body-wrapper">
+  <a href="index.php" class="btn-back" aria-label="Go Back">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+  <div class="text-center mb-3">
+    <img src="img/logoulit.png" alt="Company Logo" class="d-inline-block" style="width: 120px; height: 120px;">
+  </div>
 
-    .subscribe-btn:hover {
-        background-color: #339933;
-    }
+  <div class="container bg-white rounded-3 shadow-lg overflow-hidden my-5 p-0">
 
-    #subscription-form {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 12px;
-        padding: 8px 0;
-    }
-
-    #subscription-form input {
-        padding: 6px 12px;
-        width: 60%;
-        border-radius: 25px;
-        border: none;
-        outline: none;
-    }
-
-    #subscription-form button {
-        background-color: #339933;
-        color: white;
-        border: none;
-        padding: 8px 20px;
-        font-size: 14px;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    #subscription-form button:hover {
-        background-color: #2d7d2d;
-    }
-
-    .footer-socials {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .footer-socials a {
-        display: inline-block;
-        margin: 0 10px;
-        font-size: 22px;
-        color: white;
-        transition: color 0.3s ease, transform 0.2s ease;
-    }
-
-    .footer-socials a:hover {
-        color: #3BA43B;
-        transform: scale(1.15);
-    }
-
-    /* --- Subscription Notice Styles --- */
-    .subscription-notice {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translate(-50%, 100px);
-        padding: 12px 24px;
-        border-radius: 8px;
-        color: white;
-        font-family: 'Poppins', sans-serif;
-        z-index: 1050;
-        opacity: 0;
-        transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    .subscription-notice.show {
-        transform: translate(-50%, 0);
-        opacity: 1;
-    }
-
-    .subscription-notice.success {
-        background-color: #0C470C; /* Green for success */
-    }
-
-    .subscription-notice.error {
-        background-color: #d9534f; /* Red for error */
-    }
-
-
-    @media (max-width: 768px) {
-        .footer-container {
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-            padding: 30px 15px;
-        }
-
-        .footer-left {
-            border-right: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            padding-bottom: 30px;
-            width: 100%;
-        }
-
-        .footer-right {
-            padding-left: 20px;
-            width: 100%;
-        }
-
-        .footer-links-container {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 25px;
-        }
-
-        .footer-column {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .footer-column:last-child {
-            border-bottom: none;
-        }
-
-        #subscription-form {
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
-
-        #subscription-form input,
-        #subscription-form button {
-            width: 90%;
-            max-width: 300px;
-        }
-    }
-</style>
-
-<div class="footer-wrapper" id="footerWrapper">
-    <div class="footer-top" id="footerTop">
-        <button id="footerTopClose" class="separator-btn top-close" aria-label="Hide footer top">
-            <i class="bi bi-chevron-down"></i>
-        </button>
-        <div class="footer-links-container">
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="About.php">About Us</a></li>
-                    <li><a href="blogs.php">Blogs</a></li>
-                    <li><a href="#mainFooter">Contacts</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Guides</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="#">Terms</a></li>
-                    <li><a href="#">Privacy</a></li>
-                    <li><a href="#">Cookies</a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="header-bg text-white py-4 d-flex justify-content-center">
+      <span>Canada? Interest Check</span>
     </div>
 
-    <footer id="mainFooter">
-        <div class="footer-toggle">
-            <button id="footer-btn-up" class="separator-btn" aria-label="Show footer top">
-                <i class="bi bi-chevron-up"></i>
-            </button>
+    <form class="p-4 p-md-5" id="interestForm" novalidate>
+
+      <div class="intro-text-container">
+        <p class="intro-text">We are licensed Canadian immigration firm with a main office based in Vancouver Island British Columbia, Canada. We provide consultancy visas: temporary resident visa, family sponsorship, caregiver pathway, and LMIA application.</p>
+        <p class="intro-text">Since 2012, we have helped many people with different nationalities to successfully move to Canada for better opportunities and brighter futures. Similarly, supporting our clients and encouraging them in times of doubt have enabled us to boost the quality of our services even further.</p>
+      </div>
+      
+      <p class="required-note mb-4">* Indicates required question</p>
+
+      <div class="form-section mb-4">
+        <label for="email" class="form-label">Email <span class="required-indicator">*</span></label>
+        <input type="email" id="email" name="email" placeholder="Your email" class="form-control" required>
+      </div>
+
+      <div class="form-section mb-4">
+        <label for="fullName" class="form-label">Name (LAST NAME, First Name, Middle Initial) <span class="required-indicator">*</span></label>
+        <input type="text" id="fullName" name="fullName" placeholder="Your answer" class="form-control" required>
+      </div>
+
+      <div class="form-section mb-4">
+        <label for="phone" class="form-label">Phone Number (09XXXXXXXX) <span class="required-indicator">*</span></label>
+        <input type="tel" id="phone" name="phone" placeholder="Your answer" class="form-control" required>
+      </div>
+
+      <div class="form-section mb-4">
+        <label for="address" class="form-label">Address <span class="required-indicator">*</span></label>
+        <input type="text" id="address" name="address" placeholder="Your answer" class="form-control" required>
+      </div>
+
+      <div class="form-section mb-4">
+        <label class="form-label d-block">Interest Pathway <span class="required-indicator">*</span></label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Student Pathway" id="studentPathway" name="interestPathway[]">
+          <label class="form-check-label" for="studentPathway">Student Pathway</label>
         </div>
-        <div class="footer-container">
-            <div class="footer-left">
-                <h3>Wanna Subscribe to our Newsletter?</h3>
-                <p>Get the latest updates and tips straight to your inbox.</p>
-                <button onclick="showSubscriptionForm()" class="subscribe-btn">Click here</button>
-                <div id="subscription-form" style="display: none;">
-                    <input type="email" id="email" placeholder="Enter your email" required />
-                    <button onclick="submitSubscription()">Subscribe</button>
-                </div>
-            </div>
-            <div class="footer-right">
-                <h3>Get In Touch</h3>
-                <p>
-                    <i class="bi bi-envelope-fill me-2"></i> <?php echo $static_items['Email'] ?? 'Email not set'; ?><br />
-                    <i class="bi bi-telephone-fill me-2"></i> <?php echo $static_items['Contacts'] ?? 'Contacts not set'; ?><br />
-                    <i class="bi bi-geo-alt-fill me-2"></i> <?php echo $static_items['Location'] ?? 'Location not set'; ?>
-                </p>
-            </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Temporary Foreign Worker Program" id="tfwProgram" name="interestPathway[]">
+          <label class="form-check-label" for="tfwProgram">Temporary Foreign Worker Program</label>
         </div>
-        <div class="footer-socials">
-            <?php foreach ($social_items as $item): ?>
-                <a href="<?php echo htmlspecialchars($item['value']); ?>" target="_blank" aria-label="<?php echo htmlspecialchars($item['label']); ?>">
-                    <i class="<?php echo htmlspecialchars($item['icon_class']); ?>"></i>
-                </a>
-            <?php endforeach; ?>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Tourist/ Visitor Visa" id="touristVisa" name="interestPathway[]">
+          <label class="form-check-label" for="touristVisa">Tourist/ Visitor Visa</label>
         </div>
-         <p class="text-center mt-4 mb-0">© <?php echo date("Y"); ?> Roman & Associates Immigration Services LTD. All Rights Reserved.</p>
-    </footer>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Caregiver Pathway" id="caregiverPathway" name="interestPathway[]">
+          <label class="form-check-label" for="caregiverPathway">Caregiver Pathway</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="Family Sponsorship" id="familySponsorship" name="interestPathway[]">
+            <label class="form-check-label" for="familySponsorship">Family Sponsorship</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="LMIA Application" id="lmiaApplication" name="interestPathway[]">
+            <label class="form-check-label" for="lmiaApplication">LMIA Application</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="Express Entry" id="expressEntry" name="interestPathway[]">
+            <label class="form-check-label" for="expressEntry">Express Entry</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="Home & Inst-Caregiver Services Profile Creation" id="caregiverProfile" name="interestPathway[]">
+            <label class="form-check-label" for="caregiverProfile">Home & Inst-Caregiver Services Profile Creation</label>
+        </div>
+      </div>
+
+      <div class="form-section mb-4">
+        <label class="form-label d-block">Where did you find us? <span class="required-indicator">*</span></label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Facebook" id="findUsFacebook" name="findUs[]">
+          <label class="form-check-label" for="findUsFacebook">Facebook</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Tiktok" id="findUsTiktok" name="findUs[]">
+          <label class="form-check-label" for="findUsTiktok">Tiktok</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Instagram" id="findUsInstagram" name="findUs[]">
+          <label class="form-check-label" for="findUsInstagram">Instagram</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="Linkedin" id="findUsLinkedin" name="findUs[]">
+          <label class="form-check-label" for="findUsLinkedin">Linkedin</label>
+        </div>
+      </div>
+
+      <div class="form-section mb-4">
+        <label for="facebookLink" class="form-label">Facebook Account Link <span class="required-indicator">*</span></label>
+        <input type="url" id="facebookLink" name="facebookLink" placeholder="Your answer" class="form-control" required>
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center gap-3 mt-5">
+        <button type="button" class="btn btn-outline-secondary" id="clearBtn">Clear</button>
+        <button type="button" class="btn btn-custom" id="submitBtn">Submit</button>
+      </div>
+
+    </form>
+  </div>
 </div>
 
-<script>
-    // --- Footer Scripts ---
-    (function() {
-        // This function is defined within an IIFE to avoid polluting the global scope
-        function showSubscriptionForm() {
-            const form = document.getElementById("subscription-form");
-            const button = document.querySelector(".subscribe-btn");
-            if (form && button) {
-                form.style.display = "flex";
-                button.style.display = "none";
-            }
-        }
+<!-- Modals -->
+<div class="modal fade" id="validationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="validationModalLabel">Incomplete Form</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="validationModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button></div></div></div></div>
+<div class="modal fade" id="confirmationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Confirm Submission</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Are you sure you want to submit this application?</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirmSubmitBtn">Confirm & Submit</button></div></div></div></div>
+<div class="modal fade" id="resultModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="resultModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="resultModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button></div></div></div></div>
 
-        function submitSubscription() {
-            const emailInput = document.getElementById("email");
-            let message = "";
-            let isSuccess = false;
 
-            if (emailInput && emailInput.value && /^\S+@\S+\.\S+$/.test(emailInput.value)) {
-                message = "Subscribed successfully with: " + emailInput.value;
-                isSuccess = true;
-                emailInput.value = "";
-                document.getElementById("subscription-form").style.display = "none";
-                document.querySelector(".subscribe-btn").style.display = "block";
-            } else {
-                message = "Please enter a valid email address.";
-                isSuccess = false;
-            }
+<div id="footer-placeholder">
+    <?php include 'footer.php'; ?>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Modals
+        const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+        const resultModalLabel = document.getElementById('resultModalLabel');
+        const resultModalBody = document.getElementById('resultModalBody');
+
+        // Form and Buttons
+        const form = document.getElementById('interestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+
+        // Clear button functionality
+        clearBtn.addEventListener('click', () => {
+            form.reset();
+        });
+
+        // Submit button validation
+        submitBtn.addEventListener('click', () => {
+            const requiredInputs = form.querySelectorAll('input[required]');
+            let unfilledFields = [];
+
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    const label = form.querySelector(`label[for="${input.id}"]`);
+                    unfilledFields.push(label ? label.innerText.replace('*', '').trim() : 'A required field');
+                }
+            });
             
-            const notice = document.createElement('div');
-            notice.textContent = message;
-            notice.className = `subscription-notice ${isSuccess ? 'success' : 'error'}`;
-            document.body.appendChild(notice);
-
-            setTimeout(() => { notice.classList.add('show'); }, 10);
-
-            setTimeout(() => {
-                notice.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notice)) {
-                        document.body.removeChild(notice);
-                    }
-                }, 500);
-            }, 4000);
-        }
-
-        const wrapper = document.getElementById('footerWrapper');
-        const footerTop = document.getElementById('footerTop');
-        const mainFooter = document.getElementById('mainFooter');
-        const upButton = document.getElementById('footer-btn-up');
-        const topCloseButton = document.getElementById('footerTopClose');
-
-        function setWrapperHeight() {
-            if (wrapper && mainFooter && footerTop) {
-                const isTopVisible = footerTop.classList.contains('show');
-                wrapper.style.height = (isTopVisible ? footerTop.offsetHeight : mainFooter.offsetHeight) + 'px';
+            if (form.querySelectorAll('input[name="interestPathway[]"]:checked').length === 0) {
+                unfilledFields.push('Interest Pathway');
             }
-        }
 
-        function showFooterTop() {
-            if (wrapper && footerTop && mainFooter) {
-                footerTop.classList.add('show');
-                mainFooter.classList.add('hide');
-                setWrapperHeight();
+            if (form.querySelectorAll('input[name="findUs[]"]:checked').length === 0) {
+                unfilledFields.push('Where did you find us?');
             }
-        }
 
-        function showMainFooter() {
-            if (wrapper && footerTop && mainFooter) {
-                footerTop.classList.remove('show');
-                mainFooter.classList.remove('hide');
-                setWrapperHeight();
+            if (unfilledFields.length > 0) {
+                let errorList = '<ul>' + unfilledFields.map(field => `<li>${field}</li>`).join('') + '</ul>';
+                document.getElementById('validationModalLabel').textContent = 'Missing Information';
+                document.getElementById('validationModalBody').innerHTML = 'Please fill out the following required fields:<br>' + errorList;
+                validationModal.show();
+            } else {
+                confirmationModal.show();
             }
-        }
+        });
 
-        // Make functions globally accessible for onclick attributes
-        window.showSubscriptionForm = showSubscriptionForm;
-        window.submitSubscription = submitSubscription;
+        // Confirmation modal submit action
+        confirmSubmitBtn.addEventListener('click', async () => {
+            confirmationModal.hide();
+            
+            // Show loading state
+            resultModalLabel.textContent = 'Submitting...';
+            resultModalBody.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+            resultModal.show();
 
-        if (upButton) upButton.addEventListener('click', showFooterTop);
-        if (topCloseButton) topCloseButton.addEventListener('click', showMainFooter);
+            // Gather form data
+            const formData = new FormData(form);
+            const data = {
+                email: formData.get('email'),
+                fullName: formData.get('fullName'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                interestPathway: formData.getAll('interestPathway[]'),
+                findUs: formData.getAll('findUs[]'),
+                facebookLink: formData.get('facebookLink'),
+            };
 
-        setTimeout(setWrapperHeight, 150);
-        window.addEventListener('resize', setWrapperHeight);
-    })();
-</script>
+            try {
+                const response = await fetch('submit-application.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultModalLabel.textContent = 'Success!';
+                    resultModalBody.textContent = result.message;
+                    form.reset();
+                } else {
+                    resultModalLabel.textContent = 'Submission Failed';
+                    resultModalBody.textContent = result.message || 'Could not submit the form. Please try again later.';
+                }
+            } catch (error) {
+                resultModalLabel.textContent = 'Error';
+                resultModalBody.textContent = 'An unexpected error occurred. Please check your connection and try again.';
+            }
+        });
+    });
+  </script>
+</body>
+
+</html>
+
