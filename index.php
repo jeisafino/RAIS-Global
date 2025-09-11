@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Add this PHP block at the very top of your index.php file
 // Forcefully disable caching on this page
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
