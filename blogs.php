@@ -94,7 +94,6 @@ foreach ($events as $event) {
       align-items: center;
       border-bottom: 1px solid var(--light-gray);
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      position: sticky;
       top: 0;
       z-index: 1000;
     }
@@ -172,6 +171,14 @@ foreach ($events as $event) {
       text-decoration: none;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .btn-back.visible {
+      opacity: 1;
+      visibility: visible;
     }
 
     .btn-back:hover {
@@ -315,10 +322,8 @@ foreach ($events as $event) {
       </div>
     </section>
   </main>
-
-<div id="footer-placeholder">
+  
     <?php include 'footer.php'; ?>
-</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -358,6 +363,18 @@ foreach ($events as $event) {
           }
         }
       });
+    });
+
+    // Back button visibility toggle
+    const backButton = document.querySelector('.btn-back');
+    const header = document.querySelector('header');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > header.offsetHeight) {
+        backButton.classList.add('visible');
+      } else {
+        backButton.classList.remove('visible');
+      }
     });
   </script>
 </body>

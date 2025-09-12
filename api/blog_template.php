@@ -57,7 +57,8 @@ $hero_path = !empty($blog['hero_media_path']) ? "../" . htmlspecialchars($blog['
       --border-radius: 12px;
     }
     body { font-family: var(--font-family); line-height: 1.7; margin: 0; padding: 0; background-color: var(--secondary-color); color: var(--text-color); }
-    .btn-back { position: fixed; top: 20px; left: 20px; z-index: 1001; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; background-color: var(--primary-color); color: white; border-radius: 50%; text-decoration: none; box-shadow: var(--card-shadow); transition: all 0.3s ease; }
+    .btn-back { position: fixed; top: 20px; left: 20px; z-index: 1001; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; background-color: var(--primary-color); color: white; border-radius: 50%; text-decoration: none; box-shadow: var(--card-shadow); transition: all 0.3s ease; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;}
+    .btn-back.visible { opacity: 1; visibility: visible;}
     .btn-back:hover { background-color: var(--heading-color); transform: scale(1.1); }
     .btn-back i { font-size: 1.2rem; }
     main { width: 90%; max-width: 800px; margin: 2rem auto; }
@@ -75,9 +76,66 @@ $hero_path = !empty($blog['hero_media_path']) ? "../" . htmlspecialchars($blog['
     .section-media-container img, .section-media-container video { width: 100%; height: auto; display: block; border-radius: var(--border-radius); }
     .event-highlights-section { background-color: transparent; border-radius: var(--border-radius); padding: 0; margin-top: 2rem; box-shadow: none; border: none; }
     .event-highlights-section > h2 { font-family: var(--heading-font); color: var(--heading-color); font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center; }
+    header {
+      background: var(--surface-color);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--light-gray);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo-image {
+      max-height: 65px; /* Increased from 55px */
+      width: auto;
+    }
+
+    header nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    header nav a:hover {
+      color: var(--heading-color);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .menu-toggle .bar {
+      width: 25px;
+      height: 3px;
+      background-color: var(--primary-color);
+      margin: 4px 0;
+      transition: 0.4s;
+    }
   </style>
 </head>
 <body>
+  <header>
+    <div>
+      <img src="img/logo.png" alt="RAIS Events Logo" class="logo-image">
+    </div>
+    <div class="menu-toggle" id="mobile-menu">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav id="nav-links">
+      <a href="#map">Event</a>
+      <a href="#blogs">Blogs</a>
+      <a href="#footer-placeholder">Contact</a>
+    </nav>
+  </header>
   <a href="../blogs.php" class="btn-back"><i class="fas fa-arrow-left"></i></a>
   <main>
     <article class="blog-post-wrapper">
@@ -142,6 +200,19 @@ $hero_path = !empty($blog['hero_media_path']) ? "../" . htmlspecialchars($blog['
       <?php endif; ?>
     </article>
   </main>
+  <script>
+    // Back button visibility toggle
+    const backButton = document.querySelector('.btn-back');
+    const showButtonThreshold = 200; // Show button after scrolling 200px
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > showButtonThreshold) {
+        backButton.classList.add('visible');
+      } else {
+        backButton.classList.remove('visible');
+      }
+    });
+  </script>
   <?php include '../footer.php'; ?>
 </body>
 </html>

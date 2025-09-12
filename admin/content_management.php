@@ -1,4 +1,8 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Page-specific data
 $page_title = "RAIS Admin - Content Management";
 $active_page = "content_management";
