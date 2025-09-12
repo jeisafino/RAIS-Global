@@ -61,7 +61,7 @@ if ($services_result) { // ADDED: Check if query was successful
 $locations = [];
 $map_query = "SELECT map_title, map_summary, map_latitude, map_longitude, file_path FROM blogs WHERE map_latitude IS NOT NULL AND map_longitude IS NOT NULL";
 $map_result = $conn->query($map_query);
-if ($map_result) { // ADDED: Check if query was successful
+if ($map_result && $map_result->num_rows > 0) {
     while ($row = $map_result->fetch_assoc()) {
         $locations[] = [
             "title" => $row['map_title'],
@@ -245,7 +245,7 @@ if ($partners_result) { // ADDED: Check if query was successful
         .card-link img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-top: 1rem; }
         .card-link:nth-child(1) { background-color: #C2D6C3; } .card-link:nth-child(2) { background-color: #FFE0B3; } .card-link:nth-child(3) { background-color: #C8775D; } .card-link:nth-child(4) { background-color: #F19D6D; } .card-link:nth-child(5) { background-color: #F3C982; } .card-link:nth-child(6) { background-color: #7D9C7B; } .card-link:nth-child(7) { background-color: #5D8B6D; }
         .section-title { text-align: center; margin-bottom: 2.5rem; font-weight: 600; color: #023621; font-size: 3rem; }
-        #map { height: 550px; width: 100%; max-width: 1200px; margin: 0 auto; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border: 3px solid #0C470C; }
+        #map { height: 650px; max-width: 1200px; margin: 0 auto; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border: 3px solid var(--primary-color);}
         .partner-info { background: linear-gradient(100deg, #0e640e, #0C470C); padding: 4rem; color: white; }
         .partner-info h2 { font-weight: 600; }
         .partner-info p { font-size: 1.4rem; line-height: 1.8; }
@@ -559,262 +559,250 @@ if ($partners_result) { // ADDED: Check if query was successful
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // Pass PHP data to JavaScript
-        const locations = <?php echo json_encode($locations); ?>;
-        const partners = <?php echo json_encode($partners); ?>;
-        const exams = <?php echo json_encode($exams); ?>;
+    // Pass PHP data to JavaScript
+    const locations = <?php echo json_encode($locations); ?>;
+    const partners = <?php echo json_encode($partners); ?>;
+    const exams = <?php echo json_encode($exams); ?>;
 
-        // A globally accessible helper function
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+    // A globally accessible helper function
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // --- Main Initializer ---
+    // This single listener ensures ALL code runs only after the page is fully loaded.
+    document.addEventListener("DOMContentLoaded", function () {
+    
+        // ✅ FIX 1: Declare the map variable here so it can be shared by other functions.
+        let map;
+
+        // --- 1. Animation Control ---
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+        const animationVideo = document.getElementById('animation-video');
+        const skipButton = document.getElementById('skip-animation-btn');
+        let animationSkipped = false;
+
+        function showMainContent() {
+            if (splashScreen) {
+                splashScreen.style.display = 'none';
+            }
+            if(mainContent) {
+                mainContent.style.display = 'flex';
+            }
+            document.body.classList.remove('splash-visible');
+            document.body.classList.add('splash-hidden');
+
+            // ✅ FIX 3: Add this block to "wake up" the map after it becomes visible.
+            setTimeout(function() {
+                if (map) {
+                    map.invalidateSize();
+                }
+            }, 100);
         }
-
-        // --- Main Initializer ---
-        // This single listener ensures ALL code runs only after the page is fully loaded.
-        document.addEventListener("DOMContentLoaded", function () {
         
-            // --- 1. Animation Control ---
-            const splashScreen = document.getElementById('splash-screen');
-            const mainContent = document.getElementById('main-content');
-            const animationVideo = document.getElementById('animation-video');
-            const skipButton = document.getElementById('skip-animation-btn');
-            let animationSkipped = false;
+        const endAnimation = () => {
+            if (animationSkipped) return;
+            animationSkipped = true;
 
-            function showMainContent() {
-                if (splashScreen) {
-                    splashScreen.style.display = 'none';
-                }
-                if(mainContent) {
-                    // This makes the main content visible and lays it out as a flex container
-                    mainContent.style.display = 'flex';
-                }
-                document.body.classList.remove('splash-visible');
-                document.body.classList.add('splash-hidden');
+            if (splashScreen) {
+                splashScreen.classList.add('fade-out');
             }
-            
-            const endAnimation = () => {
-                if (animationSkipped) return;
-                animationSkipped = true;
+            setTimeout(showMainContent, 1500); 
+        };
 
-                if (splashScreen) {
-                    splashScreen.classList.add('fade-out');
-                }
-                // Wait for the 1.5s fade-out transition to finish before hiding the splash screen
-                setTimeout(showMainContent, 1500); 
-            };
-
-            function playAnimation() {
-                if (animationVideo) {
-                    animationVideo.addEventListener('ended', endAnimation);
-                    animationVideo.onerror = () => {
-                        console.error("Video could not be loaded or played.");
-                        endAnimation(); // Skip if video fails
-                    };
-                    
-                    // Manually try to play the video; this is more reliable than just 'autoplay'
-                    animationVideo.play().catch(error => {
-                        console.error("Autoplay was prevented by browser:", error);
-                        endAnimation(); // Skip if browser blocks autoplay
-                    });
-
-                } else {
-                    endAnimation(); // Skip if there's no video element
-                }
-            }
-
-            if (skipButton) {
-                skipButton.addEventListener('click', endAnimation);
-            }
-            
-            // Start the animation process
-            playAnimation();
-
-            // --- 2. Initialize All Other Page Features ---
-
-            // Hero Carousel (Video/Image Slideshow)
-            const carouselElement = document.getElementById('heroCarousel');
-            if (carouselElement) {
-                const heroCarousel = new bootstrap.Carousel(carouselElement, { interval: false, ride: false, pause: false });
-                let imageTimer; 
-                const handleSlide = () => {
-                    const activeItem = carouselElement.querySelector('.carousel-item.active');
-                    if (!activeItem) return;
-                    const mediaType = activeItem.dataset.mediaType;
-                    if (mediaType === 'image') {
-                        imageTimer = setTimeout(() => { heroCarousel.next(); }, 5000);
-                    } else if (mediaType === 'video') {
-                        const video = activeItem.querySelector('video');
-                        if (video) {
-                            video.currentTime = 0;
-                            video.play();
-                            video.addEventListener('ended', function onVideoEnd() {
-                                heroCarousel.next();
-                                video.removeEventListener('ended', onVideoEnd);
-                            });
-                        }
-                    }
+        function playAnimation() {
+            if (animationVideo) {
+                animationVideo.addEventListener('ended', endAnimation);
+                animationVideo.onerror = () => {
+                    console.error("Video could not be loaded or played.");
+                    endAnimation(); // Skip if video fails
                 };
-                carouselElement.addEventListener('slide.bs.carousel', () => {
-                    clearTimeout(imageTimer);
-                    const activeVideo = carouselElement.querySelector('.carousel-item.active video');
-                    if(activeVideo) activeVideo.pause();
+                
+                animationVideo.play().catch(error => {
+                    console.error("Autoplay was prevented by browser:", error);
+                    endAnimation(); // Skip if browser blocks autoplay
                 });
-                carouselElement.addEventListener('slid.bs.carousel', handleSlide);
-                handleSlide();
-            }
 
-            // Back to Top Button
-            const backToTopBtn = document.querySelector('.back-to-top');
-            if (backToTopBtn) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 200) {
-                        backToTopBtn.classList.remove('d-none');
-                    } else {
-                        backToTopBtn.classList.add('d-none');
-                    }
-                });
+            } else {
+                endAnimation(); // Skip if there's no video element
             }
-
-            // About Section "Learn More" Toggle
-            const learnMoreBtn = document.getElementById('learnMoreBtn');
-            if (learnMoreBtn) {
-                learnMoreBtn.addEventListener('click', () => {
-                    document.getElementById('expandedAboutWrapper').classList.toggle('is-open');
-                    learnMoreBtn.textContent = learnMoreBtn.textContent === 'Learn More' ? 'See Less' : 'Learn More';
-                });
-            }
-            const navLinks = document.querySelectorAll('.expanded-nav a');
-            const contentSections = document.querySelectorAll('.content-section');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    contentSections.forEach(s => s.classList.remove('active'));
-                    const targetId = e.currentTarget.getAttribute('data-target');
-                    document.getElementById(targetId).classList.add('active');
-                });
-            });
-
-            // Services Card Stack Animation
-            const serviceCards = document.querySelectorAll('#services .card-link');
-            let cardIndex = 0;
-            const updateCards = () => {
-                serviceCards.forEach((card, i) => {
-                    const pos = (i - cardIndex + serviceCards.length) % serviceCards.length;
-                    card.style.setProperty('--i', pos);
-                });
-            };
-            if (window.innerWidth > 768 && serviceCards.length > 0) {
-                updateCards();
-                setInterval(() => {
-                    cardIndex = (cardIndex + 1) % serviceCards.length;
-                    updateCards();
-                }, 2500);
-            }
-
-            // Leaflet Map for Blogs
-            // For testing, you can use a sample array like this:
-    const locations = [
-        {
-            title: "SM City Lipa",
-            summary: "A major shopping mall in the city.",
-            url: "#",
-            coordinates: [13.9515, 121.1578]
-        },
-        {
-            title: "San Sebastian Cathedral",
-            summary: "A historic landmark in Lipa.",
-            url: "#",
-            coordinates: [13.9403, 121.1630]
         }
-    ];
 
-    // 1. Initialize the map and set the view to Lipa City
-    const map = L.map('map').setView([13.9424, 121.1622], 14); // Zoomed in a bit more
-            
-    // 2. Add the OpenStreetMap tile layer (the visual map)
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors"
-    }).addTo(map);
+        if (skipButton) {
+            skipButton.addEventListener('click', endAnimation);
+        }
+        
+        playAnimation();
 
-    // 3. Loop through each location to create its own marker and click event
-    locations.forEach(location => {
-        // Create a marker for the current location and add it to the map
-        const marker = L.marker(location.coordinates).addTo(map);
-        
-        // Add a popup to the marker
-        marker.bindPopup(`<h5>${location.title}</h5><p>${location.summary}</p><a href="${location.url}" target="_blank">Read Blog →</a>`);
-        
-        // Add a click event listener TO THIS SPECIFIC MARKER
-        marker.on('click', () => {
-            map.flyTo(location.coordinates, 15, { // Zoom in closer on click
-                animate: true,
-                duration: 1.5
+        // --- 2. Initialize All Other Page Features ---
+
+        // Hero Carousel (Video/Image Slideshow)
+        const carouselElement = document.getElementById('heroCarousel');
+        if (carouselElement) {
+            const heroCarousel = new bootstrap.Carousel(carouselElement, { interval: false, ride: false, pause: false });
+            let imageTimer; 
+            const handleSlide = () => {
+                const activeItem = carouselElement.querySelector('.carousel-item.active');
+                if (!activeItem) return;
+                const mediaType = activeItem.dataset.mediaType;
+                if (mediaType === 'image') {
+                    imageTimer = setTimeout(() => { heroCarousel.next(); }, 5000);
+                } else if (mediaType === 'video') {
+                    const video = activeItem.querySelector('video');
+                    if (video) {
+                        video.currentTime = 0;
+                        video.play();
+                        video.addEventListener('ended', function onVideoEnd() {
+                            heroCarousel.next();
+                            video.removeEventListener('ended', onVideoEnd);
+                        });
+                    }
+                }
+            };
+            carouselElement.addEventListener('slide.bs.carousel', () => {
+                clearTimeout(imageTimer);
+                const activeVideo = carouselElement.querySelector('.carousel-item.active video');
+                if(activeVideo) activeVideo.pause();
+            });
+            carouselElement.addEventListener('slid.bs.carousel', handleSlide);
+            handleSlide();
+        }
+
+        // Back to Top Button
+        const backToTopBtn = document.querySelector('.back-to-top');
+        if (backToTopBtn) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 200) {
+                    backToTopBtn.classList.remove('d-none');
+                } else {
+                    backToTopBtn.classList.add('d-none');
+                }
+            });
+        }
+
+        // About Section "Learn More" Toggle
+        const learnMoreBtn = document.getElementById('learnMoreBtn');
+        if (learnMoreBtn) {
+            learnMoreBtn.addEventListener('click', () => {
+                document.getElementById('expandedAboutWrapper').classList.toggle('is-open');
+                learnMoreBtn.textContent = learnMoreBtn.textContent === 'Learn More' ? 'See Less' : 'Learn More';
+            });
+        }
+        const navLinks = document.querySelectorAll('.expanded-nav a');
+        const contentSections = document.querySelectorAll('.content-section');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                contentSections.forEach(s => s.classList.remove('active'));
+                const targetId = e.currentTarget.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
             });
         });
-    });
 
-    // 4. ✅ THE FIX: Wait a moment, then force the map to resize correctly
-    setTimeout(function() {
-        map.invalidateSize();
-    }, 100);
+        // Services Card Stack Animation
+        const serviceCards = document.querySelectorAll('#services .card-link');
+        let cardIndex = 0;
+        const updateCards = () => {
+            serviceCards.forEach((card, i) => {
+                const pos = (i - cardIndex + serviceCards.length) % serviceCards.length;
+                card.style.setProperty('--i', pos);
+            });
+        };
+        if (window.innerWidth > 768 && serviceCards.length > 0) {
+            updateCards();
+            setInterval(() => {
+                cardIndex = (cardIndex + 1) % serviceCards.length;
+                updateCards();
+            }, 2500);
+        }
 
-            // Partners Section Slider
-            let currentPartnerIndex = 0;
-            const partnerImageWrapper = document.getElementById('partner-image-wrapper');
-            const partnerImageContent = document.getElementById('partner-image-content');
-            const prevPartnerBtn = document.getElementById('prev-partner');
-            const nextPartnerBtn = document.getElementById('next-partner');
-            const showPartner = (index) => {
-                if (partners && partners.length > 0) {
-                    const partner = partners[index];
-                    partnerImageWrapper.style.backgroundImage = `url('${partner.backgroundImage}')`;
-                    partnerImageContent.innerHTML = `<img src="${partner.logo}" alt="${partner.name} logo"><p class="mb-2">Official Test Centre</p><p class="h5 mb-3 fw-bold">${partner.name}</p><a href="${partner.url}" target="_blank">Visit Page</a>`;
-                }
-            };
-            const slidePartner = (direction) => {
-                if (!partnerImageContent) return;
-                partnerImageContent.style.opacity = 0;
-                setTimeout(() => {
-                    if (direction === 'next') {
-                        currentPartnerIndex = (currentPartnerIndex + 1) % partners.length;
-                    } else {
-                        currentPartnerIndex = (currentPartnerIndex - 1 + partners.length) % partners.length;
-                    }
-                    showPartner(currentPartnerIndex);
-                    partnerImageContent.style.opacity = 1;
-                }, 400);
-            };
-            if (prevPartnerBtn && nextPartnerBtn) {
-                prevPartnerBtn.addEventListener('click', () => slidePartner('prev'));
-                nextPartnerBtn.addEventListener('click', () => slidePartner('next'));
+        // Leaflet Map for Blogs
+        if (typeof L !== 'undefined' && document.getElementById('map')) {
+            // ✅ FIX 2: Remove "const" to assign to the shared `map` variable from above.
+            map = L.map("map", {
+                maxBounds: [
+                    [4.0, 116.0],
+                    [21.5, 127.5]
+                ],
+                maxBoundsViscosity: 1.0
+            }).setView([12.8797, 121.7740], 6);
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap contributors",
+                minZoom: 6,
+                maxZoom: 18
+            }).addTo(map);
+
+            locations.forEach(location => {
+                const marker = L.marker(location.coordinates).addTo(map);
+                marker.bindPopup(`<h5>${location.title}</h5><p>${location.summary}</p><a href="${location.url}" target="_blank">Read Blog →</a>`);
+                marker.on('click', () => {
+                    map.flyTo(location.coordinates, 13, {
+                        animate: true,
+                        duration: 1.5
+                    });
+                });
+            });
+        }
+
+        // Partners Section Slider
+        let currentPartnerIndex = 0;
+        const partnerImageWrapper = document.getElementById('partner-image-wrapper');
+        const partnerImageContent = document.getElementById('partner-image-content');
+        const prevPartnerBtn = document.getElementById('prev-partner');
+        const nextPartnerBtn = document.getElementById('next-partner');
+        const showPartner = (index) => {
+            if (partners && partners.length > 0) {
+                const partner = partners[index];
+                partnerImageWrapper.style.backgroundImage = `url('${partner.backgroundImage}')`;
+                partnerImageContent.innerHTML = `<img src="${partner.logo}" alt="${partner.name} logo"><p class="mb-2">Official Test Centre</p><p class="h5 mb-3 fw-bold">${partner.name}</p><a href="${partner.url}" target="_blank">Visit Page</a>`;
             }
-            if (partnerImageWrapper && partnerImageContent) {
+        };
+        const slidePartner = (direction) => {
+            if (!partnerImageContent) return;
+            partnerImageContent.style.opacity = 0;
+            setTimeout(() => {
+                if (direction === 'next') {
+                    currentPartnerIndex = (currentPartnerIndex + 1) % partners.length;
+                } else {
+                    currentPartnerIndex = (currentPartnerIndex - 1 + partners.length) % partners.length;
+                }
                 showPartner(currentPartnerIndex);
-            }
+                partnerImageContent.style.opacity = 1;
+            }, 400);
+        };
+        if (prevPartnerBtn && nextPartnerBtn) {
+            prevPartnerBtn.addEventListener('click', () => slidePartner('prev'));
+            nextPartnerBtn.addEventListener('click', () => slidePartner('next'));
+        }
+        if (partnerImageWrapper && partnerImageContent) {
+            showPartner(currentPartnerIndex);
+        }
 
-            // Exams Carousel Content Update
-            const examCarousel = document.getElementById('examCarousel');
-            const examTitle = document.getElementById('exam-title');
-            const examDescription = document.getElementById('exam-description');
-            const examLearnMoreBtn = document.getElementById('exam-learn-more-btn');
-            const updateExamContent = (index) => {
-                if (exams && exams.length > index && examTitle && examDescription && examLearnMoreBtn) {
-                    const exam = exams[index];
-                    examTitle.textContent = exam.name;
-                    examDescription.textContent = exam.description;
-                    examLearnMoreBtn.href = exam.url;
-                }
-            };
-            if (examCarousel) {
-                examCarousel.addEventListener('slide.bs.carousel', event => updateExamContent(event.to));
-                updateExamContent(0); // Initialize first slide's content
+        // Exams Carousel Content Update
+        const examCarousel = document.getElementById('examCarousel');
+        const examTitle = document.getElementById('exam-title');
+        const examDescription = document.getElementById('exam-description');
+        const examLearnMoreBtn = document.getElementById('exam-learn-more-btn');
+        const updateExamContent = (index) => {
+            if (exams && exams.length > index && examTitle && examDescription && examLearnMoreBtn) {
+                const exam = exams[index];
+                examTitle.textContent = exam.name;
+                examDescription.textContent = exam.description;
+                examLearnMoreBtn.href = exam.url;
             }
-        });
-    </script>
+        };
+        if (examCarousel) {
+            examCarousel.addEventListener('slide.bs.carousel', event => updateExamContent(event.to));
+            updateExamContent(0); // Initialize first slide's content
+        }
+    });
+</script>
 </body>
 </html>

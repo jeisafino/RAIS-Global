@@ -170,7 +170,6 @@ foreach ($events as $event) {
       border-radius: 50%;
       text-decoration: none;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -322,8 +321,10 @@ foreach ($events as $event) {
       </div>
     </section>
   </main>
-  
+
+<div id="footer-placeholder">
     <?php include 'footer.php'; ?>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

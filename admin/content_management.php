@@ -1402,6 +1402,8 @@ saveServiceBtn.addEventListener('click', async () => {
             }
             confirmationModal.hide();
         };
+        confirmationModalEl.style.zIndex = "1060";
+        
         confirmationModal.show();
     });
 
