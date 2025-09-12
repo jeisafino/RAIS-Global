@@ -170,8 +170,9 @@ if ($partners_result) { // ADDED: Check if query was successful
         }
         
         #main-content {
-            display: none; /* Initially hidden */
+            display: none; /* Change this line */
             flex-grow: 1;
+            display: flex; 
             flex-direction: column;
         }
 
@@ -198,8 +199,8 @@ if ($partners_result) { // ADDED: Check if query was successful
             min-height: 100vh;
         }
 
-        #main-content > main {
-            flex-grow: 1;
+        #main-content > footer {
+             margin-top: auto !important;  
         }
 
         /* Custom Scrollbar */
@@ -548,7 +549,7 @@ if ($partners_result) { // ADDED: Check if query was successful
             </section>
         </main>
 
-            <?php include 'footer.php'; ?>
+      <?php include 'footer.php'; ?>
         
     </div> <button class="back-to-top position-fixed bottom-0 end-0 mb-4 me-4 btn btn-success rounded-circle d-none"
         onclick="scrollToTop()" style="width: 50px; height: 50px; z-index: 999;">
